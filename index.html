@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitzCell — Reparación de Celulares en Torreón</title>
+  <meta name="description" content="FitzCell, taller de reparación de celulares en Torreón. Garantías por escrito, reparación rápida y atención personalizada." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { DEFAULT: '#06b6d4', dark: '#0891b2', light: '#67e8f9' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen">
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════ -->
+  <nav class="fixed top-0 w-full z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="index.html" class="flex items-center gap-2 group">
+        <div class="w-9 h-9 rounded-xl bg-cyan-500 flex items-center justify-center font-black text-gray-950 text-lg group-hover:bg-cyan-400 transition">F</div>
+        <span class="font-bold text-xl tracking-tight">Fitz<span class="text-cyan-400">Cell</span></span>
+      </a>
+
+      <!-- Nav desktop -->
+      <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
+        <a href="index.html" class="text-cyan-400">Inicio</a>
+        <a href="rastreo.html" class="hover:text-cyan-400 transition">Rastrear equipo</a>
+        <a href="faq.html" class="hover:text-cyan-400 transition">Políticas</a>
+        <a href="rastreo.html" class="ml-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-semibold rounded-lg transition">📱 Buscar mi equipo</a>
+      </div>
+
+      <!-- Hamburger -->
+      <button id="menuBtn" class="md:hidden text-gray-400 hover:text-white transition" onclick="toggleMenu()">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-gray-900 border-t border-gray-800 px-4 pb-4">
+      <a href="index.html" class="block py-2 text-cyan-400 text-sm font-medium">Inicio</a>
+      <a href="rastreo.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-cyan-400">Rastrear equipo</a>
+      <a href="faq.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-cyan-400">Políticas</a>
+      <a href="rastreo.html" class="block mt-2 text-center px-4 py-2 bg-cyan-500 text-gray-950 font-semibold rounded-lg text-sm">📱 Buscar mi equipo</a>
+    </div>
+  </nav>
+
+  <!-- ══ HERO ════════════════════════════════════════════════ -->
+  <section class="hero-gradient min-h-screen flex items-center pt-16">
+    <div class="max-w-6xl mx-auto px-4 py-20 fade-in">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <div class="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/30 rounded-full px-4 py-1.5 text-cyan-400 text-sm font-medium mb-6">
+            <span class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
+            Abiertos · Lun–Sáb 9 am – 7 pm
+          </div>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+            Tu celular <br/>
+            <span class="text-cyan-400">reparado</span> con<br/>
+            garantía por escrito
+          </h1>
+          <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+            En <strong class="text-white">FitzCell</strong> somos especialistas en reparación de smartphones y tablets en Torreón. Diagnóstico gratuito, presupuesto sin compromiso y garantía documentada en cada trabajo.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <a href="rastreo.html" class="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold rounded-xl transition transform hover:scale-105">
+              🔍 Rastrear mi equipo
+            </a>
+            <a href="faq.html" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition border border-gray-700">
+              📋 Ver garantías
+            </a>
+          </div>
+          <!-- Badges -->
+          <div class="flex flex-wrap gap-3 mt-8">
+            <span class="flex items-center gap-2 bg-gray-800/60 rounded-full px-4 py-2 text-sm text-gray-300">✅ Garantía escrita</span>
+            <span class="flex items-center gap-2 bg-gray-800/60 rounded-full px-4 py-2 text-sm text-gray-300">⚡ Reparación el mismo día</span>
+            <span class="flex items-center gap-2 bg-gray-800/60 rounded-full px-4 py-2 text-sm text-gray-300">🔒 Sellos de seguridad</span>
+          </div>
+        </div>
+        <!-- Ilustración / Stats -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="card-glow bg-gray-800/70 rounded-2xl p-6 border border-gray-700 col-span-2">
+            <div class="text-4xl font-black text-cyan-400">+2,500</div>
+            <div class="text-gray-400 text-sm mt-1">equipos reparados exitosamente</div>
+          </div>
+          <div class="card-glow bg-gray-800/70 rounded-2xl p-6 border border-gray-700">
+            <div class="text-3xl font-black text-teal-400">98%</div>
+            <div class="text-gray-400 text-sm mt-1">satisfacción de clientes</div>
+          </div>
+          <div class="card-glow bg-gray-800/70 rounded-2xl p-6 border border-gray-700">
+            <div class="text-3xl font-black text-indigo-400">30</div>
+            <div class="text-gray-400 text-sm mt-1">días de garantía estándar</div>
+          </div>
+          <div class="card-glow bg-gray-800/70 rounded-2xl p-6 border border-gray-700">
+            <div class="text-2xl font-black text-amber-400">24h</div>
+            <div class="text-gray-400 text-sm mt-1">entrega promedio</div>
+          </div>
+          <div class="card-glow bg-gray-800/70 rounded-2xl p-6 border border-gray-700">
+            <div class="text-2xl font-black text-rose-400">$0</div>
+            <div class="text-gray-400 text-sm mt-1">costo de diagnóstico</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SERVICIOS ═══════════════════════════════════════════ -->
+  <section class="py-20 bg-gray-900">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-3">Nuestros <span class="text-cyan-400">servicios</span></h2>
+        <p class="text-gray-400 max-w-xl mx-auto">Trabajamos con todas las marcas. Usamos refacciones de calidad y entregamos garantía por escrito en cada reparación.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Servicio cards -->
+        <div class="card-glow bg-gray-800 rounded-2xl p-6 border border-gray-700">
+          <div class="text-4xl mb-4">📱</div>
+          <h3 class="font-bold text-lg mb-2">Cambio de pantalla</h3>
+          <p class="text-gray-400 text-sm">Pantallas OLED y LCD originales para iPhone, Samsung, Motorola, Xiaomi y más. Instalación en el momento.</p>
+        </div>
+        <div class="card-glow bg-gray-800 rounded-2xl p-6 border border-gray-700">
+          <div class="text-4xl mb-4">🔋</div>
+          <h3 class="font-bold text-lg mb-2">Cambio de batería</h3>
+          <p class="text-gray-400 text-sm">¿Se apaga solo o no dura el día? Cambiamos tu batería con garantía de 30 días incluida.</p>
+        </div>
+        <div class="card-glow bg-gray-800 rounded-2xl p-6 border border-gray-700">
+          <div class="text-4xl mb-4">🔌</div>
+          <h3 class="font-bold text-lg mb-2">Conectores y puertos</h3>
+          <p class="text-gray-400 text-sm">Reparamos o cambiamos puertos Lightning, USB-C y MicroUSB cuando tu celular ya no carga correctamente.</p>
+        </div>
+        <div class="card-glow bg-gray-800 rounded-2xl p-6 border border-gray-700">
+          <div class="text-4xl mb-4">📷</div>
+          <h3 class="font-bold text-lg mb-2">Reparación de cámara</h3>
+          <p class="text-gray-400 text-sm">Imagen borrosa, lente roto o módulo trasero dañado. Diagnosticamos y reparamos cámaras frontales y traseras.</p>
+        </div>
+        <div class="card-glow bg-gray-800 rounded-2xl p-6 border border-gray-700">
+          <div class="text-4xl mb-4">🔊</div>
+          <h3 class="font-bold text-lg mb-2">Audio y micrófono</h3>
+          <p class="text-gray-400 text-sm">Altavoz roto, sin audio en llamadas o micrófonos que no captan la voz. Diagnóstico gratuito.</p>
+        </div>
+        <div class="card-glow bg-gray-800 rounded-2xl p-6 border border-gray-700">
+          <div class="text-4xl mb-4">🌊</div>
+          <h3 class="font-bold text-lg mb-2">Daño por agua</h3>
+          <p class="text-gray-400 text-sm">Limpieza ultrasónica y diagnóstico por humedad. Recuperamos equipos mojados siempre que sea posible.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ VENTAJAS ════════════════════════════════════════════ -->
+  <section class="py-20 bg-gray-950">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-3">¿Por qué elegir <span class="text-cyan-400">FitzCell</span>?</h2>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="flex gap-5 items-start">
+          <div class="mt-1 flex-shrink-0 w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-2xl">📄</div>
+          <div>
+            <h3 class="font-bold text-lg mb-1">Garantía documentada</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">Cada reparación incluye una nota impresa con el número de folio, la falla reparada, el costo y el periodo de garantía. Nada de promesas de palabra.</p>
+          </div>
+        </div>
+        <div class="flex gap-5 items-start">
+          <div class="mt-1 flex-shrink-0 w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-2xl">🔏</div>
+          <div>
+            <h3 class="font-bold text-lg mb-1">Sellos de seguridad</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">Aplicamos sellos de seguridad numerados en tu equipo al entregarlo. Si alguien lo abre sin autorización, lo detectamos y la garantía se mantiene válida.</p>
+          </div>
+        </div>
+        <div class="flex gap-5 items-start">
+          <div class="mt-1 flex-shrink-0 w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-2xl">⚡</div>
+          <div>
+            <h3 class="font-bold text-lg mb-1">Rapidez comprobada</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">La mayoría de reparaciones se resuelven el mismo día. Recibirás una notificación de tu folio cuando tu equipo esté listo.</p>
+          </div>
+        </div>
+        <div class="flex gap-5 items-start">
+          <div class="mt-1 flex-shrink-0 w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-2xl">🔍</div>
+          <div>
+            <h3 class="font-bold text-lg mb-1">Rastreo en línea</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">Con tu número de folio puedes consultar el estado de tu reparación en cualquier momento desde este sitio, sin necesidad de llamar.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ UBICACIÓN ═══════════════════════════════════════════ -->
+  <section class="py-20 bg-gray-900">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-3">¿Dónde <span class="text-cyan-400">encontrarnos</span>?</h2>
+        <p class="text-gray-400">Visítanos en Torreón, Coahuila. Sin cita previa.</p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8 items-center">
+        <div class="space-y-5">
+          <div class="flex items-start gap-4 bg-gray-800 rounded-2xl p-5 border border-gray-700">
+            <span class="text-2xl mt-0.5">📍</span>
+            <div>
+              <div class="font-semibold mb-1">Dirección</div>
+              <div class="text-gray-400 text-sm">Av. Morelos 1245, Col. Centro<br/>Torreón, Coahuila, C.P. 27000</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 bg-gray-800 rounded-2xl p-5 border border-gray-700">
+            <span class="text-2xl mt-0.5">🕐</span>
+            <div>
+              <div class="font-semibold mb-1">Horario</div>
+              <div class="text-gray-400 text-sm">Lunes – Viernes: 9:00 am – 7:00 pm<br/>Sábado: 9:00 am – 4:00 pm<br/>Domingo: Cerrado</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 bg-gray-800 rounded-2xl p-5 border border-gray-700">
+            <span class="text-2xl mt-0.5">📞</span>
+            <div>
+              <div class="font-semibold mb-1">Contacto</div>
+              <div class="text-gray-400 text-sm">Tel: 871-123-4567<br/>WhatsApp: 871-987-6543</div>
+            </div>
+          </div>
+        </div>
+        <!-- Mini-mapa embed placeholder -->
+        <div class="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden h-72 flex items-center justify-center">
+          <iframe
+            title="Ubicación FitzCell"
+            class="w-full h-full rounded-2xl grayscale"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3614.4!2d-103.4068!3d25.5428!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x868fa5e0b1234567%3A0xabcdef!2sTorre%C3%B3n%2C%20Coahuila!5e0!3m2!1ses!2smx!4v1710000000000!5m2!1ses!2smx"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ══════════════════════════════════════════════ -->
+  <footer class="bg-gray-950 border-t border-gray-800 py-8">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+      <div class="flex items-center gap-2 font-semibold text-white">
+        <div class="w-7 h-7 rounded-lg bg-cyan-500 flex items-center justify-center font-black text-gray-950 text-sm">F</div>
+        FitzCell
+      </div>
+      <div>© 2026 FitzCell · Todos los derechos reservados</div>
+      <div class="flex gap-4">
+        <a href="rastreo.html" class="hover:text-cyan-400 transition">Rastrear equipo</a>
+        <a href="faq.html" class="hover:text-cyan-400 transition">Políticas</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>

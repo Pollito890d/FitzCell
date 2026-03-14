@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — FitzCell Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="../js/auth.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/sidebar.js"></script>
+</head>
+<body class="bg-gray-950 text-gray-100">
+
+  <script>renderSidebar('dashboard');</script>
+
+  <!-- Contenido principal -->
+  <div class="md:ml-64 min-h-screen">
+    <div class="pt-16 md:pt-0 p-6 fade-in">
+
+      <!-- Encabezado -->
+      <div class="mb-8">
+        <h1 class="text-2xl font-extrabold">Dashboard</h1>
+        <p class="text-gray-500 text-sm mt-1">Sábado 14 de marzo de 2026 · Bienvenido de vuelta</p>
+      </div>
+
+      <!-- Métricas -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="card-glow bg-gray-900 rounded-2xl p-5 border border-gray-800">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Equipos hoy</span>
+            <div class="w-8 h-8 bg-cyan-500/15 rounded-lg flex items-center justify-center text-cyan-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            </div>
+          </div>
+          <div class="text-3xl font-black text-white" id="metEquipos">—</div>
+          <div class="text-xs text-gray-600 mt-1">ingresados hoy</div>
+        </div>
+
+        <div class="card-glow bg-gray-900 rounded-2xl p-5 border border-gray-800">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Ventas hoy</span>
+            <div class="w-8 h-8 bg-emerald-500/15 rounded-lg flex items-center justify-center text-emerald-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+          </div>
+          <div class="text-3xl font-black text-white" id="metVentas">—</div>
+          <div class="text-xs text-gray-600 mt-1">cobrado hoy</div>
+        </div>
+
+        <div class="card-glow bg-gray-900 rounded-2xl p-5 border border-gray-800">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Por entregar</span>
+            <div class="w-8 h-8 bg-amber-500/15 rounded-lg flex items-center justify-center text-amber-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            </div>
+          </div>
+          <div class="text-3xl font-black text-white" id="metEntregar">—</div>
+          <div class="text-xs text-gray-600 mt-1">equipos listos</div>
+        </div>
+
+        <div class="card-glow bg-gray-900 rounded-2xl p-5 border border-gray-800">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">RMA pendientes</span>
+            <div class="w-8 h-8 bg-red-500/15 rounded-lg flex items-center justify-center text-red-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </div>
+          </div>
+          <div class="text-3xl font-black text-white" id="metRMA">—</div>
+          <div class="text-xs text-gray-600 mt-1">garantías activas</div>
+        </div>
+      </div>
+
+      <!-- Tabla reparaciones recientes -->
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+          <h2 class="font-bold text-base">Reparaciones recientes</h2>
+          <a href="reparaciones.html" class="text-sm text-cyan-400 hover:text-cyan-300 transition font-medium">Ver todas →</a>
+        </div>
+        <div class="table-wrapper">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-800 text-xs text-gray-500 uppercase tracking-wider">
+                <th class="text-left px-6 py-3">Folio</th>
+                <th class="text-left px-6 py-3">Cliente</th>
+                <th class="text-left px-6 py-3 hidden md:table-cell">Modelo</th>
+                <th class="text-left px-6 py-3 hidden lg:table-cell">Técnico</th>
+                <th class="text-left px-6 py-3">Estado</th>
+                <th class="text-right px-6 py-3">Deuda</th>
+              </tr>
+            </thead>
+            <tbody id="tablaRecientes"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Alertas de inventario -->
+      <div class="mt-6 bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+          <h2 class="font-bold text-base">⚠️ Stock bajo / Agotado</h2>
+          <a href="inventario.html" class="text-sm text-cyan-400 hover:text-cyan-300 transition font-medium">Ir a inventario →</a>
+        </div>
+        <div id="alertasStock" class="divide-y divide-gray-800"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Métricas
+    document.getElementById('metEquipos').textContent = FC.dashboard.equiposHoy;
+    document.getElementById('metVentas').textContent = '$' + FC.dashboard.ventasHoy.toLocaleString();
+    document.getElementById('metEntregar').textContent = FC.dashboard.porEntregar;
+    document.getElementById('metRMA').textContent = FC.dashboard.rmaPendientes;
+
+    // Tabla recientes (últimas 6)
+    const recientes = [...FC.reparaciones].reverse().slice(0, 6);
+    const badges = { 'Diagnóstico': 'badge-diagnostico', 'En proceso': 'badge-proceso', 'Listo': 'badge-listo', 'Entregado': 'badge-entregado' };
+    const tb = document.getElementById('tablaRecientes');
+    recientes.forEach(r => {
+      tb.innerHTML += `
+        <tr class="border-b border-gray-800/50 hover:bg-gray-800/30 transition">
+          <td class="px-6 py-4 font-mono text-cyan-400 font-semibold">${r.folio}</td>
+          <td class="px-6 py-4 font-medium">${r.cliente}</td>
+          <td class="px-6 py-4 text-gray-400 hidden md:table-cell">${r.modelo}</td>
+          <td class="px-6 py-4 text-gray-400 hidden lg:table-cell">${r.tecnico}</td>
+          <td class="px-6 py-4"><span class="inline-block px-2.5 py-1 rounded-full text-xs font-bold ${badges[r.estado] || ''}">${r.estado}</span></td>
+          <td class="px-6 py-4 text-right font-semibold ${r.deuda > 0 ? 'text-red-400' : 'text-emerald-400'}">$${r.deuda.toLocaleString()}</td>
+        </tr>`;
+    });
+
+    // Alertas stock
+    const stk = FC.inventario.filter(i => i.cantidad <= i.minimo);
+    const as = document.getElementById('alertasStock');
+    if (stk.length === 0) {
+      as.innerHTML = '<p class="px-6 py-4 text-gray-500 text-sm">✅ Todos los productos tienen stock suficiente.</p>';
+    } else {
+      stk.forEach(i => {
+        const agotado = i.cantidad === 0;
+        as.innerHTML += `
+          <div class="px-6 py-3 flex items-center justify-between ${agotado ? 'bg-red-950/20' : 'bg-amber-950/10'}">
+            <div>
+              <span class="font-medium text-sm">${i.nombre}</span>
+              <span class="ml-2 text-xs text-gray-500">${i.proveedor}</span>
+            </div>
+            <span class="text-sm font-bold ${agotado ? 'text-red-400' : 'text-amber-400'}">${agotado ? '🔴 Agotado' : `⚠️ ${i.cantidad} uds`}</span>
+          </div>`;
+      });
+    }
+  </script>
+</body>
+</html>

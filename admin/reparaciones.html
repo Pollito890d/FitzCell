@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reparaciones — FitzCell Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="../js/auth.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/sidebar.js"></script>
+</head>
+<body class="bg-gray-950 text-gray-100">
+  <script>renderSidebar('reparaciones');</script>
+
+  <div class="md:ml-64 min-h-screen">
+    <div class="pt-16 md:pt-0 p-6 fade-in">
+
+      <!-- Encabezado -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 class="text-2xl font-extrabold">Reparaciones</h1>
+          <p class="text-gray-500 text-sm mt-1">Gestión de órdenes de trabajo</p>
+        </div>
+        <button onclick="abrirModal()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold rounded-xl transition transform hover:scale-105">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Nueva reparación
+        </button>
+      </div>
+
+      <!-- Filtros de estado -->
+      <div class="flex flex-wrap gap-2 mb-6">
+        <button onclick="filtrar('todos')" id="btn-todos" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium bg-cyan-500 text-gray-950 transition">Todos</button>
+        <button onclick="filtrar('Diagnóstico')" id="btn-Diagnóstico" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium bg-gray-800 text-gray-400 hover:text-white transition">Diagnóstico</button>
+        <button onclick="filtrar('En proceso')" id="btn-En proceso" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium bg-gray-800 text-gray-400 hover:text-white transition">En proceso</button>
+        <button onclick="filtrar('Listo')" id="btn-Listo" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium bg-gray-800 text-gray-400 hover:text-white transition">Listo</button>
+        <button onclick="filtrar('Entregado')" id="btn-Entregado" class="filter-btn px-4 py-2 rounded-xl text-sm font-medium bg-gray-800 text-gray-400 hover:text-white transition">Entregado</button>
+      </div>
+
+      <!-- Tabla -->
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
+        <div class="table-wrapper">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-800 text-xs text-gray-500 uppercase tracking-wider">
+                <th class="text-left px-6 py-3">Folio</th>
+                <th class="text-left px-6 py-3">Cliente</th>
+                <th class="text-left px-6 py-3 hidden md:table-cell">Modelo</th>
+                <th class="text-left px-6 py-3 hidden lg:table-cell">Falla</th>
+                <th class="text-left px-6 py-3">Estado</th>
+                <th class="text-right px-6 py-3 hidden sm:table-cell">Deuda</th>
+                <th class="text-right px-6 py-3">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaRep"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MODAL NUEVA REPARACIÓN ══════════════════════════════ -->
+  <div id="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/70">
+    <div class="bg-gray-900 rounded-2xl border border-gray-700 w-full max-w-2xl max-h-[90vh] flex flex-col">
+      <!-- Header modal -->
+      <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between flex-shrink-0">
+        <h2 class="font-bold text-lg">Nueva reparación</h2>
+        <button onclick="cerrarModal()" class="text-gray-500 hover:text-white transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <!-- Body modal scrollable -->
+      <div class="overflow-y-auto p-6">
+        <form id="formNueva" onsubmit="guardarReparacion(event)">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="label">Nombre del cliente *</label>
+              <input type="text" id="f-cliente" required class="input" placeholder="Ej. Juan Pérez"/>
+            </div>
+            <div>
+              <label class="label">Teléfono</label>
+              <input type="tel" id="f-telefono" class="input" placeholder="871-000-0000"/>
+            </div>
+            <div>
+              <label class="label">Modelo del equipo *</label>
+              <input type="text" id="f-modelo" required class="input" placeholder="Ej. iPhone 12 Pro"/>
+            </div>
+            <div>
+              <label class="label">IMEI / Número de serie</label>
+              <input type="text" id="f-imei" class="input" placeholder="15 dígitos"/>
+            </div>
+            <div class="sm:col-span-2">
+              <label class="label">Descripción de la falla *</label>
+              <textarea id="f-falla" required rows="2" class="input resize-none" placeholder="Describe el problema del equipo..."></textarea>
+            </div>
+            <div>
+              <label class="label">Costo total ($) *</label>
+              <input type="number" id="f-costo" min="0" required class="input" placeholder="0"/>
+            </div>
+            <div>
+              <label class="label">Anticipo ($) *</label>
+              <input type="number" id="f-anticipo" min="0" required class="input" placeholder="0" oninput="calcDeuda()"/>
+            </div>
+            <div>
+              <label class="label">Deuda restante ($)</label>
+              <input type="number" id="f-deuda" readonly class="input bg-gray-700 cursor-not-allowed text-cyan-400 font-bold" placeholder="0"/>
+            </div>
+            <div>
+              <label class="label">Fecha estimada de entrega *</label>
+              <input type="date" id="f-fecha" required class="input"/>
+            </div>
+            <div class="sm:col-span-2 bg-amber-950/20 border border-amber-700/40 rounded-xl p-4">
+              <label class="label text-amber-300">🔏 Ubicación de sellos de seguridad *</label>
+              <input type="text" id="f-sellos" required class="input mt-1 border-amber-700/40 focus:border-amber-500" placeholder="Ej. Sello trasero esquina inferior, sello SIM"/>
+              <p class="text-xs text-amber-700 mt-1">Documenta exactamente dónde se colocaron los sellos para prevenir fraudes.</p>
+            </div>
+            <div class="sm:col-span-2">
+              <label class="label">Técnico asignado</label>
+              <select id="f-tecnico" class="input">
+                <option value="Carlos R.">Carlos R.</option>
+                <option value="Ana M.">Ana M.</option>
+              </select>
+            </div>
+            <div class="sm:col-span-2">
+              <label class="label">Notas internas</label>
+              <textarea id="f-notas" rows="2" class="input resize-none" placeholder="Instrucciones especiales, observaciones..."></textarea>
+            </div>
+          </div>
+          <div class="flex gap-3 mt-6">
+            <button type="submit" class="flex-1 py-3 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold rounded-xl transition">✅ Guardar reparación</button>
+            <button type="button" onclick="cerrarModal()" class="px-5 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold rounded-xl transition">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .label { display: block; font-size: 0.75rem; font-weight: 600; color: #9ca3af; margin-bottom: 0.375rem; }
+    .input { width: 100%; background: #1f2937; border: 1px solid #374151; border-radius: 0.75rem; padding: 0.625rem 1rem; color: #fff; font-size: 0.875rem; outline: none; transition: border-color 0.2s; }
+    .input:focus { border-color: #06b6d4; box-shadow: 0 0 0 1px #06b6d4; }
+    .input::placeholder { color: #6b7280; }
+  </style>
+
+  <script>
+    const badges = { 'Diagnóstico': 'badge-diagnostico', 'En proceso': 'badge-proceso', 'Listo': 'badge-listo', 'Entregado': 'badge-entregado' };
+    let filtroActivo = 'todos';
+
+    function renderTabla(lista) {
+      const tb = document.getElementById('tablaRep');
+      if (lista.length === 0) {
+        tb.innerHTML = `<tr><td colspan="7" class="px-6 py-10 text-center text-gray-600">No hay reparaciones con este filtro.</td></tr>`;
+        return;
+      }
+      tb.innerHTML = lista.map(r => `
+        <tr class="border-b border-gray-800/50 hover:bg-gray-800/30 transition">
+          <td class="px-6 py-4 font-mono font-semibold text-cyan-400">${r.folio}</td>
+          <td class="px-6 py-4 font-medium">${r.cliente}</td>
+          <td class="px-6 py-4 text-gray-400 hidden md:table-cell">${r.modelo}</td>
+          <td class="px-6 py-4 text-gray-400 hidden lg:table-cell truncate max-w-xs">${r.falla}</td>
+          <td class="px-6 py-4"><span class="inline-block px-2.5 py-1 rounded-full text-xs font-bold ${badges[r.estado] || ''}">${r.estado}</span></td>
+          <td class="px-6 py-4 text-right font-semibold hidden sm:table-cell ${r.deuda > 0 ? 'text-red-400' : 'text-emerald-400'}">$${r.deuda.toLocaleString()}</td>
+          <td class="px-6 py-4 text-right">
+            <button onclick="verDetalle('${r.folio}')" class="text-xs text-gray-500 hover:text-cyan-400 transition">Ver</button>
+          </td>
+        </tr>`).join('');
+    }
+
+    function filtrar(estado) {
+      filtroActivo = estado;
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.className = 'filter-btn px-4 py-2 rounded-xl text-sm font-medium bg-gray-800 text-gray-400 hover:text-white transition';
+      });
+      const btn = document.getElementById('btn-' + estado);
+      if(btn) btn.className = 'filter-btn px-4 py-2 rounded-xl text-sm font-medium bg-cyan-500 text-gray-950 transition';
+      const lista = estado === 'todos' ? FC.reparaciones : FC.reparaciones.filter(r => r.estado === estado);
+      renderTabla(lista);
+    }
+
+    function abrirModal() {
+      document.getElementById('modal').classList.remove('hidden');
+      // Fecha default: mañana
+      const manana = new Date('2026-03-14');
+      manana.setDate(manana.getDate() + 1);
+      document.getElementById('f-fecha').value = manana.toISOString().split('T')[0];
+    }
+    function cerrarModal() {
+      document.getElementById('modal').classList.add('hidden');
+      document.getElementById('formNueva').reset();
+    }
+
+    function calcDeuda() {
+      const costo = parseFloat(document.getElementById('f-costo').value) || 0;
+      const anticipo = parseFloat(document.getElementById('f-anticipo').value) || 0;
+      document.getElementById('f-deuda').value = Math.max(0, costo - anticipo);
+    }
+
+    // También recalcular cuando cambia el costo
+    document.getElementById('f-costo').addEventListener('input', calcDeuda);
+
+    function guardarReparacion(e) {
+      e.preventDefault();
+      const costo = parseFloat(document.getElementById('f-costo').value) || 0;
+      const anticipo = parseFloat(document.getElementById('f-anticipo').value) || 0;
+      const nuevo = {
+        folio: 'FTZ-0' + (FC.reparaciones.length + 11),
+        cliente: document.getElementById('f-cliente').value,
+        telefono: document.getElementById('f-telefono').value,
+        modelo: document.getElementById('f-modelo').value,
+        imei: document.getElementById('f-imei').value,
+        falla: document.getElementById('f-falla').value,
+        costo, anticipo,
+        deuda: Math.max(0, costo - anticipo),
+        sellos: document.getElementById('f-sellos').value,
+        estado: 'Diagnóstico',
+        fechaIngreso: '2026-03-14',
+        fechaEstimada: document.getElementById('f-fecha').value,
+        garantiaDias: 30,
+        notas: document.getElementById('f-notas').value,
+        tecnico: document.getElementById('f-tecnico').value
+      };
+      FC.reparaciones.unshift(nuevo);
+      cerrarModal();
+      filtrar(filtroActivo);
+    }
+
+    function verDetalle(folio) {
+      const r = FC.reparaciones.find(x => x.folio === folio);
+      if (!r) return;
+      alert(`📋 Detalle — ${r.folio}\n\nCliente: ${r.cliente}\nModelo: ${r.modelo}\nFalla: ${r.falla}\nSellos: ${r.sellos}\nCosto: $${r.costo} | Anticipo: $${r.anticipo} | Deuda: $${r.deuda}\nEstado: ${r.estado}\nNotas: ${r.notas || '—'}`);
+    }
+
+    // Render inicial
+    filtrar('todos');
+  </script>
+</body>
+</html>

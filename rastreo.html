@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rastrear Equipo — FitzCell</title>
+  <meta name="description" content="Consulta el estado de tu reparación en FitzCell ingresando tu número de folio." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="js/data.js"></script>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen">
+
+  <!-- NAVBAR (igual al index) -->
+  <nav class="fixed top-0 w-full z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2 group">
+        <div class="w-9 h-9 rounded-xl bg-cyan-500 flex items-center justify-center font-black text-gray-950 text-lg group-hover:bg-cyan-400 transition">F</div>
+        <span class="font-bold text-xl tracking-tight">Fitz<span class="text-cyan-400">Cell</span></span>
+      </a>
+      <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
+        <a href="index.html" class="hover:text-cyan-400 transition">Inicio</a>
+        <a href="rastreo.html" class="text-cyan-400">Rastrear equipo</a>
+        <a href="faq.html" class="hover:text-cyan-400 transition">Políticas</a>
+        <a href="rastreo.html" class="ml-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-semibold rounded-lg transition">📱 Buscar mi equipo</a>
+      </div>
+      <button class="md:hidden text-gray-400 hover:text-white" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden bg-gray-900 border-t border-gray-800 px-4 pb-4">
+      <a href="index.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-cyan-400">Inicio</a>
+      <a href="rastreo.html" class="block py-2 text-cyan-400 text-sm font-medium">Rastrear equipo</a>
+      <a href="faq.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-cyan-400">Políticas</a>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="pt-24 pb-20 min-h-screen">
+    <div class="max-w-2xl mx-auto px-4">
+
+      <!-- Encabezado -->
+      <div class="text-center mb-10 fade-in">
+        <div class="text-5xl mb-4">🔍</div>
+        <h1 class="text-3xl md:text-4xl font-extrabold mb-3">Rastrear mi <span class="text-cyan-400">equipo</span></h1>
+        <p class="text-gray-400">Ingresa el número de folio que recibiste al dejar tu equipo y consulta el estado actual de tu reparación.</p>
+      </div>
+
+      <!-- Buscador -->
+      <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800 mb-8 fade-in">
+        <label for="folioInput" class="block text-sm font-semibold text-gray-300 mb-2">Número de folio</label>
+        <div class="flex gap-3">
+          <input
+            id="folioInput"
+            type="text"
+            placeholder="Ej. FTZ-001"
+            maxlength="10"
+            class="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition uppercase"
+            onkeydown="if(event.key==='Enter') buscarFolio()"
+          />
+          <button onclick="buscarFolio()" class="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold rounded-xl transition transform hover:scale-105">
+            Buscar
+          </button>
+        </div>
+        <p class="text-xs text-gray-600 mt-2">El folio está impreso en tu comprobante de ingreso. Ejemplo: FTZ-001</p>
+      </div>
+
+      <!-- Resultado -->
+      <div id="resultado" class="hidden"></div>
+
+      <!-- Estado vacío / demo -->
+      <div id="estadoVacio" class="text-center py-12 text-gray-600">
+        <div class="text-6xl mb-4 opacity-30">📋</div>
+        <p class="text-sm">Tus datos aparecerán aquí una vez que ingreses tu folio</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-950 border-t border-gray-800 py-6">
+    <div class="max-w-6xl mx-auto px-4 text-center text-sm text-gray-600">
+      © 2026 FitzCell · <a href="faq.html" class="hover:text-cyan-400">Políticas de garantía</a>
+    </div>
+  </footer>
+
+  <script>
+    function estadoBadge(estado) {
+      const m = {
+        'Diagnóstico': 'badge-diagnostico',
+        'En proceso': 'badge-proceso',
+        'Listo': 'badge-listo',
+        'Entregado': 'badge-entregado'
+      };
+      return `<span class="inline-block px-3 py-1 rounded-full text-xs font-bold ${m[estado] || 'bg-gray-700 text-gray-300'}">${estado}</span>`;
+    }
+
+    function calcularGarantia(rep) {
+      if (rep.estado !== 'Entregado') return null;
+      const entrega = new Date(rep.fechaEstimada);
+      const hoy = new Date('2026-03-14');
+      const diffDias = Math.floor((hoy - entrega) / (1000 * 60 * 60 * 24));
+      const restante = rep.garantiaDias - diffDias;
+      return restante;
+    }
+
+    function buscarFolio() {
+      const folio = document.getElementById('folioInput').value.trim().toUpperCase();
+      const resultado = document.getElementById('resultado');
+      const vacio = document.getElementById('estadoVacio');
+
+      if (!folio) {
+        resultado.innerHTML = '';
+        resultado.classList.add('hidden');
+        vacio.classList.remove('hidden');
+        return;
+      }
+
+      const rep = FC.reparaciones.find(r => r.folio === folio);
+
+      vacio.classList.add('hidden');
+      resultado.classList.remove('hidden');
+
+      if (!rep) {
+        resultado.innerHTML = `
+          <div class="bg-red-900/30 border border-red-700/50 rounded-2xl p-6 text-center fade-in">
+            <div class="text-4xl mb-3">❌</div>
+            <h3 class="font-bold text-red-300 text-lg mb-1">Folio no encontrado</h3>
+            <p class="text-gray-400 text-sm">No encontramos ninguna reparación con el folio <strong class="text-white">${folio}</strong>. Verifica que lo escribiste correctamente o visítanos en el taller.</p>
+          </div>`;
+        return;
+      }
+
+      const garantiaDias = calcularGarantia(rep);
+      let garantiaHtml = '';
+      if (rep.estado === 'Entregado') {
+        if (garantiaDias > 0) {
+          garantiaHtml = `<div class="bg-emerald-900/30 border border-emerald-700/40 rounded-xl p-4">
+            <div class="text-sm font-semibold text-emerald-400 mb-1">✅ Garantía activa</div>
+            <div class="text-xs text-gray-300">Tu garantía vence en <strong>${garantiaDias}</strong> día(s). Ante cualquier problema regresa al taller con tu comprobante.</div>
+          </div>`;
+        } else {
+          garantiaHtml = `<div class="bg-red-900/20 border border-red-700/40 rounded-xl p-4">
+            <div class="text-sm font-semibold text-red-400 mb-1">⛔ Garantía vencida</div>
+            <div class="text-xs text-gray-400">El periodo de garantía de ${rep.garantiaDias} días ya venció.</div>
+          </div>`;
+        }
+      }
+
+      resultado.innerHTML = `
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden fade-in">
+          <!-- Encabezado tarjeta -->
+          <div class="bg-gray-800 px-6 py-4 flex items-center justify-between border-b border-gray-700">
+            <div>
+              <div class="text-xs text-gray-500 mb-0.5">Folio de reparación</div>
+              <div class="font-black text-xl text-cyan-400">${rep.folio}</div>
+            </div>
+            <div>${estadoBadge(rep.estado)}</div>
+          </div>
+          <!-- Datos -->
+          <div class="p-6 space-y-4">
+            <!-- Equipo -->
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div class="text-gray-500 text-xs mb-1">Cliente</div>
+                <div class="font-semibold">${rep.cliente}</div>
+              </div>
+              <div>
+                <div class="text-gray-500 text-xs mb-1">Modelo</div>
+                <div class="font-semibold">${rep.modelo}</div>
+              </div>
+              <div>
+                <div class="text-gray-500 text-xs mb-1">Falla reportada</div>
+                <div class="font-medium text-gray-300">${rep.falla}</div>
+              </div>
+              <div>
+                <div class="text-gray-500 text-xs mb-1">Técnico asignado</div>
+                <div class="font-medium text-gray-300">${rep.tecnico}</div>
+              </div>
+              <div>
+                <div class="text-gray-500 text-xs mb-1">Fecha de ingreso</div>
+                <div class="font-medium text-gray-300">${rep.fechaIngreso}</div>
+              </div>
+              <div>
+                <div class="text-gray-500 text-xs mb-1">Entrega estimada</div>
+                <div class="font-medium ${rep.estado === 'Listo' ? 'text-amber-400' : 'text-gray-300'}">${rep.fechaEstimada}</div>
+              </div>
+            </div>
+
+            <!-- Monto -->
+            <div class="bg-gray-800/60 rounded-xl p-4 grid grid-cols-3 gap-3 text-center text-sm border border-gray-700/50">
+              <div>
+                <div class="text-gray-500 text-xs mb-1">Costo total</div>
+                <div class="font-bold text-white">$${rep.costo.toLocaleString()}</div>
+              </div>
+              <div>
+                <div class="text-gray-500 text-xs mb-1">Anticipo</div>
+                <div class="font-bold text-emerald-400">$${rep.anticipo.toLocaleString()}</div>
+              </div>
+              <div>
+                <div class="text-gray-500 text-xs mb-1">Saldo pendiente</div>
+                <div class="font-bold ${rep.deuda > 0 ? 'text-red-400' : 'text-emerald-400'}">$${rep.deuda.toLocaleString()}</div>
+              </div>
+            </div>
+
+            ${garantiaHtml}
+
+            ${rep.estado === 'Listo' ? `
+            <div class="bg-amber-900/20 border border-amber-700/40 rounded-xl p-4 text-center">
+              <div class="text-amber-400 font-semibold mb-1">🎉 ¡Tu equipo ya está listo!</div>
+              <div class="text-xs text-gray-400">Pasa a recogerlo al taller. Recuerda traer tu comprobante y liquidar el saldo pendiente.</div>
+            </div>` : ''}
+          </div>
+        </div>`;
+    }
+  </script>
+</body>
+</html>

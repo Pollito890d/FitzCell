@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Garantías RMA — FitzCell Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="../js/auth.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/sidebar.js"></script>
+</head>
+<body class="bg-gray-950 text-gray-100">
+  <script>renderSidebar('rma');</script>
+
+  <div class="md:ml-64 min-h-screen">
+    <div class="pt-16 md:pt-0 p-6 fade-in">
+
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 class="text-2xl font-extrabold">Garantías a Proveedor (RMA)</h1>
+          <p class="text-gray-500 text-sm mt-1">Control de piezas defectuosas devueltas a proveedores</p>
+        </div>
+        <button onclick="document.getElementById('modalRMA').classList.remove('hidden')" class="inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold rounded-xl transition transform hover:scale-105">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Nueva devolución
+        </button>
+      </div>
+
+      <!-- Resumen rápido -->
+      <div class="grid grid-cols-3 gap-4 mb-8">
+        <div class="bg-gray-900 rounded-2xl p-4 border border-gray-800 text-center">
+          <div class="text-2xl font-black text-red-400" id="cntPendiente">—</div>
+          <div class="text-xs text-gray-500 mt-1">Pendientes</div>
+        </div>
+        <div class="bg-gray-900 rounded-2xl p-4 border border-gray-800 text-center">
+          <div class="text-2xl font-black text-emerald-400" id="cntReembolsado">—</div>
+          <div class="text-xs text-gray-500 mt-1">Reembolsados</div>
+        </div>
+        <div class="bg-gray-900 rounded-2xl p-4 border border-gray-800 text-center">
+          <div class="text-2xl font-black text-indigo-400" id="cntCambiado">—</div>
+          <div class="text-xs text-gray-500 mt-1">Cambiados</div>
+        </div>
+      </div>
+
+      <!-- Tabla RMA -->
+      <div class="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
+        <div class="table-wrapper">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-800 text-xs text-gray-500 uppercase tracking-wider">
+                <th class="text-left px-6 py-3">ID</th>
+                <th class="text-left px-6 py-3">Pieza</th>
+                <th class="text-left px-6 py-3 hidden md:table-cell">Proveedor</th>
+                <th class="text-left px-6 py-3 hidden lg:table-cell">Motivo</th>
+                <th class="text-left px-6 py-3 hidden sm:table-cell">Folio ref.</th>
+                <th class="text-right px-6 py-3 hidden sm:table-cell">Monto</th>
+                <th class="text-center px-6 py-3">Estado</th>
+                <th class="text-center px-6 py-3">Cambiar</th>
+              </tr>
+            </thead>
+            <tbody id="tablaRMA"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL NUEVA DEVOLUCIÓN -->
+  <div id="modalRMA" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/70">
+    <div class="bg-gray-900 rounded-2xl border border-gray-700 w-full max-w-lg max-h-[90vh] flex flex-col">
+      <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between flex-shrink-0">
+        <h2 class="font-bold text-lg">Nueva devolución a proveedor</h2>
+        <button onclick="document.getElementById('modalRMA').classList.add('hidden')" class="text-gray-500 hover:text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="overflow-y-auto p-6">
+        <form onsubmit="guardarRMA(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 mb-1.5">Nombre de la pieza *</label>
+            <input type="text" id="r-pieza" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-500" placeholder="Ej. Pantalla iPhone 12 Pro"/>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1.5">Proveedor *</label>
+              <input type="text" id="r-proveedor" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-500" placeholder="TechParts MX"/>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1.5">Folio de reparación</label>
+              <input type="text" id="r-folio" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-500" placeholder="FTZ-001"/>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 mb-1.5">Motivo de devolución *</label>
+            <textarea id="r-motivo" required rows="2" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-500 resize-none" placeholder="Describe el defecto de la pieza..."></textarea>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1.5">Monto ($) *</label>
+              <input type="number" id="r-monto" min="0" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-500" placeholder="0"/>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1.5">Fecha de devolución</label>
+              <input type="date" id="r-fecha" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-500" value="2026-03-14"/>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 mb-1.5">Notas adicionales</label>
+            <input type="text" id="r-notas" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-500" placeholder="Número de guía, acuerdos, etc."/>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <button type="submit" class="flex-1 py-3 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold rounded-xl transition">✅ Registrar devolución</button>
+            <button type="button" onclick="document.getElementById('modalRMA').classList.add('hidden')" class="px-5 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl transition">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const estadoClasses = {
+      'Pendiente': 'badge-pendiente',
+      'Reembolsado': 'badge-reembolsado',
+      'Cambiado': 'badge-cambiado'
+    };
+    const estadoOpciones = ['Pendiente', 'Reembolsado', 'Cambiado'];
+
+    function renderTabla() {
+      const tb = document.getElementById('tablaRMA');
+      tb.innerHTML = FC.rma.map((r, idx) => `
+        <tr class="border-b border-gray-800/50 hover:bg-gray-800/30 transition">
+          <td class="px-6 py-4 font-mono text-xs text-cyan-400 font-bold">${r.id}</td>
+          <td class="px-6 py-4 font-medium max-w-xs">${r.pieza}</td>
+          <td class="px-6 py-4 text-gray-400 hidden md:table-cell">${r.proveedor}</td>
+          <td class="px-6 py-4 text-gray-500 hidden lg:table-cell text-xs max-w-xs truncate">${r.motivo}</td>
+          <td class="px-6 py-4 hidden sm:table-cell"><span class="font-mono text-xs text-cyan-400">${r.folio}</span></td>
+          <td class="px-6 py-4 text-right font-semibold hidden sm:table-cell">$${r.monto.toLocaleString()}</td>
+          <td class="px-6 py-4 text-center">
+            <span class="inline-block px-2.5 py-1 rounded-full text-xs font-bold ${estadoClasses[r.estado] || ''}">${r.estado}</span>
+          </td>
+          <td class="px-6 py-4 text-center">
+            <select onchange="cambiarEstado(${idx}, this.value)" class="text-xs bg-gray-800 border border-gray-700 rounded-lg px-2 py-1.5 text-gray-300 focus:outline-none focus:border-cyan-500">
+              ${estadoOpciones.map(op => `<option value="${op}" ${op===r.estado?'selected':''}>${op}</option>`).join('')}
+            </select>
+          </td>
+        </tr>`).join('');
+
+      // Contadores
+      document.getElementById('cntPendiente').textContent = FC.rma.filter(r => r.estado === 'Pendiente').length;
+      document.getElementById('cntReembolsado').textContent = FC.rma.filter(r => r.estado === 'Reembolsado').length;
+      document.getElementById('cntCambiado').textContent = FC.rma.filter(r => r.estado === 'Cambiado').length;
+    }
+
+    function cambiarEstado(idx, nuevoEstado) {
+      FC.rma[idx].estado = nuevoEstado;
+      renderTabla();
+    }
+
+    function guardarRMA(e) {
+      e.preventDefault();
+      const nuevo = {
+        id: 'RMA-00' + (FC.rma.length + 1),
+        pieza: document.getElementById('r-pieza').value,
+        proveedor: document.getElementById('r-proveedor').value,
+        motivo: document.getElementById('r-motivo').value,
+        fechaDevolucion: document.getElementById('r-fecha').value,
+        folio: document.getElementById('r-folio').value || '—',
+        estado: 'Pendiente',
+        monto: parseFloat(document.getElementById('r-monto').value) || 0,
+        notas: document.getElementById('r-notas').value
+      };
+      FC.rma.unshift(nuevo);
+      document.getElementById('modalRMA').classList.add('hidden');
+      document.querySelector('#modalRMA form').reset();
+      renderTabla();
+    }
+
+    renderTabla();
+  </script>
+</body>
+</html>

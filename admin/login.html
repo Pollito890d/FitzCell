@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acceso Administrador — FitzCell</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen flex items-center justify-center px-4">
+
+  <div class="w-full max-w-md fade-in">
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-cyan-500 flex items-center justify-center font-black text-gray-950 text-2xl">F</div>
+        <span class="font-bold text-2xl tracking-tight">Fitz<span class="text-cyan-400">Cell</span></span>
+      </div>
+      <p class="text-gray-500 text-sm">Panel de administración · Acceso privado</p>
+    </div>
+
+    <!-- Card de login -->
+    <div class="bg-gray-900 rounded-2xl border border-gray-800 p-8">
+      <h1 class="text-xl font-bold mb-6 text-center">Iniciar sesión</h1>
+
+      <div id="errorMsg" class="hidden bg-red-900/40 border border-red-700/50 rounded-xl px-4 py-3 mb-5 text-red-300 text-sm text-center">
+        ❌ Usuario o contraseña incorrectos
+      </div>
+
+      <form onsubmit="handleLogin(event)" class="space-y-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-400 mb-2" for="usuario">Usuario</label>
+          <input
+            id="usuario"
+            type="text"
+            placeholder="admin"
+            autocomplete="username"
+            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-400 mb-2" for="password">Contraseña</label>
+          <div class="relative">
+            <input
+              id="password"
+              type="password"
+              placeholder="••••••••••"
+              autocomplete="current-password"
+              class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition pr-12"
+            />
+            <button type="button" onclick="togglePass()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition">
+              <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold rounded-xl transition transform hover:scale-[1.02]">
+          Entrar al panel →
+        </button>
+      </form>
+
+      <p class="text-center text-xs text-gray-700 mt-6">Acceso exclusivo para personal autorizado</p>
+    </div>
+
+    <div class="text-center mt-6">
+      <a href="../index.html" class="text-sm text-gray-600 hover:text-gray-400 transition">← Regresar al sitio público</a>
+    </div>
+  </div>
+
+  <script>
+    // Si ya está autenticado, ir directo al dashboard
+    if (sessionStorage.getItem("fc_admin") === "authenticated") {
+      window.location.href = "dashboard.html";
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('usuario').value.trim();
+      const pass = document.getElementById('password').value;
+      if (user === 'admin' && pass === 'fitzcell2025') {
+        sessionStorage.setItem("fc_admin", "authenticated");
+        window.location.href = "dashboard.html";
+      } else {
+        document.getElementById('errorMsg').classList.remove('hidden');
+        document.getElementById('password').value = '';
+      }
+    }
+
+    function togglePass() {
+      const inp = document.getElementById('password');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    }
+  </script>
+</body>
+</html>

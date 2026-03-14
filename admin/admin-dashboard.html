@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FitzCell Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+        }
+
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="p-8">
+    <div class="animate-pop">
+        <!-- Header con fecha y acciones rápidas -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
+            <div>
+                <h2 class="text-3xl font-bold">Dashboard</h2>
+                <p class="text-slate-500 mt-1">Bienvenido de vuelta, Isaac. Aquí está el resumen de hoy.</p>
+            </div>
+            <div class="flex items-center gap-4 mt-4 md:mt-0">
+                <div class="text-right">
+                    <span class="text-xs font-bold text-slate-400 uppercase">Hoy es</span>
+                    <p class="font-bold text-lg" id="fecha-actual"></p>
+                </div>
+                <button onclick="parent.abrirModal('nueva-orden')"
+                    class="bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-emerald-600 transition-colors flex items-center gap-2">
+                    <span>+</span> Nueva Orden
+                </button>
+            </div>
+        </header>
+
+        <!-- Tarjetas de estadísticas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-3xl">💰</span>
+                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">+12%</span>
+                </div>
+                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Ventas Hoy</p>
+                <h3 class="text-3xl font-bold text-emerald-600">$7,200</h3>
+                <p class="text-xs text-slate-400 mt-2">vs ayer +1,200</p>
+            </div>
+
+            <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-3xl">📦</span>
+                </div>
+                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Equipos en Taller</p>
+                <h3 class="text-3xl font-bold text-blue-600">17</h3>
+                <p class="text-xs text-slate-400 mt-2">5 listos para entregar</p>
+            </div>
+
+            <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-3xl">⚠️</span>
+                </div>
+                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Stock Crítico</p>
+                <h3 class="text-3xl font-bold text-rose-600">3</h3>
+                <p class="text-xs text-slate-400 mt-2">Productos por agotarse</p>
+            </div>
+
+            <div class="stat-card bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-3xl">⭐</span>
+                </div>
+                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Satisfacción</p>
+                <h3 class="text-3xl font-bold text-amber-500">98%</h3>
+                <p class="text-xs text-slate-400 mt-2">Basado en 45 reseñas</p>
+            </div>
+        </div>
+
+        <!-- Gráfica y actividad reciente -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            <div class="lg:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+                <div class="flex justify-between items-center mb-6">
+                    <h4 class="font-bold text-lg">Ingresos de la semana</h4>
+                    <div class="flex gap-2">
+                        <button
+                            class="text-xs bg-slate-100 px-3 py-1 rounded-full font-bold hover:bg-emerald-500 hover:text-white transition-colors">Semana</button>
+                        <button
+                            class="text-xs bg-slate-100 px-3 py-1 rounded-full font-bold hover:bg-emerald-500 hover:text-white transition-colors">Mes</button>
+                    </div>
+                </div>
+                <canvas id="ventasChart" height="200"></canvas>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+                <h4 class="font-bold text-lg mb-6">Actividad Reciente</h4>
+                <div class="space-y-6">
+                    <div class="flex gap-4 items-start">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 mt-2"></div>
+                        <div class="flex-1">
+                            <p class="text-sm font-bold">Venta realizada</p>
+                            <p class="text-xs text-slate-400">Cargador Samsung - $450</p>
+                            <p class="text-xs text-slate-300 mt-1">Hace 5 minutos</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 items-start">
+                        <div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
+                        <div class="flex-1">
+                            <p class="text-sm font-bold">Reparación Finalizada</p>
+                            <p class="text-xs text-slate-400">Moto G52 - Cambio de pantalla</p>
+                            <p class="text-xs text-slate-300 mt-1">Hace 15 minutos</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 items-start">
+                        <div class="w-2 h-2 rounded-full bg-amber-500 mt-2"></div>
+                        <div class="flex-1">
+                            <p class="text-sm font-bold">Nuevo Ingreso</p>
+                            <p class="text-xs text-slate-400">iPhone 14 - Problema de humedad</p>
+                            <p class="text-xs text-slate-300 mt-1">Hace 25 minutos</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 items-start">
+                        <div class="w-2 h-2 rounded-full bg-purple-500 mt-2"></div>
+                        <div class="flex-1">
+                            <p class="text-sm font-bold">Stock actualizado</p>
+                            <p class="text-xs text-slate-400">Se agregaron 10 fundas iPhone</p>
+                            <p class="text-xs text-slate-300 mt-1">Hace 1 hora</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="w-full mt-6 text-sm text-emerald-600 font-bold hover:underline text-center">
+                    Ver todas las actividades →
+                </button>
+            </div>
+        </div>
+
+        <!-- Órdenes recientes -->
+        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+            <div class="flex justify-between items-center mb-6">
+                <h4 class="font-bold text-lg">Órdenes de Servicio Recientes</h4>
+                <a href="admin-reparaciones.html" class="text-sm text-emerald-600 font-bold hover:underline">Ver
+                    todas</a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 border-b">
+                        <tr class="text-xs font-bold text-slate-400 uppercase">
+                            <th class="px-6 py-4">Folio</th>
+                            <th class="px-6 py-4">Cliente</th>
+                            <th class="px-6 py-4">Equipo</th>
+                            <th class="px-6 py-4">Estado</th>
+                            <th class="px-6 py-4">Fecha</th>
+                            <th class="px-6 py-4 text-right">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y text-sm">
+                        <tr class="hover:bg-slate-50">
+                            <td class="px-6 py-4 font-bold">ORD-124</td>
+                            <td class="px-6 py-4">María González</td>
+                            <td class="px-6 py-4">Samsung S23</td>
+                            <td class="px-6 py-4"><span
+                                    class="bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold">En
+                                    proceso</span></td>
+                            <td class="px-6 py-4">02 Mar 2026</td>
+                            <td class="px-6 py-4 text-right">
+                                <button onclick="verDetalle('ORD-124')"
+                                    class="text-emerald-600 font-bold hover:underline text-sm">Ver</button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="px-6 py-4 font-bold">ORD-123</td>
+                            <td class="px-6 py-4">Carlos Mendoza</td>
+                            <td class="px-6 py-4">iPhone 13 Pro</td>
+                            <td class="px-6 py-4"><span
+                                    class="bg-amber-100 text-amber-600 px-3 py-1 rounded-full text-xs font-bold">Esperando
+                                    pieza</span></td>
+                            <td class="px-6 py-4">28 Feb 2026</td>
+                            <td class="px-6 py-4 text-right">
+                                <button onclick="verDetalle('ORD-123')"
+                                    class="text-emerald-600 font-bold hover:underline text-sm">Ver</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar fecha actual
+        document.getElementById('fecha-actual').textContent = new Date().toLocaleDateString('es-MX', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Inicializar gráfica
+        const ctx = document.getElementById('ventasChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'],
+                datasets: [{
+                    label: 'Ventas ($)',
+                    data: [4200, 3800, 5100, 4900, 6500, 7200, 6800],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#10b981',
+                    pointBorderColor: 'white',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { backgroundColor: '#0f172a' }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#e2e8f0' },
+                        ticks: { callback: value => '$' + value }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        function verDetalle(folio) {
+            window.location.href = `admin-detalle-reparacion.html?folio=${folio}`;
+        }
+    </script>
+</body>
+
+</html>

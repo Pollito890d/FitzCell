@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - FitzCell Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+        }
+
+        .config-section {
+            transition: all 0.2s;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="p-8">
+    <div class="max-w-4xl mx-auto animate-pop">
+        <h2 class="text-3xl font-bold mb-8">Configuración del Sistema</h2>
+
+        <div class="space-y-6">
+            <!-- Perfil de usuario -->
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 config-section">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                    <span class="text-2xl">👤</span> Mi Perfil
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="text-sm font-bold text-slate-600 mb-2 block">Nombre completo</label>
+                        <input type="text" value="Isaac Fitz" class="w-full p-3 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="text-sm font-bold text-slate-600 mb-2 block">Correo electrónico</label>
+                        <input type="email" value="isaac@fitzcell.com" class="w-full p-3 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="text-sm font-bold text-slate-600 mb-2 block">Teléfono</label>
+                        <input type="tel" value="951 123 4567" class="w-full p-3 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="text-sm font-bold text-slate-600 mb-2 block">Rol</label>
+                        <input type="text" value="Administrador" disabled
+                            class="w-full p-3 border rounded-xl bg-slate-50">
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end">
+                    <button class="bg-emerald-500 text-white px-6 py-2 rounded-xl font-bold hover:bg-emerald-600">
+                        Actualizar perfil
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cambiar contraseña -->
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 config-section">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                    <span class="text-2xl">🔒</span> Seguridad
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="text-sm font-bold text-slate-600 mb-2 block">Contraseña actual</label>
+                        <input type="password" placeholder="••••••••" class="w-full p-3 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="text-sm font-bold text-slate-600 mb-2 block">Nueva contraseña</label>
+                        <input type="password" placeholder="Mínimo 8 caracteres" class="w-full p-3 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="text-sm font-bold text-slate-600 mb-2 block">Confirmar contraseña</label>
+                        <input type="password" placeholder="Repite la contraseña" class="w-full p-3 border rounded-xl">
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end">
+                    <button class="bg-slate-900 text-white px-6 py-2 rounded-xl font-bold hover:bg-emerald-600">
+                        Cambiar contraseña
+                    </button>
+                </div>
+            </div>
+
+            <!-- Configuración de la tienda -->
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 config-section">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                    <span class="text-2xl">🏪</span> Información del Negocio
+                </h3>
+                <div class="grid grid-cols-1 gap-6">
+                    <div>
+                        <label class="text-sm font-bold text-slate-600 mb-2 block">Nombre del negocio</label>
+                        <input type="text" value="FitzCell - Reparaciones y Accesorios"
+                            class="w-full p-3 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="text-sm font-bold text-slate-600 mb-2 block">Dirección</label>
+                        <input type="text" value="Av. Independencia #12, San Pablo Huixtepec, Oax."
+                            class="w-full p-3 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="text-sm font-bold text-slate-600 mb-2 block">Teléfono de contacto</label>
+                        <input type="text" value="951 123 4567" class="w-full p-3 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="text-sm font-bold text-slate-600 mb-2 block">Email</label>
+                        <input type="email" value="contacto@fitzcell.com" class="w-full p-3 border rounded-xl">
+                    </div>
+                    <div>
+                        <label class="text-sm font-bold text-slate-600 mb-2 block">RFC</label>
+                        <input type="text" value="FICM890123XYZ" class="w-full p-3 border rounded-xl">
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end">
+                    <button class="bg-emerald-500 text-white px-6 py-2 rounded-xl font-bold hover:bg-emerald-600">
+                        Guardar cambios
+                    </button>
+                </div>
+            </div>
+
+            <!-- Preferencias del sistema -->
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 config-section">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                    <span class="text-2xl">⚙️</span> Preferencias
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-bold">Notificaciones por correo</p>
+                            <p class="text-sm text-slate-500">Recibir alertas de stock bajo y nuevas órdenes</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer">
+                            <div
+                                class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-emerald-500 transition-colors">
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-bold">Modo oscuro</p>
+                            <p class="text-sm text-slate-500">Cambiar la apariencia del panel</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer">
+                            <div
+                                class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-emerald-500 transition-colors">
+                            </div>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-bold text-slate-600 mb-2 block">Idioma</label>
+                        <select class="w-full p-3 border rounded-xl">
+                            <option>Español (México)</option>
+                            <option>Español (Internacional)</option>
+                            <option>Inglés</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usuarios del sistema (solo admin) -->
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 config-section">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                    <span class="text-2xl">👥</span> Usuarios del Sistema
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                        <div>
+                            <p class="font-bold">Isaac Fitz</p>
+                            <p class="text-sm text-slate-500"><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+                                    data-cfemail="58312b39393b183e312c223b3d3434763b3735">[email&#160;protected]</a> ·
+                                Administrador</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button
+                                class="text-xs bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full font-bold">Activo</button>
+                            <button class="text-slate-400 hover:text-slate-600">✏️</button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                        <div>
+                            <p class="font-bold">María González</p>
+                            <p class="text-sm text-slate-500"><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+                                    data-cfemail="e08d81928981a08689949a83858c8cce838f8d">[email&#160;protected]</a> ·
+                                Vendedor</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button
+                                class="text-xs bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full font-bold">Activo</button>
+                            <button class="text-slate-400 hover:text-slate-600">✏️</button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                        <div>
+                            <p class="font-bold">Carlos López</p>
+                            <p class="text-sm text-slate-500"><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+                                    data-cfemail="7e1d1f0c12110d3e18170a041d1b1212501d1113">[email&#160;protected]</a> ·
+                                Técnico</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button
+                                class="text-xs bg-amber-100 text-amber-600 px-3 py-1 rounded-full font-bold">Inactivo</button>
+                            <button class="text-slate-400 hover:text-slate-600">✏️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button
+                        class="w-full border-2 border-dashed border-slate-200 p-4 rounded-xl text-slate-400 hover:text-emerald-500 hover:border-emerald-500 transition-colors">
+                        + Invitar nuevo usuario
+                    </button>
+                </div>
+            </div>
+
+            <!-- Copia de seguridad -->
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 config-section">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                    <span class="text-2xl">💾</span> Copias de Seguridad
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-bold">Última copia de seguridad</p>
+                            <p class="text-sm text-slate-500">02 Mar 2026, 03:00 AM · Completa</p>
+                        </div>
+                        <button class="text-emerald-600 font-bold hover:underline">Descargar</button>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-bold">Tamaño de la base de datos</p>
+                            <p class="text-sm text-slate-500">156 MB</p>
+                        </div>
+                        <button class="bg-slate-900 text-white px-4 py-2 rounded-xl font-bold hover:bg-emerald-600">
+                            Respaldar ahora
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito - FitzCell</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="bg-slate-50 text-slate-900">
+    <header class="bg-[#0f172a] text-white sticky top-0 z-50 shadow-xl">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-3" onclick="location.href='index.html'">
+                <span class="text-2xl">📱</span>
+                <h1 class="text-xl font-bold tracking-tighter">FITZCELL<span class="text-emerald-400">.</span></h1>
+            </div>
+            <nav class="hidden md:flex gap-8 text-sm font-medium">
+                <a href="index.html" class="hover:text-emerald-400 transition-colors">Inicio</a>
+                <a href="tienda.html" class="hover:text-emerald-400 transition-colors">Tienda</a>
+                <a href="rastreo.html" class="hover:text-emerald-400 transition-colors">Rastreo</a>
+                <a href="nosotros.html" class="hover:text-emerald-400 transition-colors">Nosotros</a>
+            </nav>
+            <div class="flex items-center gap-5">
+                <a href="carrito.html"
+                    class="relative p-2 hover:bg-white/10 rounded-full transition-all flex items-center gap-2">
+                    <span>🛒</span>
+                    <span id="cart-count"
+                        class="bg-emerald-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#0f172a]">0</span>
+                </a>
+                <a href="login.html"
+                    class="hidden sm:block text-xs border border-white/20 px-4 py-2 rounded-lg hover:bg-white hover:text-slate-900 transition-all font-bold uppercase tracking-wider">Acceso
+                    Staff</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-2xl mx-auto py-16 px-6">
+        <h2 class="text-3xl font-bold mb-8">Tu Carrito</h2>
+        <div id="carrito-contenido" class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm"></div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div>
+                <div class="flex items-center gap-2 mb-6">
+                    <span class="text-xl">📱</span>
+                    <h1 class="text-lg font-bold">FITZCELL</h1>
+                </div>
+                <p class="text-slate-500 text-sm leading-relaxed">Expertos en San Pablo Huixtepec.</p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-6 text-slate-800">Soporte</h4>
+                <ul class="space-y-4 text-sm text-slate-500">
+                    <li><a href="politicas.html" class="hover:text-emerald-600">Políticas de Garantía</a></li>
+                    <li><a href="faq.html" class="hover:text-emerald-600">Preguntas Frecuentes</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-6 text-slate-800">Ubicación</h4>
+                <a href="https://maps.app.goo.gl/fnMABRnQGftYW78h9">
+                    <p class="text-sm text-slate-500">📍 Av. Independencia #12, San Pablo Huixtepec, Oax.</p>
+                </a>
+            </div>
+            <div>
+                <h4 class="font-bold mb-6 text-slate-800">Contacto</h4>
+                <p class="text-sm text-slate-500">📞 951 123 4567</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function renderCarrito() {
+            const container = document.getElementById('carrito-contenido');
+            let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            const total = carrito.reduce((acc, item) => acc + item.precio, 0);
+
+            if (carrito.length === 0) {
+                container.innerHTML = '<p class="text-slate-400 text-center py-8">No hay productos en tu carrito</p>';
+            } else {
+                container.innerHTML = `
+                    <div class="space-y-4 mb-8">
+                        ${carrito.map((item, index) => `
+                            <div class="flex justify-between items-center border-b pb-4">
+                                <div>
+                                    <p class="font-bold">${item.nombre}</p>
+                                    <p class="text-sm text-slate-500">$${item.precio}</p>
+                                </div>
+                                <button onclick="eliminarDelCarrito(${index})" class="text-rose-500 hover:text-rose-700 text-sm">Eliminar</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="bg-slate-900 text-white p-6 rounded-2xl flex justify-between items-center">
+                        <p class="text-2xl font-bold text-emerald-400">Total: $${total}</p>
+                        <button onclick="procesarCompra()" class="bg-emerald-500 px-6 py-2 rounded-lg font-bold hover:bg-emerald-600 transition-colors">Apartar</button>
+                    </div>
+                `;
+            }
+            document.getElementById('cart-count').innerText = carrito.length;
+        }
+
+        function eliminarDelCarrito(index) {
+            let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            carrito.splice(index, 1);
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            localStorage.setItem('cartCount', carrito.length);
+            renderCarrito();
+        }
+
+        function procesarCompra() {
+            alert('¡Gracias por tu compra! Te contactaremos para coordinar la entrega.');
+            localStorage.removeItem('carrito');
+            localStorage.setItem('cartCount', '0');
+            renderCarrito();
+        }
+
+        renderCarrito();
+    </script>
+</body>
+
+</html>

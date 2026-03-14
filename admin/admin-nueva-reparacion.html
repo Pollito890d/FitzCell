@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Reparación - FitzCell Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+        }
+    </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="p-8">
+    <div class="max-w-3xl mx-auto">
+        <div class="flex items-center gap-4 mb-8">
+            <a href="admin-reparaciones.html" class="text-2xl hover:text-emerald-500 transition-colors">←</a>
+            <h2 class="text-3xl font-bold">Nueva Orden de Reparación</h2>
+        </div>
+
+        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+            <form onsubmit="guardarReparacion(event)">
+                <div class="space-y-6">
+                    <!-- Información del cliente -->
+                    <div>
+                        <h3 class="font-bold text-lg mb-4">Información del Cliente</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-600 mb-2">Nombre completo *</label>
+                                <input type="text" required class="w-full p-3 border rounded-xl"
+                                    placeholder="Ej: Juan Pérez">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-600 mb-2">Teléfono *</label>
+                                <input type="tel" required class="w-full p-3 border rounded-xl"
+                                    placeholder="951 123 4567">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-bold text-slate-600 mb-2">Email</label>
+                                <input type="email" class="w-full p-3 border rounded-xl"
+                                    placeholder="cliente@email.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información del equipo -->
+                    <div class="pt-4 border-t">
+                        <h3 class="font-bold text-lg mb-4">Información del Equipo</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-600 mb-2">Tipo de equipo *</label>
+                                <select required class="w-full p-3 border rounded-xl">
+                                    <option value="">Seleccionar</option>
+                                    <option>Smartphone</option>
+                                    <option>Tablet</option>
+                                    <option>Laptop</option>
+                                    <option>Smartwatch</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-600 mb-2">Marca *</label>
+                                <input type="text" required class="w-full p-3 border rounded-xl"
+                                    placeholder="Ej: Samsung">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-600 mb-2">Modelo *</label>
+                                <input type="text" required class="w-full p-3 border rounded-xl"
+                                    placeholder="Ej: Galaxy S23">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-600 mb-2">IMEI / Serie</label>
+                                <input type="text" class="w-full p-3 border rounded-xl" placeholder="Opcional">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-600 mb-2">Contraseña/Patrón</label>
+                                <input type="text" class="w-full p-3 border rounded-xl" placeholder="Si aplica">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-600 mb-2">Condición física</label>
+                                <select class="w-full p-3 border rounded-xl">
+                                    <option>Buen estado</option>
+                                    <option>Golpeado</option>
+                                    <option>Rayado</option>
+                                    <option>Con humedad</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Diagnóstico y servicio -->
+                    <div class="pt-4 border-t">
+                        <h3 class="font-bold text-lg mb-4">Diagnóstico y Servicio</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-600 mb-2">Falla reportada *</label>
+                                <textarea required rows="3" class="w-full p-3 border rounded-xl"
+                                    placeholder="Describe el problema que presenta el equipo..."></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-600 mb-2">Tipo de servicio *</label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <label
+                                        class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+                                        <input type="radio" name="servicio" value="diagnostico" checked> Solo
+                                        diagnóstico
+                                    </label>
+                                    <label
+                                        class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+                                        <input type="radio" name="servicio" value="reparacion"> Reparación completa
+                                    </label>
+                                    <label
+                                        class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+                                        <input type="radio" name="servicio" value="mantenimiento"> Mantenimiento
+                                    </label>
+                                    <label
+                                        class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+                                        <input type="radio" name="servicio" value="urgente"> Urgente (24h)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-600 mb-2">Presupuesto estimado</label>
+                                <input type="number" class="w-full p-3 border rounded-xl" placeholder="$">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-600 mb-2">Notas adicionales</label>
+                                <textarea rows="2" class="w-full p-3 border rounded-xl"
+                                    placeholder="Observaciones importantes..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accesorios recibidos -->
+                    <div class="pt-4 border-t">
+                        <h3 class="font-bold text-lg mb-4">Accesorios Recibidos</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <label
+                                class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+                                <input type="checkbox"> Funda
+                            </label>
+                            <label
+                                class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+                                <input type="checkbox"> Mica
+                            </label>
+                            <label
+                                class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+                                <input type="checkbox"> Cargador
+                            </label>
+                            <label
+                                class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+                                <input type="checkbox"> Audífonos
+                            </label>
+                            <label
+                                class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+                                <input type="checkbox"> Caja
+                            </label>
+                            <label
+                                class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+                                <input type="checkbox"> Factura
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 justify-end mt-8 pt-6 border-t">
+                    <a href="admin-reparaciones.html"
+                        class="px-6 py-3 border border-slate-200 rounded-xl font-bold hover:bg-slate-50 transition-colors">
+                        Cancelar
+                    </a>
+                    <button type="submit"
+                        class="px-6 py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition-colors">
+                        Crear Orden
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function guardarReparacion(event) {
+            event.preventDefault();
+            alert('Orden de reparación creada exitosamente');
+            window.location.href = 'admin-reparaciones.html';
+        }
+    </script>
+</body>
+
+</html>

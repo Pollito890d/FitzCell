@@ -1,0 +1,43 @@
+/* ============================================================
+   FitzCell — Global Styles (complemento a Tailwind)
+============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* { font-family: 'Inter', sans-serif; }
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #111827; }
+::-webkit-scrollbar-thumb { background: #0e7490; border-radius: 4px; }
+
+/* Animación fade-in */
+.fade-in { animation: fadeIn 0.4s ease-in-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Glow en hover de tarjetas */
+.card-glow:hover { box-shadow: 0 0 18px rgba(6, 182, 212, 0.3); transition: box-shadow 0.3s ease; }
+
+/* Gradiente hero */
+.hero-gradient {
+  background: linear-gradient(135deg, #0f172a 0%, #0c4a6e 50%, #0f172a 100%);
+}
+
+/* Estado badges */
+.badge-diagnostico { background-color: #1e3a5f; color: #60a5fa; border: 1px solid #3b82f6; }
+.badge-proceso     { background-color: #1e3a2a; color: #34d399; border: 1px solid #10b981; }
+.badge-listo       { background-color: #3a2c10; color: #fbbf24; border: 1px solid #f59e0b; }
+.badge-entregado   { background-color: #1e3a1e; color: #86efac; border: 1px solid #22c55e; }
+.badge-pendiente   { background-color: #3a1e1e; color: #f87171; border: 1px solid #ef4444; }
+.badge-reembolsado { background-color: #1e3a2a; color: #34d399; border: 1px solid #10b981; }
+.badge-cambiado    { background-color: #1a2a3a; color: #818cf8; border: 1px solid #6366f1; }
+
+/* Stock bajo highlight */
+.stock-bajo { background-color: #2d1515 !important; }
+.stock-agotado { background-color: #3d0f0f !important; }
+
+/* Sidebar transition */
+#sidebar { transition: transform 0.3s ease; }
+
+/* Tabla responsive */
+.table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }

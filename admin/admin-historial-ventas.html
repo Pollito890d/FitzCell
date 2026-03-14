@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Ventas - FitzCell Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="p-8">
+    <div class="animate-pop">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h2 class="text-3xl font-bold">Historial de Ventas</h2>
+                <p class="text-slate-500 mt-1">Consulta todas las transacciones realizadas</p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="exportarVentas()"
+                    class="border border-slate-200 px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors">
+                    📥 Exportar
+                </button>
+                <button onclick="window.location.href='admin-ventas.html'"
+                    class="bg-emerald-500 text-white px-6 py-2 rounded-xl font-bold hover:bg-emerald-600 transition-colors">
+                    + Nueva Venta
+                </button>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="text-xs font-bold text-slate-400 mb-1 block">Desde</label>
+                    <input type="date" class="w-full p-3 border rounded-xl" value="2026-03-01">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 mb-1 block">Hasta</label>
+                    <input type="date" class="w-full p-3 border rounded-xl" value="2026-03-02">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 mb-1 block">Método de pago</label>
+                    <select class="w-full p-3 border rounded-xl">
+                        <option>Todos</option>
+                        <option>Efectivo</option>
+                        <option>Tarjeta</option>
+                        <option>Transferencia</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button
+                        class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-emerald-600 transition-colors">
+                        Filtrar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen de ventas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <p class="text-xs font-bold text-slate-400 uppercase">Ventas del período</p>
+                <p class="text-3xl font-bold text-emerald-600 mt-2">$24,350</p>
+                <p class="text-sm text-slate-500 mt-1">vs período anterior +15%</p>
+            </div>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <p class="text-xs font-bold text-slate-400 uppercase">Número de transacciones</p>
+                <p class="text-3xl font-bold text-blue-600 mt-2">48</p>
+                <p class="text-sm text-slate-500 mt-1">Ticket promedio: $507</p>
+            </div>
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <p class="text-xs font-bold text-slate-400 uppercase">Producto más vendido</p>
+                <p class="text-3xl font-bold text-amber-600 mt-2">Micas</p>
+                <p class="text-sm text-slate-500 mt-1">28 unidades vendidas</p>
+            </div>
+        </div>
+
+        <!-- Tabla de ventas -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50 border-b">
+                    <tr class="text-xs font-bold text-slate-400 uppercase">
+                        <th class="px-6 py-4">Folio</th>
+                        <th class="px-6 py-4">Fecha</th>
+                        <th class="px-6 py-4">Productos</th>
+                        <th class="px-6 py-4">Método de pago</th>
+                        <th class="px-6 py-4">Total</th>
+                        <th class="px-6 py-4">Vendedor</th>
+                        <th class="px-6 py-4 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y text-sm">
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-4 font-bold">VTA-2503</td>
+                        <td class="px-6 py-4">02 Mar 2026, 11:30</td>
+                        <td class="px-6 py-4">Cargador, Funda</td>
+                        <td class="px-6 py-4">Efectivo</td>
+                        <td class="px-6 py-4 font-bold text-emerald-600">$870</td>
+                        <td class="px-6 py-4">Isaac</td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="verDetalleVenta('VTA-2503')"
+                                class="text-blue-500 hover:underline mr-3">Ver</button>
+                            <button onclick="imprimirTicket('VTA-2503')"
+                                class="text-slate-500 hover:underline">Imprimir</button>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-4 font-bold">VTA-2502</td>
+                        <td class="px-6 py-4">02 Mar 2026, 10:15</td>
+                        <td class="px-6 py-4">Audífonos, Mica x2</td>
+                        <td class="px-6 py-4">Tarjeta</td>
+                        <td class="px-6 py-4 font-bold text-emerald-600">$850</td>
+                        <td class="px-6 py-4">María</td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="verDetalleVenta('VTA-2502')"
+                                class="text-blue-500 hover:underline mr-3">Ver</button>
+                            <button onclick="imprimirTicket('VTA-2502')"
+                                class="text-slate-500 hover:underline">Imprimir</button>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-4 font-bold">VTA-2501</td>
+                        <td class="px-6 py-4">01 Mar 2026, 18:45</td>
+                        <td class="px-6 py-4">Powerbank, Cargador</td>
+                        <td class="px-6 py-4">Transferencia</td>
+                        <td class="px-6 py-4 font-bold text-emerald-600">$1,130</td>
+                        <td class="px-6 py-4">Isaac</td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="verDetalleVenta('VTA-2501')"
+                                class="text-blue-500 hover:underline mr-3">Ver</button>
+                            <button onclick="imprimirTicket('VTA-2501')"
+                                class="text-slate-500 hover:underline">Imprimir</button>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-4 font-bold">VTA-2500</td>
+                        <td class="px-6 py-4">01 Mar 2026, 14:20</td>
+                        <td class="px-6 py-4">Funda iPhone x3</td>
+                        <td class="px-6 py-4">Efectivo</td>
+                        <td class="px-6 py-4 font-bold text-emerald-600">$960</td>
+                        <td class="px-6 py-4">Carlos</td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="verDetalleVenta('VTA-2500')"
+                                class="text-blue-500 hover:underline mr-3">Ver</button>
+                            <button onclick="imprimirTicket('VTA-2500')"
+                                class="text-slate-500 hover:underline">Imprimir</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex justify-between items-center mt-8">
+            <p class="text-sm text-slate-500">Mostrando 1-4 de 48 ventas</p>
+            <div class="flex gap-2">
+                <button
+                    class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">←</button>
+                <button
+                    class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center">1</button>
+                <button
+                    class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">2</button>
+                <button
+                    class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">3</button>
+                <button
+                    class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">→</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function verDetalleVenta(folio) {
+            alert(`Mostrando detalle de venta: ${folio}`);
+        }
+
+        function imprimirTicket(folio) {
+            alert(`Imprimiendo ticket: ${folio}`);
+        }
+
+        function exportarVentas() {
+            alert('Exportando historial de ventas a Excel...');
+        }
+    </script>
+</body>
+
+</html>
