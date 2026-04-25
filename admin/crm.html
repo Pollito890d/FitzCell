@@ -1,53 +1,70 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="bg-gray-950">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clientes CRM — FitzCell Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' },
+            base: '#0a0a0b'
+          }
+        }
+      }
+    }
+  </script>
   <link rel="stylesheet" href="../css/styles.css" />
   <script src="../js/auth.js"></script>
   <script src="../js/data.js"></script>
   <script src="../js/sidebar.js"></script>
+  <link rel="icon" type="image/svg+xml" href="../media/images/fitzcell_logo.svg" />
 </head>
-<body class="bg-gray-950 text-gray-100">
+<body class="bg-base text-gray-100 min-h-screen">
   <script>renderSidebar('crm');</script>
 
   <div class="md:ml-64 min-h-screen">
     <div class="pt-16 md:pt-0 p-6 fade-in">
 
       <div class="mb-8">
-        <h1 class="text-2xl font-extrabold">Historial de Clientes</h1>
-        <p class="text-gray-500 text-sm mt-1">Busca un cliente para ver su historial completo, deudas y garantías</p>
+        <h1 class="text-2xl font-extrabold tracking-tight">Historial de Clientes</h1>
+        <p class="text-gray-500 text-sm mt-1">Busca un cliente para ver su historial completo, deudas y garantías activas</p>
       </div>
 
       <!-- Buscador -->
-      <div class="bg-gray-900 rounded-2xl border border-gray-800 p-6 mb-6">
-        <div class="flex gap-3">
+      <div class="bg-gray-900 rounded-3xl border border-gray-800 p-8 shadow-lg shadow-black/20 mb-8">
+        <div class="flex flex-col sm:flex-row gap-4">
           <input
             id="buscarInput"
             type="text"
             placeholder="Escribe el nombre del cliente..."
-            class="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition"
+            class="flex-1 bg-gray-800 border border-gray-700 rounded-2xl px-6 py-4 text-white placeholder-gray-600 focus:outline-none font-medium transition-all input-fitz"
             oninput="buscarCliente()"
           />
-          <button onclick="buscarCliente()" class="px-5 py-3 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold rounded-xl transition">
+          <button onclick="buscarCliente()" class="px-10 py-4 bg-brand text-gray-950 font-black rounded-2xl btn-neon uppercase tracking-widest text-sm">
             Buscar
           </button>
         </div>
       </div>
 
       <!-- Resultados -->
-      <div id="resultados">
-        <div class="text-center py-16 text-gray-600">
-          <div class="text-5xl mb-4 opacity-30">👤</div>
-          <p class="text-sm">Los resultados del cliente aparecerán aquí</p>
+      <div id="resultados" class="space-y-6">
+        <div class="text-center py-24 text-gray-600">
+          <div class="text-6xl mb-6 opacity-20">👤</div>
+          <p class="text-sm font-bold uppercase tracking-[0.2em]">Los resultados aparecerán aquí</p>
         </div>
       </div>
     </div>
   </div>
 
   <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await FC.loadData();
+    });
+
     const badges = { 'Diagnóstico':'badge-diagnostico','En proceso':'badge-proceso','Listo':'badge-listo','Entregado':'badge-entregado' };
 
     function calcGarantia(rep) {
@@ -63,7 +80,7 @@
       const res = document.getElementById('resultados');
 
       if (q.length < 2) {
-        res.innerHTML = `<div class="text-center py-16 text-gray-600"><div class="text-5xl mb-4 opacity-30">👤</div><p class="text-sm">Escribe al menos 2 caracteres</p></div>`;
+        res.innerHTML = `<div class="text-center py-24 text-gray-600"><div class="text-6xl mb-6 opacity-20">👤</div><p class="text-sm font-bold uppercase tracking-widest">Escribe al menos 2 caracteres</p></div>`;
         return;
       }
 
@@ -78,7 +95,7 @@
 
       const nombres = Object.keys(clientes);
       if (nombres.length === 0) {
-        res.innerHTML = `<div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 text-center text-gray-500">No se encontró ningún cliente con ese nombre.</div>`;
+        res.innerHTML = `<div class="bg-gray-900 border border-gray-800 rounded-3xl p-12 text-center text-gray-500 font-bold uppercase tracking-widest text-xs">No se encontró ningún registro coincidente.</div>`;
         return;
       }
 
@@ -96,44 +113,46 @@
           let gBadge = '';
           if (r.estado === 'Entregado') {
             gBadge = gDias > 0
-              ? `<span class="text-xs text-emerald-400 font-semibold">✅ Garantía ${gDias}d</span>`
-              : `<span class="text-xs text-red-400">⛔ Garantía vencida</span>`;
+              ? `<span class="text-[10px] bg-brand/10 text-brand px-2 py-0.5 rounded border border-brand/20 font-black flex items-center gap-1">✅ Garantía ${gDias}d</span>`
+              : `<span class="text-[10px] bg-rose-950/20 text-rose-500 px-2 py-0.5 rounded border border-rose-900/30 font-black">⛔ Vencida</span>`;
           }
           return `
-            <div class="flex items-start justify-between gap-3 py-3 border-b border-gray-800/50 last:border-0">
+            <div class="flex items-start justify-between gap-6 py-5 border-b border-gray-800/80 last:border-0 hover:bg-gray-800/20 transition-colors px-4 -mx-4 rounded-xl">
               <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <span class="font-mono text-cyan-400 text-xs font-bold">${r.folio}</span>
-                  <span class="inline-block px-2 py-0.5 rounded-full text-xs font-bold ${badges[r.estado] || ''}">${r.estado}</span>
+                <div class="flex items-center gap-3 flex-wrap mb-2">
+                  <span class="font-black text-brand text-[10px] bg-brand/5 border border-brand/20 px-2 py-0.5 rounded tracking-tighter">${r.folio}</span>
+                  <span class="inline-block px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${badges[r.estado] || 'bg-gray-800 text-gray-400'}">${r.estado}</span>
                   ${gBadge}
                 </div>
-                <div class="text-sm font-medium mt-1">${r.modelo}</div>
-                <div class="text-xs text-gray-500 mt-0.5 truncate">${r.falla}</div>
-                <div class="text-xs text-gray-600 mt-0.5">📅 ${r.fechaIngreso} · 🔧 ${r.tecnico}</div>
+                <div class="text-base font-black text-white">${r.modelo}</div>
+                <div class="text-sm text-gray-500 mt-1 font-medium italic">"${r.falla}"</div>
+                <div class="text-[10px] text-gray-600 mt-3 font-black uppercase tracking-widest">📅 Ingreso: ${r.fecha_ingreso} · ⚙️ Técnico: ${r.tecnico || 'PENDIENTE'}</div>
               </div>
               <div class="text-right flex-shrink-0">
-                <div class="text-xs text-gray-500">Costo</div>
-                <div class="font-bold text-sm">$${r.costo.toLocaleString()}</div>
-                ${r.deuda > 0 ? `<div class="text-xs text-red-400 font-semibold mt-0.5">Debe $${r.deuda.toLocaleString()}</div>` : `<div class="text-xs text-emerald-400 mt-0.5">✓ Pagado</div>`}
+                <div class="text-[10px] text-gray-600 font-black uppercase tracking-widest mb-1">Monto Total</div>
+                <div class="font-black text-lg text-white">$${r.costo.toLocaleString()}</div>
+                ${r.deuda > 0 ? `<div class="text-[10px] text-rose-500 font-bold bg-rose-950/20 border border-rose-900/30 px-2 py-1 rounded inline-block mt-2">DEUDA: $${r.deuda.toLocaleString()}</div>` : `<div class="text-[10px] text-brand font-bold bg-brand/10 border border-brand/20 px-2 py-1 rounded inline-block mt-2">PAGADO</div>`}
               </div>
             </div>`;
         }).join('');
 
         return `
-          <div class="bg-gray-900 rounded-2xl border ${tieneDeuda ? 'border-red-800/50' : 'border-gray-800'} overflow-hidden mb-4">
+          <div class="bg-gray-900 rounded-3xl border ${tieneDeuda ? 'border-rose-900/50 shadow-rose-950/10' : 'border-gray-800 shadow-black/30'} overflow-hidden mb-6 shadow-2xl">
             <!-- Header cliente -->
-            <div class="px-6 py-4 border-b border-gray-800 flex flex-wrap items-start justify-between gap-3">
+            <div class="px-8 py-6 border-b border-gray-800/80 bg-gray-950/30 flex flex-wrap items-center justify-between gap-4">
               <div>
-                <h3 class="font-bold text-lg">${nombre}</h3>
-                <div class="text-sm text-gray-500 mt-0.5">📞 ${data.telefono || 'Sin teléfono'} · ${data.reps.length} reparación(es)</div>
+                <h3 class="font-black text-2xl text-white tracking-tight">${nombre}</h3>
+                <div class="text-xs text-gray-500 mt-1 font-bold flex items-center gap-2">
+                    <span class="bg-gray-800 px-2 py-0.5 rounded text-gray-300">📞 ${data.telefono || 'SIN TELÉFONO'}</span>
+                    <span class="bg-gray-800 px-2 py-0.5 rounded text-gray-300">📦 ${data.reps.length} SERVICIOS</span>
+                </div>
               </div>
               <div class="flex flex-wrap gap-2">
-                ${tieneDeuda ? `<span class="px-3 py-1.5 rounded-xl text-xs font-bold bg-red-950/50 text-red-400 border border-red-800/40">💸 Deuda: $${totalDeuda.toLocaleString()}</span>` : `<span class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-950/30 text-emerald-400 border border-emerald-800/30">✅ Sin deuda</span>`}
-                ${garantiasActivas.length > 0 ? `<span class="px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-950/30 text-cyan-400 border border-cyan-800/30">🛡️ ${garantiasActivas.length} garantía(s) activa(s)</span>` : ''}
+                ${tieneDeuda ? `<span class="px-4 py-2 rounded-2xl text-xs font-black bg-rose-500 text-white shadow-lg shadow-rose-950/20 uppercase tracking-widest">Saldo: $${totalDeuda.toLocaleString()}</span>` : `<span class="px-4 py-2 rounded-2xl text-xs font-black bg-brand/20 text-brand border border-brand/30 uppercase tracking-widest">Sin Saldo Pendiente</span>`}
               </div>
             </div>
             <!-- Historial -->
-            <div class="px-6 py-2">
+            <div class="p-8">
               ${repsHtml}
             </div>
           </div>`;

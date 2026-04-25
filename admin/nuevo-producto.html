@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es" class="bg-gray-950">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Producto - FitzCell Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' },
+                        base: '#0a0a0b'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <script src="../js/auth.js"></script>
+    <script src="../js/data.js"></script>
+    <script src="../js/sidebar.js"></script>
+    <link rel="icon" type="image/svg+xml" href="../media/images/fitzcell_logo.svg" />
+</head>
+
+<body class="bg-base text-gray-100 min-h-screen">
+    <script>renderSidebar('inventario');</script>
+
+    <!-- Contenido principal -->
+    <div class="md:ml-64 min-h-screen">
+        <div class="pt-16 md:pt-0 p-6 fade-in">
+            <div class="max-w-3xl mx-auto">
+                <div class="flex items-center gap-4 mb-8">
+                    <a href="inventario.html" class="text-2xl hover:text-brand transition-colors">←</a>
+                    <h2 class="text-3xl font-bold">Nuevo Producto</h2>
+                </div>
+
+                <div class="bg-gray-900 p-8 rounded-3xl shadow-lg shadow-black/20 border border-gray-800">
+                    <form onsubmit="guardarProducto(event)">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="col-span-2">
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Nombre del producto *</label>
+                                <input type="text" id="p-nombre" required
+                                    class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none input-fitz"
+                                    placeholder="Ej. Pantalla iPhone 12 Pro" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Categoría *</label>
+                                <select id="p-categoria"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
+                                    <option value="Pantallas">Pantallas</option>
+                                    <option value="Baterías">Baterías</option>
+                                    <option value="Cargadores">Cargadores</option>
+                                    <option value="Accesorios">Accesorios</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Precio *</label>
+                                <input type="number" id="p-precio" required min="0" step="0.01"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz"
+                                    placeholder="0.00">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Stock inicial *</label>
+                                <input type="number" id="p-stock" required min="0"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz"
+                                    placeholder="0">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Stock mínimo *</label>
+                                <input type="number" id="p-minimo" required min="0"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz"
+                                    placeholder="5">
+                                <p class="text-xs text-gray-500 mt-1">Alerta cuando el stock esté por debajo de este
+                                    número</p>
+                            </div>
+
+                            <div class="col-span-2">
+                                <label class="block text-sm font-bold text-gray-400 mb-2 text-white">Descripción</label>
+                                <textarea id="p-desc" rows="4"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz resize-none"
+                                    placeholder="Descripción del producto..."></textarea>
+                            </div>
+
+                            <div class="col-span-2">
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Proveedor</label>
+                                <input type="text" id="p-proveedor"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz"
+                                    placeholder="Nombre del proveedor">
+                            </div>
+
+                            <div class="col-span-2">
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Código de barras / SKU</label>
+                                <input type="text"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz"
+                                    placeholder="Opcional">
+                            </div>
+
+                            <div class="col-span-2">
+                                <label class="block text-sm font-bold text-gray-400 mb-2 text-white">Imagen del
+                                    producto</label>
+                                <div
+                                    class="border-2 border-dashed border-gray-700 rounded-2xl p-8 text-center bg-gray-800/50 hover:bg-gray-800 transition-colors cursor-pointer">
+                                    <span class="text-4xl mb-4 block">📸</span>
+                                    <p class="text-sm text-gray-400 mb-2">Arrastra una imagen o haz clic para
+                                        seleccionar</p>
+                                    <button type="button" class="px-4 py-2 rounded-xl text-sm font-bold btn-neon-gray">
+                                        Seleccionar archivo
+                                    </button>
+                                    <input type="file" class="hidden" accept="image/*">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 justify-end mt-8 pt-6 border-t border-gray-800">
+                            <a href="inventario.html" class="px-8 py-4 rounded-xl font-bold btn-neon-gray">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="px-6 py-3 rounded-xl font-bold btn-neon">
+                                🚀 Guardar Producto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                function guardarProducto(event) {
+                    event.preventDefault();
+                    alert('Producto guardado exitosamente');
+                    window.location.href = 'inventario.html';
+                }
+            </script>
+        </div>
+    </div>
+</body>
+
+</html>

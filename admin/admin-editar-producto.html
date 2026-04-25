@@ -1,153 +1,134 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="bg-gray-950">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Producto - FitzCell Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f8fafc;
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' },
+                        base: '#0a0a0b'
+                    }
+                }
+            }
         }
-    </style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="css/styles.css">
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="../media/images/fitzcell_logo.svg" />
 </head>
 
-<body class="p-8">
+<body class="p-8 bg-base text-gray-100 min-h-screen">
     <div class="max-w-3xl mx-auto">
         <div class="flex items-center gap-4 mb-8">
-            <a href="admin-inventario.html" class="text-2xl hover:text-emerald-500 transition-colors">←</a>
+            <a href="admin-inventario.html" class="text-2xl hover:text-brand transition-colors">←</a>
             <h2 class="text-3xl font-bold">Editar Producto</h2>
-            <span class="text-sm bg-slate-200 px-3 py-1 rounded-full font-bold">ID: 1</span>
+            <span class="text-sm bg-gray-800 text-gray-400 px-3 py-1 rounded-full font-bold border border-gray-700" id="producto-id">ID: —</span>
         </div>
 
-        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+        <div class="bg-gray-900 p-8 rounded-3xl shadow-lg shadow-black/20 border border-gray-800">
             <form onsubmit="actualizarProducto(event)">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="col-span-2">
-                        <label class="block text-sm font-bold text-slate-600 mb-2">Nombre del producto *</label>
-                        <input type="text" value="Cargador Samsung 25W" required class="w-full p-3 border rounded-xl">
+                        <label class="block text-sm font-bold text-gray-400 mb-2">Nombre del producto *</label>
+                        <input type="text" id="p-nombre" required class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-slate-600 mb-2">Categoría *</label>
-                        <select required class="w-full p-3 border rounded-xl">
+                        <label class="block text-sm font-bold text-gray-400 mb-2">Categoría *</label>
+                        <select id="p-categoria" required class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
                             <option value="">Seleccionar categoría</option>
-                            <option selected>Cargadores</option>
-                            <option>Fundas</option>
-                            <option>Audio</option>
-                            <option>Micas</option>
-                            <option>Repuestos</option>
+                            <option value="Pantallas">Pantallas</option>
+                            <option value="Baterías">Baterías</option>
+                            <option value="Cargadores">Cargadores</option>
+                            <option value="Fundas">Fundas</option>
+                            <option value="Audio">Audio</option>
+                            <option value="Micas">Micas</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-slate-600 mb-2">Precio *</label>
-                        <input type="number" value="450" required min="0" step="0.01"
-                            class="w-full p-3 border rounded-xl">
+                        <label class="block text-sm font-bold text-gray-400 mb-2">Precio *</label>
+                        <input type="number" id="p-precio" required min="0" step="0.01" class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-slate-600 mb-2">Stock actual *</label>
-                        <input type="number" value="12" required min="0" class="w-full p-3 border rounded-xl">
+                        <label class="block text-sm font-bold text-gray-400 mb-2">Stock actual *</label>
+                        <input type="number" id="p-stock" required min="0" class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-slate-600 mb-2">Stock mínimo *</label>
-                        <input type="number" value="5" required min="0" class="w-full p-3 border rounded-xl">
+                        <label class="block text-sm font-bold text-gray-400 mb-2">Stock mínimo *</label>
+                        <input type="number" id="p-minimo" required min="0" class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
                     </div>
 
                     <div class="col-span-2">
-                        <label class="block text-sm font-bold text-slate-600 mb-2">Descripción</label>
-                        <textarea rows="4"
-                            class="w-full p-3 border rounded-xl">Carga super rápida certificada para modelos S21, S22, S23. Incluye cable USB-C.</textarea>
+                        <label class="block text-sm font-bold text-gray-400 mb-2">Descripción</label>
+                        <textarea id="p-desc" rows="4" class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz resize-none"></textarea>
                     </div>
 
                     <div class="col-span-2">
-                        <label class="block text-sm font-bold text-slate-600 mb-2">Proveedor</label>
-                        <input type="text" value="Samsung México" class="w-full p-3 border rounded-xl">
+                        <label class="block text-sm font-bold text-gray-400 mb-2">Proveedor</label>
+                        <input type="text" id="p-proveedor" class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
                     </div>
 
                     <div class="col-span-2">
-                        <label class="block text-sm font-bold text-slate-600 mb-2">Código de barras / SKU</label>
-                        <input type="text" value="SAM-25W-USB-C" class="w-full p-3 border rounded-xl">
-                    </div>
-
-                    <div class="col-span-2">
-                        <label class="block text-sm font-bold text-slate-600 mb-2">Imagen del producto</label>
-                        <div class="flex items-center gap-6">
-                            <div class="w-24 h-24 bg-slate-100 rounded-2xl flex items-center justify-center text-4xl">
-                                🔌
-                            </div>
-                            <div class="flex-1">
-                                <button type="button"
-                                    class="bg-slate-100 px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-200">
-                                    Cambiar imagen
-                                </button>
-                                <p class="text-xs text-slate-400 mt-2">PNG, JPG hasta 2MB</p>
-                            </div>
-                        </div>
+                        <label class="block text-sm font-bold text-gray-400 mb-2">Código de barras / SKU</label>
+                        <input type="text" id="p-sku" class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
                     </div>
                 </div>
 
-                <!-- Historial de movimientos -->
-                <div class="mt-8 pt-6 border-t">
-                    <h4 class="font-bold text-lg mb-4">Historial de movimientos</h4>
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-slate-500">02 Mar 2026</span>
-                            <span class="font-bold">Venta</span>
-                            <span class="text-rose-500">-1 unidad</span>
-                            <span class="text-slate-400">Stock: 15 → 14</span>
-                        </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-slate-500">01 Mar 2026</span>
-                            <span class="font-bold">Compra</span>
-                            <span class="text-emerald-500">+10 unidades</span>
-                            <span class="text-slate-400">Stock: 5 → 15</span>
-                        </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-slate-500">28 Feb 2026</span>
-                            <span class="font-bold">Ajuste</span>
-                            <span class="text-amber-500">Ajuste manual</span>
-                            <span class="text-slate-400">Stock: 4 → 5</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex gap-4 justify-end mt-8 pt-6 border-t">
-                    <button type="button" onclick="if(confirm('¿Eliminar producto?')) eliminarProducto()"
-                        class="px-6 py-3 border border-rose-200 text-rose-600 rounded-xl font-bold hover:bg-rose-50 transition-colors">
-                        Eliminar
-                    </button>
-                    <a href="admin-inventario.html"
-                        class="px-6 py-3 border border-slate-200 rounded-xl font-bold hover:bg-slate-50 transition-colors">
-                        Cancelar
-                    </a>
-                    <button type="submit"
-                        class="px-6 py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition-colors">
-                        Guardar Cambios
-                    </button>
+                <div class="flex gap-4 justify-end mt-8 pt-6 border-t border-gray-800">
+                    <button type="button" onclick="eliminarProducto()" class="px-8 py-4 rounded-xl font-bold btn-neon-red">Eliminar</button>
+                    <a href="admin-inventario.html" class="px-8 py-4 rounded-xl font-bold btn-neon-gray">Cancelar</a>
+                    <button type="submit" class="px-6 py-3 rounded-xl font-bold btn-neon">🔄 Actualizar Producto</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        function actualizarProducto(event) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productoId = urlParams.get('id') || 1;
+        document.getElementById('producto-id').textContent = 'ID: ' + productoId;
+
+        async function loadProducto() {
+            try {
+                const res = await fetch(`/api/inventario/${productoId}`);
+                if (res.ok) {
+                    const p = await res.json();
+                    document.getElementById('p-nombre').value = p.nombre;
+                    document.getElementById('p-categoria').value = p.categoria;
+                    document.getElementById('p-precio').value = p.precio;
+                    document.getElementById('p-stock').value = p.stock || p.cantidad;
+                    document.getElementById('p-minimo').value = p.minimo;
+                    document.getElementById('p-desc').value = p.descripcion || '';
+                    document.getElementById('p-proveedor').value = p.proveedor || '';
+                    document.getElementById('p-sku').value = p.sku || '';
+                }
+            } catch (e) { console.log('Producto local'); }
+        }
+
+        async function actualizarProducto(event) {
             event.preventDefault();
             alert('Producto actualizado exitosamente');
             window.location.href = 'admin-inventario.html';
         }
 
         function eliminarProducto() {
-            alert('Producto eliminado');
-            window.location.href = 'admin-inventario.html';
+            if (confirm('¿Estás seguro de eliminar este producto? Esta acción no se puede deshacer.')) {
+                alert('Producto eliminado');
+                window.location.href = 'admin-inventario.html';
+            }
         }
+
+        loadProducto();
     </script>
 </body>
 

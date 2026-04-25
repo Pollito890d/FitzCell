@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FitzCell — Reparación de Celulares en Torreón</title>
-  <meta name="description" content="FitzCell, taller de reparación de celulares en Torreón. Garantías por escrito, reparación rápida y atención personalizada." />
+  <meta name="description"
+    content="FitzCell, taller de reparación de celulares en Torreón. Garantías por escrito, reparación rápida y atención personalizada." />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/styles.css" />
   <script>
@@ -12,46 +14,66 @@
       theme: {
         extend: {
           colors: {
-            brand: { DEFAULT: '#06b6d4', dark: '#0891b2', light: '#67e8f9' }
+            brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' },
+            base: '#0a0a0b'
           }
         }
       }
     }
   </script>
+  <link rel="icon" type="image/svg+xml" href="media/images/fitzcell_logo.svg" />
+  <script src="js/i18n.js"></script>
 </head>
-<body class="bg-gray-950 text-gray-100 min-h-screen">
+
+<body class="bg-base text-gray-100 min-h-screen">
 
   <!-- ══ NAVBAR ══════════════════════════════════════════════ -->
-  <nav class="fixed top-0 w-full z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
+  <nav class="fixed top-0 w-full z-50 bg-base/90 backdrop-blur border-b border-gray-800/50">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <!-- Logo -->
       <a href="index.html" class="flex items-center gap-2 group">
-        <div class="w-9 h-9 rounded-xl bg-cyan-500 flex items-center justify-center font-black text-gray-950 text-lg group-hover:bg-cyan-400 transition">F</div>
-        <span class="font-bold text-xl tracking-tight">Fitz<span class="text-cyan-400">Cell</span></span>
+        <img src="media/images/fitzcell_logo.svg" alt="FitzCell Logo"
+          class="h-9 w-auto hover:opacity-80 transition object-contain">
+
       </a>
 
       <!-- Nav desktop -->
       <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
-        <a href="index.html" class="text-cyan-400">Inicio</a>
-        <a href="rastreo.html" class="hover:text-cyan-400 transition">Rastrear equipo</a>
-        <a href="faq.html" class="hover:text-cyan-400 transition">Políticas</a>
-        <a href="rastreo.html" class="ml-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-semibold rounded-lg transition">📱 Buscar mi equipo</a>
+        <a href="index.html" class="text-brand" data-i18n="nav_home">Inicio</a>
+        <a href="tienda.html" class="hover:text-brand transition" data-i18n="nav_store">Tienda</a>
+        <a href="carrito.html" class="hover:text-brand transition flex items-center gap-1">Carrito <span
+            id="nav-cart-count"
+            class="bg-brand text-gray-950 text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span></a>
+        <a href="rastreo.html" class="hover:text-brand transition">Rastrear equipo</a>
+        <a href="faq.html" class="hover:text-brand transition">Políticas</a>
+        <a href="rastreo.html"
+          class="ml-2 px-4 py-2 bg-brand text-gray-950 font-semibold rounded-lg btn-neon" data-i18n="nav_search_btn">📱
+          Buscar mi equipo</a>
       </div>
 
       <!-- Hamburger -->
       <button id="menuBtn" class="md:hidden text-gray-400 hover:text-white transition" onclick="toggleMenu()">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
     </div>
 
     <!-- Mobile menu -->
     <div id="mobileMenu" class="hidden md:hidden bg-gray-900 border-t border-gray-800 px-4 pb-4">
-      <a href="index.html" class="block py-2 text-cyan-400 text-sm font-medium">Inicio</a>
-      <a href="rastreo.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-cyan-400">Rastrear equipo</a>
-      <a href="faq.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-cyan-400">Políticas</a>
-      <a href="rastreo.html" class="block mt-2 text-center px-4 py-2 bg-cyan-500 text-gray-950 font-semibold rounded-lg text-sm">📱 Buscar mi equipo</a>
+      <a href="index.html" class="block py-2 text-brand text-sm font-medium">Inicio</a>
+      <a href="tienda.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-brand">Tienda</a>
+      <a href="carrito.html"
+        class="block py-2 text-gray-300 text-sm font-medium hover:text-brand flex items-center gap-2">Carrito <span
+          id="mobile-nav-cart-count"
+          class="bg-brand text-gray-950 text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span></a>
+      <a href="rastreo.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-brand">Rastrear
+        equipo</a>
+      <a href="faq.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-brand">Políticas</a>
+      <a href="rastreo.html"
+        class="block mt-2 text-center px-4 py-2 bg-brand text-gray-950 font-semibold rounded-lg text-sm btn-neon">📱 Buscar
+        mi
+        equipo</a>
     </div>
   </nav>
 
@@ -60,53 +82,60 @@
     <div class="max-w-6xl mx-auto px-4 py-20 fade-in">
       <div class="grid md:grid-cols-2 gap-12 items-center">
         <div>
-          <div class="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/30 rounded-full px-4 py-1.5 text-cyan-400 text-sm font-medium mb-6">
-            <span class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
+          <div
+            class="inline-flex items-center gap-2 bg-brand/10 border border-brand/30 rounded-full px-4 py-1.5 text-brand text-sm font-medium mb-6">
+            <span class="w-2 h-2 bg-brand rounded-full animate-pulse"></span>
             Abiertos · Lun–Sáb 9 am – 7 pm
           </div>
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-            Tu celular <br/>
-            <span class="text-cyan-400">reparado</span> con<br/>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6" data-i18n="hero_title">
+            Tu celular <br />
+            <span class="text-brand">reparado</span> con<br />
             garantía por escrito
           </h1>
-          <p class="text-gray-400 text-lg mb-8 leading-relaxed">
-            En <strong class="text-white">FitzCell</strong> somos especialistas en reparación de smartphones y tablets en Torreón. Diagnóstico gratuito, presupuesto sin compromiso y garantía documentada en cada trabajo.
+          <p class="text-gray-400 text-lg mb-8 leading-relaxed" data-i18n="hero_desc">
+            En <strong class="text-white">FitzCell</strong> somos especialistas en reparación de smartphones y tablets
+            en Torreón. Diagnóstico gratuito, presupuesto sin compromiso y garantía documentada en cada trabajo.
           </p>
           <div class="flex flex-wrap gap-4">
-            <a href="rastreo.html" class="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold rounded-xl transition transform hover:scale-105">
+            <a href="rastreo.html"
+              class="px-6 py-3 bg-brand text-gray-950 font-bold rounded-xl btn-neon inline-block">
               🔍 Rastrear mi equipo
             </a>
-            <a href="faq.html" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition border border-gray-700">
+            <a href="faq.html"
+              class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-xl transition border border-gray-700">
               📋 Ver garantías
             </a>
           </div>
           <!-- Badges -->
           <div class="flex flex-wrap gap-3 mt-8">
-            <span class="flex items-center gap-2 bg-gray-800/60 rounded-full px-4 py-2 text-sm text-gray-300">✅ Garantía escrita</span>
-            <span class="flex items-center gap-2 bg-gray-800/60 rounded-full px-4 py-2 text-sm text-gray-300">⚡ Reparación el mismo día</span>
-            <span class="flex items-center gap-2 bg-gray-800/60 rounded-full px-4 py-2 text-sm text-gray-300">🔒 Sellos de seguridad</span>
+            <span class="flex items-center gap-2 bg-gray-800/60 rounded-full px-4 py-2 text-sm text-gray-300">✅ Garantía
+              escrita</span>
+            <span class="flex items-center gap-2 bg-gray-800/60 rounded-full px-4 py-2 text-sm text-gray-300">⚡
+              Reparación el mismo día</span>
+            <span class="flex items-center gap-2 bg-gray-800/60 rounded-full px-4 py-2 text-sm text-gray-300">🔒 Sellos
+              de seguridad</span>
           </div>
         </div>
         <!-- Ilustración / Stats -->
         <div class="grid grid-cols-2 gap-4">
           <div class="card-glow bg-gray-800/70 rounded-2xl p-6 border border-gray-700 col-span-2">
-            <div class="text-4xl font-black text-cyan-400">+2,500</div>
+            <div class="text-4xl font-black text-brand">+2,500</div>
             <div class="text-gray-400 text-sm mt-1">equipos reparados exitosamente</div>
           </div>
           <div class="card-glow bg-gray-800/70 rounded-2xl p-6 border border-gray-700">
-            <div class="text-3xl font-black text-teal-400">98%</div>
+            <div class="text-3xl font-black text-brand">98%</div>
             <div class="text-gray-400 text-sm mt-1">satisfacción de clientes</div>
           </div>
           <div class="card-glow bg-gray-800/70 rounded-2xl p-6 border border-gray-700">
-            <div class="text-3xl font-black text-indigo-400">30</div>
+            <div class="text-3xl font-black text-brand">30</div>
             <div class="text-gray-400 text-sm mt-1">días de garantía estándar</div>
           </div>
           <div class="card-glow bg-gray-800/70 rounded-2xl p-6 border border-gray-700">
-            <div class="text-2xl font-black text-amber-400">24h</div>
+            <div class="text-2xl font-black text-brand">24h</div>
             <div class="text-gray-400 text-sm mt-1">entrega promedio</div>
           </div>
           <div class="card-glow bg-gray-800/70 rounded-2xl p-6 border border-gray-700">
-            <div class="text-2xl font-black text-rose-400">$0</div>
+            <div class="text-2xl font-black text-brand">$0</div>
             <div class="text-gray-400 text-sm mt-1">costo de diagnóstico</div>
           </div>
         </div>
@@ -118,40 +147,47 @@
   <section class="py-20 bg-gray-900">
     <div class="max-w-6xl mx-auto px-4">
       <div class="text-center mb-14">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-3">Nuestros <span class="text-cyan-400">servicios</span></h2>
-        <p class="text-gray-400 max-w-xl mx-auto">Trabajamos con todas las marcas. Usamos refacciones de calidad y entregamos garantía por escrito en cada reparación.</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-3">Nuestros <span class="text-brand">servicios</span></h2>
+        <p class="text-gray-400 max-w-xl mx-auto">Trabajamos con todas las marcas. Usamos refacciones de calidad y
+          entregamos garantía por escrito en cada reparación.</p>
       </div>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Servicio cards -->
         <div class="card-glow bg-gray-800 rounded-2xl p-6 border border-gray-700">
           <div class="text-4xl mb-4">📱</div>
           <h3 class="font-bold text-lg mb-2">Cambio de pantalla</h3>
-          <p class="text-gray-400 text-sm">Pantallas OLED y LCD originales para iPhone, Samsung, Motorola, Xiaomi y más. Instalación en el momento.</p>
+          <p class="text-gray-400 text-sm">Pantallas OLED y LCD originales para iPhone, Samsung, Motorola, Xiaomi y más.
+            Instalación en el momento.</p>
         </div>
         <div class="card-glow bg-gray-800 rounded-2xl p-6 border border-gray-700">
           <div class="text-4xl mb-4">🔋</div>
           <h3 class="font-bold text-lg mb-2">Cambio de batería</h3>
-          <p class="text-gray-400 text-sm">¿Se apaga solo o no dura el día? Cambiamos tu batería con garantía de 30 días incluida.</p>
+          <p class="text-gray-400 text-sm">¿Se apaga solo o no dura el día? Cambiamos tu batería con garantía de 30 días
+            incluida.</p>
         </div>
         <div class="card-glow bg-gray-800 rounded-2xl p-6 border border-gray-700">
           <div class="text-4xl mb-4">🔌</div>
           <h3 class="font-bold text-lg mb-2">Conectores y puertos</h3>
-          <p class="text-gray-400 text-sm">Reparamos o cambiamos puertos Lightning, USB-C y MicroUSB cuando tu celular ya no carga correctamente.</p>
+          <p class="text-gray-400 text-sm">Reparamos o cambiamos puertos Lightning, USB-C y MicroUSB cuando tu celular
+            ya no carga correctamente.</p>
         </div>
         <div class="card-glow bg-gray-800 rounded-2xl p-6 border border-gray-700">
           <div class="text-4xl mb-4">📷</div>
           <h3 class="font-bold text-lg mb-2">Reparación de cámara</h3>
-          <p class="text-gray-400 text-sm">Imagen borrosa, lente roto o módulo trasero dañado. Diagnosticamos y reparamos cámaras frontales y traseras.</p>
+          <p class="text-gray-400 text-sm">Imagen borrosa, lente roto o módulo trasero dañado. Diagnosticamos y
+            reparamos cámaras frontales y traseras.</p>
         </div>
         <div class="card-glow bg-gray-800 rounded-2xl p-6 border border-gray-700">
           <div class="text-4xl mb-4">🔊</div>
           <h3 class="font-bold text-lg mb-2">Audio y micrófono</h3>
-          <p class="text-gray-400 text-sm">Altavoz roto, sin audio en llamadas o micrófonos que no captan la voz. Diagnóstico gratuito.</p>
+          <p class="text-gray-400 text-sm">Altavoz roto, sin audio en llamadas o micrófonos que no captan la voz.
+            Diagnóstico gratuito.</p>
         </div>
         <div class="card-glow bg-gray-800 rounded-2xl p-6 border border-gray-700">
           <div class="text-4xl mb-4">🌊</div>
           <h3 class="font-bold text-lg mb-2">Daño por agua</h3>
-          <p class="text-gray-400 text-sm">Limpieza ultrasónica y diagnóstico por humedad. Recuperamos equipos mojados siempre que sea posible.</p>
+          <p class="text-gray-400 text-sm">Limpieza ultrasónica y diagnóstico por humedad. Recuperamos equipos mojados
+            siempre que sea posible.</p>
         </div>
       </div>
     </div>
@@ -161,37 +197,108 @@
   <section class="py-20 bg-gray-950">
     <div class="max-w-6xl mx-auto px-4">
       <div class="text-center mb-14">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-3">¿Por qué elegir <span class="text-cyan-400">FitzCell</span>?</h2>
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-3">¿Por qué elegir <span
+            class="text-brand">FitzCell</span>?</h2>
       </div>
       <div class="grid md:grid-cols-2 gap-8">
         <div class="flex gap-5 items-start">
-          <div class="mt-1 flex-shrink-0 w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-2xl">📄</div>
+          <div
+            class="mt-1 flex-shrink-0 w-12 h-12 rounded-xl bg-brand/15 border border-brand/30 flex items-center justify-center text-2xl">
+            📄</div>
           <div>
             <h3 class="font-bold text-lg mb-1">Garantía documentada</h3>
-            <p class="text-gray-400 text-sm leading-relaxed">Cada reparación incluye una nota impresa con el número de folio, la falla reparada, el costo y el periodo de garantía. Nada de promesas de palabra.</p>
+            <p class="text-gray-400 text-sm leading-relaxed">Cada reparación incluye una nota impresa con el número de
+              folio, la falla reparada, el costo y el periodo de garantía. Nada de promesas de palabra.</p>
           </div>
         </div>
         <div class="flex gap-5 items-start">
-          <div class="mt-1 flex-shrink-0 w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-2xl">🔏</div>
+          <div
+            class="mt-1 flex-shrink-0 w-12 h-12 rounded-xl bg-brand/15 border border-brand/30 flex items-center justify-center text-2xl">
+            🔏</div>
           <div>
             <h3 class="font-bold text-lg mb-1">Sellos de seguridad</h3>
-            <p class="text-gray-400 text-sm leading-relaxed">Aplicamos sellos de seguridad numerados en tu equipo al entregarlo. Si alguien lo abre sin autorización, lo detectamos y la garantía se mantiene válida.</p>
+            <p class="text-gray-400 text-sm leading-relaxed">Aplicamos sellos de seguridad numerados en tu equipo al
+              entregarlo. Si alguien lo abre sin autorización, lo detectamos y la garantía se mantiene válida.</p>
           </div>
         </div>
         <div class="flex gap-5 items-start">
-          <div class="mt-1 flex-shrink-0 w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-2xl">⚡</div>
+          <div
+            class="mt-1 flex-shrink-0 w-12 h-12 rounded-xl bg-brand/15 border border-brand/30 flex items-center justify-center text-2xl">
+            ⚡</div>
           <div>
             <h3 class="font-bold text-lg mb-1">Rapidez comprobada</h3>
-            <p class="text-gray-400 text-sm leading-relaxed">La mayoría de reparaciones se resuelven el mismo día. Recibirás una notificación de tu folio cuando tu equipo esté listo.</p>
+            <p class="text-gray-400 text-sm leading-relaxed">La mayoría de reparaciones se resuelven el mismo día.
+              Recibirás una notificación de tu folio cuando tu equipo esté listo.</p>
           </div>
         </div>
         <div class="flex gap-5 items-start">
-          <div class="mt-1 flex-shrink-0 w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-2xl">🔍</div>
+          <div
+            class="mt-1 flex-shrink-0 w-12 h-12 rounded-xl bg-brand/15 border border-brand/30 flex items-center justify-center text-2xl">
+            🔍</div>
           <div>
             <h3 class="font-bold text-lg mb-1">Rastreo en línea</h3>
-            <p class="text-gray-400 text-sm leading-relaxed">Con tu número de folio puedes consultar el estado de tu reparación en cualquier momento desde este sitio, sin necesidad de llamar.</p>
+            <p class="text-gray-400 text-sm leading-relaxed">Con tu número de folio puedes consultar el estado de tu
+              reparación en cualquier momento desde este sitio, sin necesidad de llamar.</p>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SOLICITAR REPARACIÓN ════════════════════════════════ -->
+  <section class="py-20 bg-gray-900 border-t border-gray-800" id="solicitar">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="bg-gray-800 border border-gray-700 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+        <!-- Decoración de fondo -->
+        <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-brand rounded-full blur-3xl opacity-10"></div>
+        <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-brand rounded-full blur-3xl opacity-10">
+        </div>
+
+        <div class="text-center mb-10 relative z-10">
+          <h2 class="text-3xl md:text-4xl font-extrabold mb-3">Solicitar <span class="text-brand">Reparación</span>
+          </h2>
+          <p class="text-gray-400">Llena este formulario y trae tu equipo sin hacer fila. Nosotros lo revisaremos de
+            inmediato.</p>
+        </div>
+
+        <form id="formSolicitud" onsubmit="enviarSolicitud(event)" class="space-y-6 relative z-10">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-2">Nombre completo *</label>
+              <input type="text" id="s-nombre" required
+                class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white input-fitz" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-2">Teléfono (WhatsApp) *</label>
+              <input type="tel" id="s-telefono" required
+                class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white input-fitz" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-2">Correo electrónico</label>
+              <input type="email" id="s-email"
+                class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white input-fitz" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-2">Modelo del equipo *</label>
+              <input type="text" id="s-modelo" placeholder="Ej. iPhone 13 Pro" required
+                class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white input-fitz" />
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-sm font-medium text-gray-400 mb-2">Describe la falla detalladamente *</label>
+              <textarea id="s-falla" rows="3" required
+                class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white resize-none input-fitz"></textarea>
+            </div>
+          </div>
+
+          <div id="msgSolicitud" class="hidden text-sm p-4 rounded-xl text-center font-medium mt-4"></div>
+
+          <div class="text-center pt-4">
+            <button type="submit" id="btnSolicitud"
+              class="px-8 py-3 bg-brand text-gray-950 font-bold rounded-xl btn-neon inline-flex items-center justify-center min-w-[200px]">
+              🚀 Enviar Solicitud
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </section>
@@ -200,8 +307,9 @@
   <section class="py-20 bg-gray-900">
     <div class="max-w-6xl mx-auto px-4">
       <div class="text-center mb-10">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-3">¿Dónde <span class="text-cyan-400">encontrarnos</span>?</h2>
-        <p class="text-gray-400">Visítanos en Torreón, Coahuila. Sin cita previa.</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-3">¿Dónde <span class="text-brand">encontrarnos</span>?
+        </h2>
+        <p class="text-gray-400">Visítanos en San Pablo Huixtepec, Oaxaca. Sin cita previa.</p>
       </div>
       <div class="grid md:grid-cols-2 gap-8 items-center">
         <div class="space-y-5">
@@ -209,34 +317,90 @@
             <span class="text-2xl mt-0.5">📍</span>
             <div>
               <div class="font-semibold mb-1">Dirección</div>
-              <div class="text-gray-400 text-sm">Av. Morelos 1245, Col. Centro<br/>Torreón, Coahuila, C.P. 27000</div>
+              <div class="text-gray-400 text-sm">Av. Zaragoza #127<br />San Pablo Huixtepec, Oaxaca 71265</div>
             </div>
           </div>
           <div class="flex items-start gap-4 bg-gray-800 rounded-2xl p-5 border border-gray-700">
             <span class="text-2xl mt-0.5">🕐</span>
             <div>
               <div class="font-semibold mb-1">Horario</div>
-              <div class="text-gray-400 text-sm">Lunes – Viernes: 9:00 am – 7:00 pm<br/>Sábado: 9:00 am – 4:00 pm<br/>Domingo: Cerrado</div>
+              <div class="text-gray-400 text-sm">Lunes – Viernes: 9:00 am – 7:00 pm<br />Sábado: 9:00 am – 4:00
+                pm<br />Domingo: Cerrado</div>
             </div>
           </div>
           <div class="flex items-start gap-4 bg-gray-800 rounded-2xl p-5 border border-gray-700">
             <span class="text-2xl mt-0.5">📞</span>
             <div>
               <div class="font-semibold mb-1">Contacto</div>
-              <div class="text-gray-400 text-sm">Tel: 871-123-4567<br/>WhatsApp: 871-987-6543</div>
+              <div class="text-gray-400 text-sm">Tel: +52 1 951 586 2992</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 bg-gray-800 rounded-2xl p-5 border border-gray-700">
+            <span class="text-2xl mt-0.5">🌐</span>
+            <div class="w-full">
+              <div class="font-semibold mb-2">Síguenos</div>
+              <div class="flex gap-3">
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/profile.php?id=61553729607765"
+                  class="group flex items-center h-10 rounded-full bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-white hover:-translate-y-1 transition-all duration-300 ease-out px-2.5 overflow-hidden">
+                  <div class="w-5 h-5 flex items-center justify-center shrink-0">
+                    <svg class="w-full h-full" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path fill-rule="evenodd"
+                        d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                        clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <span
+                    class="max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2 transition-all duration-300 ease-out whitespace-nowrap font-bold text-sm">Facebook</span>
+                </a>
+                <!-- Instagram -->
+                <a href="https://www.instagram.com/fitz.cell/"
+                  class="group flex items-center h-10 rounded-full bg-pink-600/10 text-pink-500 hover:bg-gradient-to-tr hover:from-yellow-400 hover:via-pink-500 hover:to-purple-600 hover:text-white hover:-translate-y-1 transition-all duration-300 ease-out px-2.5 overflow-hidden">
+                  <div class="w-5 h-5 flex items-center justify-center shrink-0">
+                    <svg class="w-full h-full" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path fill-rule="evenodd"
+                        d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
+                        clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <span
+                    class="max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2 transition-all duration-300 ease-out whitespace-nowrap font-bold text-sm">Instagram</span>
+                </a>
+                <!-- TikTok (Custom SVG) -->
+                <a href="https://www.tiktok.com/@fitzcell?is_from_webapp=1&sender_device=pc"
+                  class="group flex items-center h-10 rounded-full bg-gray-950/40 text-gray-300 hover:bg-black hover:text-white hover:-translate-y-1 transition-all duration-300 ease-out px-3 overflow-hidden">
+                  <div class="w-4 h-4 flex items-center justify-center shrink-0">
+                    <svg class="w-full h-full" fill="currentColor" viewBox="0 0 448 512" aria-hidden="true">
+                      <path
+                        d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25v178.72A162.55 162.55 0 1 1 162.61 187V275a74.62 74.62 0 1 0 52.23 71.18V0l88 0a121.18 121.18 0 0 0 1.95 22.17h.06A122.18 122.18 0 0 0 381 102.39a114.02 114.02 0 0 0 67 20.14Z" />
+                    </svg>
+                  </div>
+                  <span
+                    class="max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2 transition-all duration-300 ease-out whitespace-nowrap font-bold text-sm">TikTok</span>
+                </a>
+                <!-- WhatsApp -->
+                <a href="https://api.whatsapp.com/send?phone=%2B5219515862992&token=eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjEyNSJ9.eyJleHAiOjE3NzQxMTk5MTQsInBob25lIjoiKzUyMTk1MTU4NjI5OTIiLCJjb250ZXh0IjoiQWZlU3JpTjBmX2tpbVNwcmFHOVlDUVREM3NLVWdXajBaQ3VZX1R5eS1xSkItOGU1NzJPOFdCRTdTN0E0VndOVzJoeWt0Y1djWGYyc3djOGh5dGpFOTZzWUd0bVZEbkRNSmZjeGtHOWQ5bm85dXRadjZNaUZsRDhuRkRWRm1pZWFraHQyTVZyUnZpSjRBZ196aXYxSm1aM1FMQSIsInNvdXJjZSI6IkZCX1BhZ2UiLCJhcHAiOiJmYWNlYm9vayIsImVudHJ5X3BvaW50IjoicGFnZV9jdGEifQ.a5nlR69mNPYPCX6GTVzIcYnoN3i39AaDMT-H8ow2pC2-8M6rvjIE8ljcYu0bDifx1C1TK0Gmeql3I2cCqssCfg&fbclid=IwY2xjawQqedtleHRuA2FlbQIxMABicmlkETE2WDZuNWVHTm9UMGYxRGw3c3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHqBYssUx7knqe8THXXmAy0eCxM0s12Kr2vLEfY7yLIXzjCI6DnRIxAr74frU_aem_6hMyiw7rUABDSEyUg9zpWA"
+                  class="group flex items-center h-10 rounded-full bg-brand/10 text-brand hover:bg-brand hover:text-gray-950 hover:-translate-y-1 transition-all duration-300 ease-out px-2.5 overflow-hidden">
+                  <div class="w-5 h-5 flex items-center justify-center shrink-0">
+                    <svg class="w-full h-full" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
+                    </svg>
+                  </div>
+                  <span
+                    class="max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2 transition-all duration-300 ease-out whitespace-nowrap font-bold text-sm">WhatsApp</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
         <!-- Mini-mapa embed placeholder -->
-        <div class="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden h-72 flex items-center justify-center">
+        <div
+          class="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden h-72 flex items-center justify-center">
           <iframe
-            title="Ubicación FitzCell"
-            class="w-full h-full rounded-2xl grayscale"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3614.4!2d-103.4068!3d25.5428!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x868fa5e0b1234567%3A0xabcdef!2sTorre%C3%B3n%2C%20Coahuila!5e0!3m2!1ses!2smx!4v1710000000000!5m2!1ses!2smx"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
+            src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d337.55039969550836!2d-96.78378069645751!3d16.828993825833436!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sAv.%20Zaragoza%20%C2%B7127%20San%20Pablo%20Huixtepec!5e0!3m2!1ses-419!2smx!4v1774043140429!5m2!1ses-419!2smx"
+            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
       </div>
     </div>
@@ -244,15 +408,16 @@
 
   <!-- ══ FOOTER ══════════════════════════════════════════════ -->
   <footer class="bg-gray-950 border-t border-gray-800 py-8">
-    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+    <div
+      class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
       <div class="flex items-center gap-2 font-semibold text-white">
-        <div class="w-7 h-7 rounded-lg bg-cyan-500 flex items-center justify-center font-black text-gray-950 text-sm">F</div>
+        <img src="media/images/fitzcell_logo.svg" alt="FitzCell Logo" class="h-7 w-auto opacity-90 object-contain">
         FitzCell
       </div>
       <div>© 2026 FitzCell · Todos los derechos reservados</div>
       <div class="flex gap-4">
-        <a href="rastreo.html" class="hover:text-cyan-400 transition">Rastrear equipo</a>
-        <a href="faq.html" class="hover:text-cyan-400 transition">Políticas</a>
+        <a href="rastreo.html" class="hover:text-brand transition">Rastrear equipo</a>
+        <a href="faq.html" class="hover:text-brand transition">Políticas</a>
       </div>
     </div>
   </footer>
@@ -261,6 +426,59 @@
     function toggleMenu() {
       document.getElementById('mobileMenu').classList.toggle('hidden');
     }
+
+    async function enviarSolicitud(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSolicitud');
+      const msg = document.getElementById('msgSolicitud');
+
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+      msg.classList.add('hidden');
+
+      const payload = {
+        cliente_nombre: document.getElementById('s-nombre').value,
+        cliente_telefono: document.getElementById('s-telefono').value,
+        cliente_email: document.getElementById('s-email').value,
+        modelo: document.getElementById('s-modelo').value,
+        falla: document.getElementById('s-falla').value
+      };
+
+      try {
+        const res = await fetch('http://localhost:3000/api/reparaciones/solicitud', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          msg.className = 'text-sm p-4 rounded-xl text-center font-medium mt-4 bg-brand/30 text-brand border border-brand/50';
+          msg.innerHTML = `✅ ¡Solicitud enviada! Tu equipo ha sido pre-registrado. Conserva este folio para rastrearlo: <strong class="text-white text-lg ml-2">${data.folio}</strong>`;
+          msg.classList.remove('hidden');
+          document.getElementById('formSolicitud').reset();
+          btn.textContent = '🚀 Enviar Solicitud';
+          btn.disabled = false;
+        } else {
+          throw new Error('Error en el servidor');
+        }
+      } catch (error) {
+        msg.className = 'text-sm p-4 rounded-xl text-center font-medium mt-4 bg-red-900/30 text-red-400 border border-red-800/50';
+        msg.innerHTML = '❌ Ocurrió un error al enviar tu solicitud. Inténtalo de nuevo.';
+        msg.classList.remove('hidden');
+        btn.textContent = '🚀 Enviar Solicitud';
+        btn.disabled = false;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const count = localStorage.getItem('cartCount') || '0';
+      const navCart = document.getElementById('nav-cart-count');
+      const mobileNavCart = document.getElementById('mobile-nav-cart-count');
+      if (navCart) navCart.innerText = count;
+      if (mobileNavCart) mobileNavCart.innerText = count;
+    });
   </script>
 </body>
+
 </html>

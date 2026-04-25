@@ -6,32 +6,48 @@
   <title>Rastrear Equipo — FitzCell</title>
   <meta name="description" content="Consulta el estado de tu reparación en FitzCell ingresando tu número de folio." />
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' },
+            base: '#0a0a0b'
+          }
+        }
+      }
+    }
+  </script>
   <link rel="stylesheet" href="css/styles.css" />
   <script src="js/data.js"></script>
+  <link rel="icon" type="image/svg+xml" href="media/images/fitzcell_logo.svg" />
 </head>
-<body class="bg-gray-950 text-gray-100 min-h-screen">
-
-  <!-- NAVBAR (igual al index) -->
-  <nav class="fixed top-0 w-full z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
+<body class="bg-base text-gray-100 min-h-screen">
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 w-full z-50 bg-base/90 backdrop-blur border-b border-gray-800/50">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <a href="index.html" class="flex items-center gap-2 group">
-        <div class="w-9 h-9 rounded-xl bg-cyan-500 flex items-center justify-center font-black text-gray-950 text-lg group-hover:bg-cyan-400 transition">F</div>
-        <span class="font-bold text-xl tracking-tight">Fitz<span class="text-cyan-400">Cell</span></span>
+        <img src="media/images/fitzcell_logo.svg" alt="FitzCell Logo" class="h-9 w-auto hover:opacity-80 transition object-contain">
+        
       </a>
       <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
-        <a href="index.html" class="hover:text-cyan-400 transition">Inicio</a>
-        <a href="rastreo.html" class="text-cyan-400">Rastrear equipo</a>
-        <a href="faq.html" class="hover:text-cyan-400 transition">Políticas</a>
-        <a href="rastreo.html" class="ml-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-semibold rounded-lg transition">📱 Buscar mi equipo</a>
+        <a href="index.html" class="hover:text-brand transition">Inicio</a>
+        <a href="tienda.html" class="hover:text-brand transition">Tienda</a>
+        <a href="carrito.html" class="hover:text-brand transition flex items-center gap-1">Carrito <span id="nav-cart-count" class="bg-brand text-gray-950 text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span></a>
+        <a href="rastreo.html" class="text-brand">Rastrear equipo</a>
+        <a href="faq.html" class="hover:text-brand transition">Políticas</a>
+        <a href="rastreo.html" class="ml-2 px-4 py-2 bg-brand text-gray-950 font-semibold rounded-lg btn-neon">📱 Buscar mi equipo</a>
       </div>
       <button class="md:hidden text-gray-400 hover:text-white" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
     </div>
     <div id="mobileMenu" class="hidden md:hidden bg-gray-900 border-t border-gray-800 px-4 pb-4">
-      <a href="index.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-cyan-400">Inicio</a>
-      <a href="rastreo.html" class="block py-2 text-cyan-400 text-sm font-medium">Rastrear equipo</a>
-      <a href="faq.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-cyan-400">Políticas</a>
+      <a href="index.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-brand">Inicio</a>
+      <a href="tienda.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-brand">Tienda</a>
+      <a href="carrito.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-brand flex items-center gap-2">Carrito <span id="mobile-nav-cart-count" class="bg-brand text-gray-950 text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span></a>
+      <a href="rastreo.html" class="block py-2 text-brand text-sm font-medium">Rastrear equipo</a>
+      <a href="faq.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-brand">Políticas</a>
     </div>
   </nav>
 
@@ -42,7 +58,7 @@
       <!-- Encabezado -->
       <div class="text-center mb-10 fade-in">
         <div class="text-5xl mb-4">🔍</div>
-        <h1 class="text-3xl md:text-4xl font-extrabold mb-3">Rastrear mi <span class="text-cyan-400">equipo</span></h1>
+        <h1 class="text-3xl md:text-4xl font-extrabold mb-3">Rastrear mi <span class="text-brand">equipo</span></h1>
         <p class="text-gray-400">Ingresa el número de folio que recibiste al dejar tu equipo y consulta el estado actual de tu reparación.</p>
       </div>
 
@@ -55,10 +71,10 @@
             type="text"
             placeholder="Ej. FTZ-001"
             maxlength="10"
-            class="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition uppercase"
+            class="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none transition uppercase input-fitz"
             onkeydown="if(event.key==='Enter') buscarFolio()"
           />
-          <button onclick="buscarFolio()" class="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold rounded-xl transition transform hover:scale-105">
+          <button onclick="buscarFolio()" class="px-6 py-3 bg-brand text-gray-950 font-bold rounded-xl btn-neon">
             Buscar
           </button>
         </div>
@@ -77,13 +93,23 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="bg-gray-950 border-t border-gray-800 py-6">
+  <footer class="bg-base border-t border-gray-800 py-6">
     <div class="max-w-6xl mx-auto px-4 text-center text-sm text-gray-600">
-      © 2026 FitzCell · <a href="faq.html" class="hover:text-cyan-400">Políticas de garantía</a>
+      © 2026 FitzCell · <a href="faq.html" class="hover:text-brand">Políticas de garantía</a>
     </div>
   </footer>
 
   <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const count = localStorage.getItem('cartCount') || '0';
+      const navCart = document.getElementById('nav-cart-count');
+      const mobileNavCart = document.getElementById('mobile-nav-cart-count');
+      if (navCart) navCart.innerText = count;
+      if (mobileNavCart) mobileNavCart.innerText = count;
+
+      await FC.loadData();
+    });
+
     function estadoBadge(estado) {
       const m = {
         'Diagnóstico': 'badge-diagnostico',
@@ -96,10 +122,10 @@
 
     function calcularGarantia(rep) {
       if (rep.estado !== 'Entregado') return null;
-      const entrega = new Date(rep.fechaEstimada);
+      const entrega = new Date(rep.fecha_estimada);
       const hoy = new Date('2026-03-14');
       const diffDias = Math.floor((hoy - entrega) / (1000 * 60 * 60 * 24));
-      const restante = rep.garantiaDias - diffDias;
+      const restante = (rep.garantia_dias || 30) - diffDias;
       return restante;
     }
 
@@ -141,7 +167,7 @@
         } else {
           garantiaHtml = `<div class="bg-red-900/20 border border-red-700/40 rounded-xl p-4">
             <div class="text-sm font-semibold text-red-400 mb-1">⛔ Garantía vencida</div>
-            <div class="text-xs text-gray-400">El periodo de garantía de ${rep.garantiaDias} días ya venció.</div>
+            <div class="text-xs text-gray-400">El periodo de garantía de ${rep.garantia_dias || 30} días ya venció.</div>
           </div>`;
         }
       }
@@ -152,7 +178,7 @@
           <div class="bg-gray-800 px-6 py-4 flex items-center justify-between border-b border-gray-700">
             <div>
               <div class="text-xs text-gray-500 mb-0.5">Folio de reparación</div>
-              <div class="font-black text-xl text-cyan-400">${rep.folio}</div>
+              <div class="font-black text-xl text-brand">${rep.folio}</div>
             </div>
             <div>${estadoBadge(rep.estado)}</div>
           </div>
@@ -174,15 +200,15 @@
               </div>
               <div>
                 <div class="text-gray-500 text-xs mb-1">Técnico asignado</div>
-                <div class="font-medium text-gray-300">${rep.tecnico}</div>
+                <div class="font-medium text-gray-300">${rep.tecnico || 'Sin asignar'}</div>
               </div>
               <div>
                 <div class="text-gray-500 text-xs mb-1">Fecha de ingreso</div>
-                <div class="font-medium text-gray-300">${rep.fechaIngreso}</div>
+                <div class="font-medium text-gray-300">${rep.fecha_ingreso}</div>
               </div>
               <div>
                 <div class="text-gray-500 text-xs mb-1">Entrega estimada</div>
-                <div class="font-medium ${rep.estado === 'Listo' ? 'text-amber-400' : 'text-gray-300'}">${rep.fechaEstimada}</div>
+                <div class="font-medium ${rep.estado === 'Listo' ? 'text-amber-400' : 'text-gray-300'}">${rep.fecha_estimada}</div>
               </div>
             </div>
 

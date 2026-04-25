@@ -107,7 +107,10 @@
   </div>
 
   <script>
-    // Métricas
+    document.addEventListener('DOMContentLoaded', async () => {
+      await FC.loadData();
+      
+      // Métricas
     document.getElementById('metEquipos').textContent = FC.dashboard.equiposHoy;
     document.getElementById('metVentas').textContent = '$' + FC.dashboard.ventasHoy.toLocaleString();
     document.getElementById('metEntregar').textContent = FC.dashboard.porEntregar;
@@ -146,7 +149,8 @@
             <span class="text-sm font-bold ${agotado ? 'text-red-400' : 'text-amber-400'}">${agotado ? '🔴 Agotado' : `⚠️ ${i.cantidad} uds`}</span>
           </div>`;
       });
-    }
+      }
+    });
   </script>
 </body>
 </html>

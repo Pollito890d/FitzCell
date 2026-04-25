@@ -1,65 +1,84 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="bg-gray-950">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Garantías RMA — FitzCell Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' },
+            base: '#0a0a0b'
+          }
+        }
+      }
+    }
+  </script>
   <link rel="stylesheet" href="../css/styles.css" />
   <script src="../js/auth.js"></script>
   <script src="../js/data.js"></script>
   <script src="../js/sidebar.js"></script>
+  <link rel="icon" type="image/svg+xml" href="../media/images/fitzcell_logo.svg" />
 </head>
-<body class="bg-gray-950 text-gray-100">
+
+<body class="bg-base text-gray-100 min-h-screen">
   <script>renderSidebar('rma');</script>
 
   <div class="md:ml-64 min-h-screen">
     <div class="pt-16 md:pt-0 p-6 fade-in">
 
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
         <div>
-          <h1 class="text-2xl font-extrabold">Garantías a Proveedor (RMA)</h1>
-          <p class="text-gray-500 text-sm mt-1">Control de piezas defectuosas devueltas a proveedores</p>
+          <h1 class="text-2xl font-black tracking-tight">Garantías a Proveedor (RMA)</h1>
+          <p class="text-gray-500 text-sm mt-1 font-medium">Control de piezas defectuosas devueltas a proveedores</p>
         </div>
-        <button onclick="document.getElementById('modalRMA').classList.remove('hidden')" class="inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold rounded-xl transition transform hover:scale-105">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        <button onclick="document.getElementById('modalRMA').classList.remove('hidden')"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-brand text-gray-950 font-black rounded-2xl btn-neon uppercase tracking-widest text-xs">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
           Nueva devolución
         </button>
       </div>
 
       <!-- Resumen rápido -->
-      <div class="grid grid-cols-3 gap-4 mb-8">
-        <div class="bg-gray-900 rounded-2xl p-4 border border-gray-800 text-center">
-          <div class="text-2xl font-black text-red-400" id="cntPendiente">—</div>
-          <div class="text-xs text-gray-500 mt-1">Pendientes</div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+        <div class="bg-gray-900 rounded-3xl p-6 border border-gray-800 text-center shadow-lg shadow-black/20">
+          <div class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Pendientes de Acción</div>
+          <div class="text-4xl font-black text-rose-500" id="cntPendiente">—</div>
         </div>
-        <div class="bg-gray-900 rounded-2xl p-4 border border-gray-800 text-center">
-          <div class="text-2xl font-black text-emerald-400" id="cntReembolsado">—</div>
-          <div class="text-xs text-gray-500 mt-1">Reembolsados</div>
+        <div class="bg-gray-900 rounded-3xl p-6 border border-gray-800 text-center shadow-lg shadow-black/20">
+          <div class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Total Reembolsado</div>
+          <div class="text-4xl font-black text-brand" id="cntReembolsado">—</div>
         </div>
-        <div class="bg-gray-900 rounded-2xl p-4 border border-gray-800 text-center">
-          <div class="text-2xl font-black text-indigo-400" id="cntCambiado">—</div>
-          <div class="text-xs text-gray-500 mt-1">Cambiados</div>
+        <div class="bg-gray-900 rounded-3xl p-6 border border-gray-800 text-center shadow-lg shadow-black/20">
+          <div class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Productos Canjeados</div>
+          <div class="text-4xl font-black text-brand-light" id="cntCambiado">—</div>
         </div>
       </div>
 
       <!-- Tabla RMA -->
-      <div class="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden">
+      <div class="bg-gray-900 rounded-3xl border border-gray-800 overflow-hidden shadow-2xl">
         <div class="table-wrapper">
           <table class="w-full text-sm">
             <thead>
-              <tr class="border-b border-gray-800 text-xs text-gray-500 uppercase tracking-wider">
-                <th class="text-left px-6 py-3">ID</th>
-                <th class="text-left px-6 py-3">Pieza</th>
-                <th class="text-left px-6 py-3 hidden md:table-cell">Proveedor</th>
-                <th class="text-left px-6 py-3 hidden lg:table-cell">Motivo</th>
-                <th class="text-left px-6 py-3 hidden sm:table-cell">Folio ref.</th>
-                <th class="text-right px-6 py-3 hidden sm:table-cell">Monto</th>
-                <th class="text-center px-6 py-3">Estado</th>
-                <th class="text-center px-6 py-3">Cambiar</th>
+              <tr
+                class="bg-gray-950 border-b border-gray-800 text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                <th class="text-left px-6 py-5">Identificador</th>
+                <th class="text-left px-6 py-5">Componente Defectuoso</th>
+                <th class="text-left px-6 py-5 hidden md:table-cell">Proveedor</th>
+                <th class="text-left px-6 py-5 hidden lg:table-cell">Falla Técnica</th>
+                <th class="text-left px-6 py-5 hidden sm:table-cell">Rep. Origen</th>
+                <th class="text-right px-6 py-5 hidden sm:table-cell">Monto</th>
+                <th class="text-center px-6 py-5">Estatus</th>
+                <th class="text-center px-6 py-5">Acción</th>
               </tr>
             </thead>
-            <tbody id="tablaRMA"></tbody>
+            <tbody id="tablaRMA" class="divide-y divide-gray-800 text-gray-300"></tbody>
           </table>
         </div>
       </div>
@@ -67,51 +86,72 @@
   </div>
 
   <!-- MODAL NUEVA DEVOLUCIÓN -->
-  <div id="modalRMA" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/70">
-    <div class="bg-gray-900 rounded-2xl border border-gray-700 w-full max-w-lg max-h-[90vh] flex flex-col">
-      <div class="px-6 py-4 border-b border-gray-800 flex items-center justify-between flex-shrink-0">
-        <h2 class="font-bold text-lg">Nueva devolución a proveedor</h2>
-        <button onclick="document.getElementById('modalRMA').classList.add('hidden')" class="text-gray-500 hover:text-white">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+  <div id="modalRMA"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-gray-950/90 backdrop-blur-sm">
+    <div class="bg-gray-900 rounded-3xl border border-gray-700 w-full max-w-lg shadow-2xl flex flex-col animate-pop">
+      <div class="px-8 py-6 border-b border-gray-800 flex items-center justify-between bg-gray-950/50 rounded-t-3xl">
+        <h2 class="font-black text-lg text-white">Registro de RMA</h2>
+        <button onclick="document.getElementById('modalRMA').classList.add('hidden')"
+          class="text-gray-500 hover:text-white transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       </div>
-      <div class="overflow-y-auto p-6">
-        <form onsubmit="guardarRMA(event)" class="space-y-4">
+      <div class="p-8">
+        <form onsubmit="guardarRMA(event)" class="space-y-6">
           <div>
-            <label class="block text-xs font-semibold text-gray-400 mb-1.5">Nombre de la pieza *</label>
-            <input type="text" id="r-pieza" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-500" placeholder="Ej. Pantalla iPhone 12 Pro"/>
+            <label class="block text-[10px] font-black text-gray-500 mb-2 uppercase tracking-widest">Pieza Defectuosa
+              *</label>
+            <input type="text" id="r-pieza" required
+              class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4 text-white text-sm focus:outline-none focus:border-brand input-fitz"
+              placeholder="Ej. Pantalla iPhone 12 Pro (Mancha LED)" />
           </div>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1.5">Proveedor *</label>
-              <input type="text" id="r-proveedor" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-500" placeholder="TechParts MX"/>
+              <label class="block text-[10px] font-black text-gray-500 mb-2 uppercase tracking-widest">Proveedor
+                *</label>
+              <input type="text" id="r-proveedor" required
+                class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4 text-white text-sm focus:outline-none focus:border-brand input-fitz"
+                placeholder="TechParts" />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1.5">Folio de reparación</label>
-              <input type="text" id="r-folio" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-500" placeholder="FTZ-001"/>
-            </div>
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-gray-400 mb-1.5">Motivo de devolución *</label>
-            <textarea id="r-motivo" required rows="2" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-500 resize-none" placeholder="Describe el defecto de la pieza..."></textarea>
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1.5">Monto ($) *</label>
-              <input type="number" id="r-monto" min="0" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-500" placeholder="0"/>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1.5">Fecha de devolución</label>
-              <input type="date" id="r-fecha" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-500" value="2026-03-14"/>
+              <label class="block text-[10px] font-black text-gray-500 mb-2 uppercase tracking-widest">Folio
+                Servicio</label>
+              <input type="text" id="r-folio"
+                class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4 text-white text-sm focus:outline-none focus:border-brand input-fitz"
+                placeholder="FTZ-001" />
             </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-400 mb-1.5">Notas adicionales</label>
-            <input type="text" id="r-notas" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-cyan-500" placeholder="Número de guía, acuerdos, etc."/>
+            <label class="block text-[10px] font-black text-gray-500 mb-2 uppercase tracking-widest">Descripción
+              detallada del fallo *</label>
+            <textarea id="r-motivo" required rows="3"
+              class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4 text-white text-sm focus:outline-none focus:border-brand resize-none font-medium"
+              placeholder="Especifique el defecto de fábrica..."></textarea>
           </div>
-          <div class="flex gap-3 pt-2">
-            <button type="submit" class="flex-1 py-3 bg-cyan-500 hover:bg-cyan-400 text-gray-950 font-bold rounded-xl transition">✅ Registrar devolución</button>
-            <button type="button" onclick="document.getElementById('modalRMA').classList.add('hidden')" class="px-5 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl transition">Cancelar</button>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-black text-gray-500 mb-2 uppercase tracking-widest">Valor Aduanero
+                ($) *</label>
+              <input type="number" id="r-monto" min="0" required
+                class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-5 py-4 text-brand font-black text-sm focus:outline-none focus:border-brand"
+                placeholder="0" />
+            </div>
+            <div>
+              <label class="block text-[10px] font-black text-gray-500 mb-2 uppercase tracking-widest">Fecha
+                Envío</label>
+              <input type="date" id="r-fecha"
+                class="w-full bg-gray-800 border border-gray-700 rounded-2xl px-5 py-3.5 text-white text-sm focus:outline-none focus:border-brand"
+                value="2026-03-14" />
+            </div>
+          </div>
+          <div class="flex gap-4 pt-4">
+            <button type="submit"
+              class="flex-1 py-4 bg-brand text-gray-950 font-black rounded-2xl btn-neon uppercase tracking-widest text-xs">Confirmar
+              Envío</button>
+            <button type="button" onclick="document.getElementById('modalRMA').classList.add('hidden')"
+              class="px-8 py-4 rounded-2xl font-bold text-sm btn-neon-gray">Cancelar</button>
           </div>
         </form>
       </div>
@@ -120,28 +160,28 @@
 
   <script>
     const estadoClasses = {
-      'Pendiente': 'badge-pendiente',
-      'Reembolsado': 'badge-reembolsado',
-      'Cambiado': 'badge-cambiado'
+      'Pendiente': 'bg-rose-950/20 text-rose-500 border border-rose-900/40',
+      'Reembolsado': 'bg-brand/10 text-brand border border-brand/30',
+      'Cambiado': 'bg-brand/20 text-brand-light border border-brand/40'
     };
     const estadoOpciones = ['Pendiente', 'Reembolsado', 'Cambiado'];
 
     function renderTabla() {
       const tb = document.getElementById('tablaRMA');
       tb.innerHTML = FC.rma.map((r, idx) => `
-        <tr class="border-b border-gray-800/50 hover:bg-gray-800/30 transition">
-          <td class="px-6 py-4 font-mono text-xs text-cyan-400 font-bold">${r.id}</td>
-          <td class="px-6 py-4 font-medium max-w-xs">${r.pieza}</td>
-          <td class="px-6 py-4 text-gray-400 hidden md:table-cell">${r.proveedor}</td>
-          <td class="px-6 py-4 text-gray-500 hidden lg:table-cell text-xs max-w-xs truncate">${r.motivo}</td>
-          <td class="px-6 py-4 hidden sm:table-cell"><span class="font-mono text-xs text-cyan-400">${r.folio}</span></td>
-          <td class="px-6 py-4 text-right font-semibold hidden sm:table-cell">$${r.monto.toLocaleString()}</td>
+        <tr class="hover:bg-gray-800/30 transition-colors">
+          <td class="px-6 py-4 font-black text-[10px] text-brand tracking-tighter">${r.id}</td>
+          <td class="px-6 py-4 font-black text-white max-w-xs">${r.pieza}</td>
+          <td class="px-6 py-4 text-gray-400 font-medium hidden md:table-cell">${r.proveedor}</td>
+          <td class="px-6 py-4 text-gray-500 hidden lg:table-cell text-[11px] max-w-xs italic font-medium">"${r.motivo}"</td>
+          <td class="px-6 py-4 hidden sm:table-cell"><span class="font-black text-[10px] bg-gray-800 px-2 py-0.5 rounded text-gray-400">${r.folio}</span></td>
+          <td class="px-6 py-4 text-right font-black text-white hidden sm:table-cell">$${r.monto.toLocaleString()}</td>
           <td class="px-6 py-4 text-center">
-            <span class="inline-block px-2.5 py-1 rounded-full text-xs font-bold ${estadoClasses[r.estado] || ''}">${r.estado}</span>
+            <span class="inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${estadoClasses[r.estado] || ''}">${r.estado}</span>
           </td>
           <td class="px-6 py-4 text-center">
-            <select onchange="cambiarEstado(${idx}, this.value)" class="text-xs bg-gray-800 border border-gray-700 rounded-lg px-2 py-1.5 text-gray-300 focus:outline-none focus:border-cyan-500">
-              ${estadoOpciones.map(op => `<option value="${op}" ${op===r.estado?'selected':''}>${op}</option>`).join('')}
+            <select onchange="cambiarEstado(${idx}, this.value)" class="text-[10px] bg-gray-950 border border-gray-800 rounded-lg px-2 py-1 text-gray-400 font-black uppercase tracking-widest focus:outline-none focus:border-brand">
+              ${estadoOpciones.map(op => `<option value="${op}" ${op === r.estado ? 'selected' : ''}>${op}</option>`).join('')}
             </select>
           </td>
         </tr>`).join('');
@@ -176,7 +216,11 @@
       renderTabla();
     }
 
-    renderTabla();
+    document.addEventListener('DOMContentLoaded', async () => {
+      await FC.loadData();
+      renderTabla();
+    });
   </script>
 </body>
+
 </html>

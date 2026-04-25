@@ -1,201 +1,138 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="bg-gray-950">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Reparación - FitzCell Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' },
+                        base: '#0a0a0b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .step-line { position: absolute; left: 11px; top: 24px; bottom: -10px; width: 2px; background: #1f2937; }
+        .step-dot { width: 24px; height: 24px; border-radius: 50%; background: #1f2937; border: 2px solid #374151; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #94a3b8; z-index: 10; }
+        .step-dot.completed { background: #07B76B; border-color: #07B76B; color: #0a0a0b; }
+        .step-dot.active { background: #07B76B; border-color: #07B76B; color: #0a0a0b; box-shadow: 0 0 10px rgba(7, 183, 107, 0.4); }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="../media/images/fitzcell_logo.svg" />
 </head>
 
-<body class="p-8">
+<body class="p-8 bg-base text-gray-100 min-h-screen">
     <div class="max-w-6xl mx-auto">
         <div class="flex items-center gap-4 mb-8">
-            <a href="admin-reparaciones.html" class="text-2xl hover:text-emerald-500 transition-colors">←</a>
+            <a href="admin-reparaciones.html" class="text-2xl hover:text-brand transition-colors">←</a>
             <h2 class="text-3xl font-bold">Detalle de Reparación</h2>
-            <span class="text-sm bg-slate-200 px-3 py-1 rounded-full font-bold">ORD-123</span>
+            <span class="text-sm bg-gray-800 border border-gray-700 text-gray-400 px-3 py-1 rounded-full font-bold" id="folio-badge">—</span>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Información del cliente y equipo -->
             <div class="lg:col-span-1 space-y-6">
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <h3 class="font-bold text-lg mb-4">Información del Equipo</h3>
-                    <div class="space-y-4">
+                <div class="bg-gray-900 p-6 rounded-3xl border border-gray-800 shadow-lg shadow-black/20">
+                    <h3 class="font-bold text-lg mb-6 text-white border-b border-gray-800 pb-4">Información del Equipo</h3>
+                    <div class="space-y-6">
                         <div>
-                            <p class="text-xs text-slate-400 uppercase font-bold">Equipo</p>
-                            <p class="font-bold text-xl">iPhone 13 Pro</p>
+                            <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1">Equipo</p>
+                            <p class="font-bold text-xl text-white" id="equipo-nombre">—</p>
                         </div>
                         <div>
-                            <p class="text-xs text-slate-400 uppercase font-bold">Cliente</p>
-                            <p class="font-bold">Carlos Mendoza</p>
-                            <p class="text-sm text-slate-500"><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-                                    data-cfemail="25464457494a56654048444c490b464a48">[email&#160;protected]</a></p>
-                            <p class="text-sm text-slate-500">951 123 4567</p>
+                            <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1">Cliente</p>
+                            <p class="font-bold text-gray-200" id="cliente-nombre">—</p>
+                            <p class="text-sm text-gray-400" id="cliente-email">—</p>
+                            <p class="text-sm text-gray-400" id="cliente-tel">—</p>
                         </div>
                         <div>
-                            <p class="text-xs text-slate-400 uppercase font-bold">Falla reportada</p>
-                            <p class="text-sm">Cambio de batería y limpieza de puerto de carga</p>
+                            <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1">Falla reportada</p>
+                            <p class="text-sm text-gray-300 bg-gray-950 p-3 rounded-xl border border-gray-800" id="falla-reportada">—</p>
                         </div>
                         <div>
-                            <p class="text-xs text-slate-400 uppercase font-bold">Fechas</p>
-                            <p class="text-sm">Ingreso: 28 Feb 2026, 10:30 AM</p>
-                            <p class="text-sm">Estimada: 02 Mar 2026</p>
+                            <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-2">Fecha de ingreso</p>
+                            <p class="font-bold text-gray-300" id="fecha-ingreso">—</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <h3 class="font-bold text-lg mb-4">Acciones Rápidas</h3>
+                <div class="bg-gray-900 p-6 rounded-3xl border border-gray-800 shadow-lg shadow-black/20">
+                    <h3 class="font-bold text-lg mb-6 text-white border-b border-gray-800 pb-4">Acciones Rápidas</h3>
                     <div class="space-y-3">
-                        <button onclick="cambiarEstado('diagnostico')"
-                            class="w-full text-left px-4 py-3 bg-slate-50 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
-                            🔍 Marcar en diagnóstico
-                        </button>
-                        <button onclick="cambiarEstado('reparacion')"
-                            class="w-full text-left px-4 py-3 bg-slate-50 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
-                            🔧 Iniciar reparación
-                        </button>
-                        <button onclick="cambiarEstado('calidad')"
-                            class="w-full text-left px-4 py-3 bg-slate-50 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
-                            ✅ Enviar a control calidad
-                        </button>
-                        <button onclick="cambiarEstado('listo')"
-                            class="w-full text-left px-4 py-3 bg-slate-50 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
-                            🎯 Marcar como listo
-                        </button>
-                        <button onclick="notificarCliente()"
-                            class="w-full text-left px-4 py-3 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors">
-                            📱 Notificar al cliente
-                        </button>
+                        <button onclick="cambiarEstado('diagnostico')" class="w-full text-left px-4 py-3 bg-gray-950 border border-gray-800 rounded-xl hover:bg-gray-800 hover:text-white transition-all text-sm font-medium">🔍 Marcar en diagnóstico</button>
+                        <button onclick="cambiarEstado('reparacion')" class="w-full text-left px-4 py-3 bg-gray-950 border border-gray-800 rounded-xl hover:bg-gray-800 hover:text-white transition-all text-sm font-medium">🔧 Iniciar reparación</button>
+                        <button onclick="cambiarEstado('calidad')" class="w-full text-left px-4 py-3 bg-gray-950 border border-gray-800 rounded-xl hover:bg-gray-800 hover:text-white transition-all text-sm font-medium">✅ Enviar a control calidad</button>
+                        <button onclick="cambiarEstado('listo')" class="w-full text-left px-4 py-3 bg-gray-950 border border-gray-800 rounded-xl hover:bg-gray-800 hover:text-white transition-all text-sm font-medium">🎯 Marcar como listo</button>
+                        <button onclick="notificarCliente()" class="w-full text-center px-4 py-4 bg-brand text-gray-950 rounded-xl font-black text-sm uppercase tracking-widest mt-4 btn-neon">📱 Notificar al cliente</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Línea de tiempo y notas -->
             <div class="lg:col-span-2">
-                <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm mb-6">
-                    <h4 class="font-bold text-lg mb-8">Línea de tiempo de la reparación</h4>
-                    <div class="space-y-0 relative">
-                        <div class="relative flex gap-6 pb-10">
-                            <div class="step-line"></div>
-                            <div class="step-dot completed">✓</div>
-                            <div class="flex-1 -mt-1">
-                                <div class="flex justify-between items-start mb-1">
-                                    <h5 class="font-bold">Recibido</h5>
-                                    <span class="text-[10px] font-bold text-slate-400">28 Feb, 10:30 AM</span>
-                                </div>
-                                <p class="text-sm text-slate-500">Equipo ingresado al sistema por Isaac</p>
-                            </div>
-                        </div>
-
-                        <div class="relative flex gap-6 pb-10">
-                            <div class="step-line"></div>
-                            <div class="step-dot completed">✓</div>
-                            <div class="flex-1 -mt-1">
-                                <div class="flex justify-between items-start mb-1">
-                                    <h5 class="font-bold">Diagnóstico</h5>
-                                    <span class="text-[10px] font-bold text-slate-400">28 Feb, 14:15 PM</span>
-                                </div>
-                                <p class="text-sm text-slate-500">Pruebas de carga realizadas. Batería con 72% de vida
-                                    útil restante. Se recomienda cambio.</p>
-                            </div>
-                        </div>
-
-                        <div class="relative flex gap-6 pb-10">
-                            <div class="step-line"></div>
-                            <div class="step-dot active">3</div>
-                            <div class="flex-1 -mt-1">
-                                <div class="flex justify-between items-start mb-1">
-                                    <h5 class="font-bold text-emerald-600">En Reparación</h5>
-                                    <span class="text-[10px] font-bold text-slate-400">Hoy, 09:00 AM</span>
-                                </div>
-                                <p class="text-sm text-slate-500">Instalando batería original. Limpieza de puerto en
-                                    proceso.</p>
-                                <div class="mt-3 flex gap-2">
-                                    <span
-                                        class="text-xs bg-emerald-100 text-emerald-600 px-2 py-1 rounded-full">Técnico:
-                                        Isaac</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="relative flex gap-6 pb-10">
-                            <div class="step-dot">4</div>
-                            <div class="flex-1 -mt-1">
-                                <div class="flex justify-between items-start mb-1">
-                                    <h5 class="font-bold text-slate-300">Control de Calidad</h5>
-                                    <span class="text-[10px] font-bold text-slate-400">Pendiente</span>
-                                </div>
-                                <p class="text-sm text-slate-300">Pruebas de ciclos de carga y rendimiento</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="bg-gray-900 p-8 rounded-3xl border border-gray-800 shadow-lg shadow-black/20 mb-8">
+                    <h4 class="font-bold text-lg mb-10 text-white flex items-center gap-2"><span class="text-brand">⏳</span> Línea de Tiempo</h4>
+                    <div class="space-y-0 relative" id="timeline-container"></div>
                 </div>
 
-                <!-- Notas de la reparación -->
-                <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
-                    <div class="flex justify-between items-center mb-6">
-                        <h4 class="font-bold text-lg">Notas de la reparación</h4>
-                        <button onclick="agregarNota()" class="text-emerald-600 font-bold text-sm hover:underline">+
-                            Agregar nota</button>
+                <div class="bg-gray-900 p-8 rounded-3xl border border-gray-800 shadow-lg shadow-black/20">
+                    <div class="flex justify-between items-center mb-8 border-b border-gray-800 pb-4">
+                        <h4 class="font-bold text-lg text-white">Bitácora Técnica</h4>
+                        <button onclick="agregarNota()" class="text-[10px] font-black uppercase bg-gray-800 border border-gray-700 px-3 py-2 rounded-xl text-gray-400 btn-neon">+ Agregar nota</button>
                     </div>
-
-                    <div class="space-y-4">
-                        <div class="bg-slate-50 p-4 rounded-xl">
-                            <div class="flex justify-between items-start mb-2">
-                                <p class="font-bold text-sm">Isaac Fitz</p>
-                                <p class="text-xs text-slate-400">Hace 2 horas</p>
-                            </div>
-                            <p class="text-sm text-slate-600">Batería original en stock. Procedo con el cambio.</p>
+                    <div class="space-y-6" id="notas-container"></div>
+                    <div class="mt-8">
+                        <textarea id="nueva-nota" placeholder="Añadir observación técnica..." class="w-full bg-gray-950 border border-gray-800 rounded-2xl p-4 text-sm text-white focus:outline-none focus:border-brand placeholder-gray-700" rows="4"></textarea>
+                        <div class="flex justify-end mt-4">
+                            <button onclick="guardarNota()" class="bg-gray-800 border border-gray-700 text-white px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest btn-neon">Guardar nota</button>
                         </div>
-
-                        <div class="bg-slate-50 p-4 rounded-xl">
-                            <div class="flex justify-between items-start mb-2">
-                                <p class="font-bold text-sm">Sistema</p>
-                                <p class="text-xs text-slate-400">28 Feb, 14:15 PM</p>
-                            </div>
-                            <p class="text-sm text-slate-600">Diagnóstico completado. Presupuesto: $850 (batería +
-                                limpieza)</p>
-                        </div>
-                    </div>
-
-                    <div class="mt-6">
-                        <textarea placeholder="Escribe una nota..." class="w-full p-4 border rounded-2xl text-sm"
-                            rows="3"></textarea>
-                        <button
-                            class="mt-3 bg-slate-900 text-white px-6 py-2 rounded-xl text-sm font-bold hover:bg-emerald-600 transition-colors">
-                            Guardar nota
-                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const folio = urlParams.get('folio') || 'ORD-123';
+
+        document.getElementById('folio-badge').textContent = folio;
+
+        async function loadOrden() {
+            try {
+                const res = await fetch(`/api/reparaciones/${folio}`);
+                if (res.ok) {
+                    const orden = await res.json();
+                    document.getElementById('equipo-nombre').textContent = orden.equipo || orden.modelo;
+                    document.getElementById('cliente-nombre').textContent = orden.cliente;
+                    document.getElementById('cliente-email').textContent = orden.email || '';
+                    document.getElementById('cliente-tel').textContent = orden.telefono || '';
+                    document.getElementById('falla-reportada').textContent = orden.falla;
+                    document.getElementById('fecha-ingreso').textContent = orden.fechaIngreso || orden.fecha || '—';
+                }
+            } catch (e) {
+                console.log('Usando datos de prueba');
+            }
+        }
+
         function cambiarEstado(estado) {
-            const estados = {
-                diagnostico: 'Estado cambiado a: En diagnóstico',
-                reparacion: 'Estado cambiado a: En reparación',
-                calidad: 'Estado cambiado a: Control de calidad',
-                listo: 'Estado cambiado a: Listo para entregar'
-            };
+            const estados = { diagnostico: '🔄 Estado: En diagnóstico', reparacion: '🔧 Estado: En reparación', calidad: '✅ Estado: Control de calidad', listo: '🎯 Estado: Listo para guardar' };
             alert(estados[estado]);
         }
 
-        function notificarCliente() {
-            alert('Notificación enviada al cliente');
-        }
+        function notificarCliente() { alert('📱 SMS y WhatsApp enviados al cliente.'); }
+        function agregarNota() { document.getElementById('nueva-nota').focus(); }
+        function guardarNota() { alert('📝 Nota guardada.'); }
 
-        function agregarNota() {
-            alert('Nota agregada');
-        }
+        loadOrden();
     </script>
 </body>
 

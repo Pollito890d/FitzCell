@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="bg-gray-950">
 
 <head>
     <meta charset="UTF-8">
@@ -9,43 +9,44 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: #f8fafc;
+            background: #0a0a0b;
         }
 
         .product-row:hover {
-            background: #f8fafc;
+            background: #111827;
         }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="../media/images/fitzcell_logo.svg" />
 </head>
 
-<body class="p-8">
+<body class="p-8 bg-gray-950 text-gray-100 min-h-screen">
     <div class="animate-pop">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
                 <h2 class="text-3xl font-bold">Gestión de Inventario</h2>
-                <p class="text-slate-500 mt-1">Controla el stock de productos y accesorios</p>
+                <p class="text-gray-400 mt-1">Controla el stock de productos y accesorios</p>
             </div>
             <div class="flex gap-3 mt-4 md:mt-0">
                 <button onclick="exportarInventario()"
-                    class="border border-slate-200 px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors">
+                    class="border border-gray-700 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-950 transition-colors">
                     📥 Exportar
                 </button>
                 <button onclick="window.location.href='admin-nuevo-producto.html'"
-                    class="bg-emerald-500 text-white px-6 py-2 rounded-xl font-bold hover:bg-emerald-600 transition-colors flex items-center gap-2">
+                    class="px-6 py-2 rounded-xl font-bold flex items-center gap-2 btn-neon">
                     <span>+</span> Nuevo Producto
                 </button>
             </div>
         </div>
 
         <!-- Filtros y búsqueda -->
-        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 mb-8">
+        <div class="bg-gray-900 p-6 rounded-3xl shadow-lg shadow-black/20 border border-gray-800 mb-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <input type="text" placeholder="Buscar producto..." class="border border-slate-200 p-3 rounded-xl"
+                <input type="text" placeholder="Buscar producto..." class="bg-gray-800 border border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz"
                     id="searchInput" onkeyup="filtrarProductos()">
-                <select class="border border-slate-200 p-3 rounded-xl" id="categoriaFilter"
+                <select class="bg-gray-800 border border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz" id="categoriaFilter"
                     onchange="filtrarProductos()">
                     <option value="">Todas las categorías</option>
                     <option value="Cargadores">Cargadores</option>
@@ -53,23 +54,23 @@
                     <option value="Audio">Audio</option>
                     <option value="Micas">Micas</option>
                 </select>
-                <select class="border border-slate-200 p-3 rounded-xl" id="stockFilter" onchange="filtrarProductos()">
+                <select class="bg-gray-800 border border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz" id="stockFilter" onchange="filtrarProductos()">
                     <option value="">Todos los stocks</option>
                     <option value="bajo">Stock bajo (menos de 5)</option>
                     <option value="medio">Stock medio (5-20)</option>
                     <option value="alto">Stock alto (+20)</option>
                 </select>
-                <button onclick="limpiarFiltros()" class="text-slate-500 hover:text-slate-900 text-sm font-bold">
+                <button onclick="limpiarFiltros()" class="text-gray-400 hover:text-white text-sm font-bold">
                     Limpiar filtros
                 </button>
             </div>
         </div>
 
         <!-- Tabla de inventario -->
-        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="bg-gray-900 rounded-3xl shadow-lg shadow-black/20 border border-gray-800 overflow-hidden">
             <table class="w-full text-left">
-                <thead class="bg-slate-50 border-b">
-                    <tr class="text-xs font-bold text-slate-400 uppercase">
+                <thead class="bg-gray-950 border-b">
+                    <tr class="text-xs font-bold text-gray-500 uppercase">
                         <th class="px-6 py-4">Producto</th>
                         <th class="px-6 py-4">Categoría</th>
                         <th class="px-6 py-4">Stock</th>
@@ -80,18 +81,18 @@
                 </thead>
                 <tbody class="divide-y text-sm" id="tabla-productos">
                     <!-- Datos quemados de ejemplo -->
-                    <tr class="hover:bg-slate-50 product-row" data-nombre="Cargador Samsung 25W"
+                    <tr class="hover:bg-gray-950 product-row" data-nombre="Cargador Samsung 25W"
                         data-categoria="Cargadores" data-stock="12">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 <span class="text-2xl">🔌</span>
                                 <div>
                                     <span class="font-bold">Cargador Samsung 25W</span>
-                                    <p class="text-xs text-slate-400">Carga super rápida</p>
+                                    <p class="text-xs text-gray-500">Carga super rápida</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-slate-500">Cargadores</td>
+                        <td class="px-6 py-4 text-gray-400">Cargadores</td>
                         <td class="px-6 py-4">
                             <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-600">12
                                 pzas</span>
@@ -100,23 +101,23 @@
                         <td class="px-6 py-4">28 ventas</td>
                         <td class="px-6 py-4 text-right">
                             <button onclick="editarProducto(1)"
-                                class="text-blue-500 font-bold hover:underline mr-3">Editar</button>
+                                class="text-green-500 font-bold hover:underline mr-3">Editar</button>
                             <button onclick="ajustarStock(1)"
                                 class="text-emerald-500 font-bold hover:underline">Stock</button>
                         </td>
                     </tr>
-                    <tr class="hover:bg-slate-50 product-row" data-nombre="Funda iPhone 15" data-categoria="Fundas"
+                    <tr class="hover:bg-gray-950 product-row" data-nombre="Funda iPhone 15" data-categoria="Fundas"
                         data-stock="2">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 <span class="text-2xl">🛡️</span>
                                 <div>
                                     <span class="font-bold">Funda iPhone 15</span>
-                                    <p class="text-xs text-slate-400">Uso rudo</p>
+                                    <p class="text-xs text-gray-500">Uso rudo</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-slate-500">Fundas</td>
+                        <td class="px-6 py-4 text-gray-400">Fundas</td>
                         <td class="px-6 py-4">
                             <span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-600">2
                                 pzas</span>
@@ -125,23 +126,23 @@
                         <td class="px-6 py-4">15 ventas</td>
                         <td class="px-6 py-4 text-right">
                             <button onclick="editarProducto(2)"
-                                class="text-blue-500 font-bold hover:underline mr-3">Editar</button>
+                                class="text-green-500 font-bold hover:underline mr-3">Editar</button>
                             <button onclick="ajustarStock(2)"
                                 class="text-emerald-500 font-bold hover:underline">Stock</button>
                         </td>
                     </tr>
-                    <tr class="hover:bg-slate-50 product-row" data-nombre="Audífonos Lenovo" data-categoria="Audio"
+                    <tr class="hover:bg-gray-950 product-row" data-nombre="Audífonos Lenovo" data-categoria="Audio"
                         data-stock="8">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 <span class="text-2xl">🎧</span>
                                 <div>
                                     <span class="font-bold">Audífonos Lenovo</span>
-                                    <p class="text-xs text-slate-400">Bluetooth Hi-Fi</p>
+                                    <p class="text-xs text-gray-500">Bluetooth Hi-Fi</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-slate-500">Audio</td>
+                        <td class="px-6 py-4 text-gray-400">Audio</td>
                         <td class="px-6 py-4">
                             <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-600">8
                                 pzas</span>
@@ -150,23 +151,23 @@
                         <td class="px-6 py-4">32 ventas</td>
                         <td class="px-6 py-4 text-right">
                             <button onclick="editarProducto(3)"
-                                class="text-blue-500 font-bold hover:underline mr-3">Editar</button>
+                                class="text-green-500 font-bold hover:underline mr-3">Editar</button>
                             <button onclick="ajustarStock(3)"
                                 class="text-emerald-500 font-bold hover:underline">Stock</button>
                         </td>
                     </tr>
-                    <tr class="hover:bg-slate-50 product-row" data-nombre="Mica Cerámica" data-categoria="Micas"
+                    <tr class="hover:bg-gray-950 product-row" data-nombre="Mica Cerámica" data-categoria="Micas"
                         data-stock="40">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 <span class="text-2xl">💎</span>
                                 <div>
                                     <span class="font-bold">Mica Cerámica</span>
-                                    <p class="text-xs text-slate-400">Alta resistencia</p>
+                                    <p class="text-xs text-gray-500">Alta resistencia</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-slate-500">Micas</td>
+                        <td class="px-6 py-4 text-gray-400">Micas</td>
                         <td class="px-6 py-4">
                             <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-600">40
                                 pzas</span>
@@ -175,7 +176,7 @@
                         <td class="px-6 py-4">45 ventas</td>
                         <td class="px-6 py-4 text-right">
                             <button onclick="editarProducto(4)"
-                                class="text-blue-500 font-bold hover:underline mr-3">Editar</button>
+                                class="text-green-500 font-bold hover:underline mr-3">Editar</button>
                             <button onclick="ajustarStock(4)"
                                 class="text-emerald-500 font-bold hover:underline">Stock</button>
                         </td>
@@ -186,18 +187,18 @@
 
         <!-- Paginación -->
         <div class="flex justify-between items-center mt-8">
-            <p class="text-sm text-slate-500">Mostrando 1-4 de 12 productos</p>
+            <p class="text-sm text-gray-400">Mostrando 1-4 de 12 productos</p>
             <div class="flex gap-2">
                 <button
-                    class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">←</button>
+                    class="w-10 h-10 rounded-xl border border-gray-700 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">←</button>
                 <button
                     class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center">1</button>
                 <button
-                    class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">2</button>
+                    class="w-10 h-10 rounded-xl border border-gray-700 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">2</button>
                 <button
-                    class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">3</button>
+                    class="w-10 h-10 rounded-xl border border-gray-700 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">3</button>
                 <button
-                    class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">→</button>
+                    class="w-10 h-10 rounded-xl border border-gray-700 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">→</button>
             </div>
         </div>
     </div>
@@ -205,26 +206,26 @@
     <!-- Modal para ajustar stock -->
     <div id="stock-modal" class="fixed inset-0 bg-slate-900/80 hidden justify-center items-center z-50 p-4"
         onclick="cerrarStockModal(event)">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6" onclick="event.stopPropagation()">
+        <div class="bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md p-6" onclick="event.stopPropagation()">
             <h3 class="text-xl font-bold mb-4">Ajustar Stock</h3>
             <form id="stock-form" onsubmit="guardarAjusteStock(event)">
                 <input type="hidden" id="producto-id">
                 <div class="space-y-4">
                     <div>
-                        <label class="text-sm font-bold text-slate-600">Producto</label>
+                        <label class="text-sm font-bold text-gray-400">Producto</label>
                         <p id="producto-nombre" class="font-bold text-lg"></p>
                     </div>
                     <div>
-                        <label class="text-sm font-bold text-slate-600">Stock actual</label>
+                        <label class="text-sm font-bold text-gray-400">Stock actual</label>
                         <p id="stock-actual" class="font-bold"></p>
                     </div>
                     <div>
-                        <label class="text-sm font-bold text-slate-600">Nuevo stock</label>
-                        <input type="number" id="nuevo-stock" min="0" class="w-full p-3 border rounded-xl" required>
+                        <label class="text-sm font-bold text-gray-400">Nuevo stock</label>
+                        <input type="number" id="nuevo-stock" min="0" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none input-fitz" required>
                     </div>
                     <div>
-                        <label class="text-sm font-bold text-slate-600">Motivo del ajuste</label>
-                        <select class="w-full p-3 border rounded-xl" id="motivo-ajuste">
+                        <label class="text-sm font-bold text-gray-400">Motivo del ajuste</label>
+                        <select class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none input-fitz" id="motivo-ajuste">
                             <option>Compra a proveedor</option>
                             <option>Ajuste por inventario</option>
                             <option>Devolución</option>
@@ -233,11 +234,11 @@
                     </div>
                     <div class="flex gap-3 pt-4">
                         <button type="button" onclick="cerrarStockModal()"
-                            class="flex-1 border border-slate-200 py-3 rounded-xl font-bold hover:bg-slate-50">
+                            class="flex-1 border border-gray-700 py-3 rounded-xl font-bold hover:bg-gray-950">
                             Cancelar
                         </button>
                         <button type="submit"
-                            class="flex-1 bg-emerald-500 text-white py-3 rounded-xl font-bold hover:bg-emerald-600">
+                            class="flex-1 py-3 rounded-xl font-bold btn-neon">
                             Guardar
                         </button>
                     </div>

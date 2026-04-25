@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es" class="bg-gray-950">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - FitzCell Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' },
+                        base: '#0a0a0b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .config-section {
+            transition: all 0.2s;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <script src="../js/i18n.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/data.js"></script>
+    <script src="../js/sidebar.js"></script>
+    <link rel="icon" type="image/svg+xml" href="../media/images/fitzcell_logo.svg" />
+</head>
+
+<body class="bg-base text-gray-100 min-h-screen">
+    <script>renderSidebar('configuracion');</script>
+
+    <!-- Contenido principal -->
+    <div class="md:ml-64 min-h-screen">
+        <div class="pt-16 md:pt-0 p-6 fade-in">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold mb-8" data-i18n="settings_title">Configuración del Sistema</h2>
+
+                <div class="space-y-6">
+                    <!-- Perfil de usuario -->
+                    <div
+                        class="bg-gray-900 p-8 rounded-3xl shadow-lg shadow-black/20 border border-gray-800 config-section">
+                        <h3 class="text-xl font-bold mb-6 flex items-center gap-3 text-white">
+                            <span class="text-2xl">👤</span> Mi Perfil
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="text-sm font-bold text-gray-400 mb-2 block">Nombre completo</label>
+                                <input type="text" value="Isaac Fitz"
+                                    class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+                            <div>
+                                <label class="text-sm font-bold text-gray-400 mb-2 block">Correo electrónico</label>
+                                <input type="email" value="isaac@fitzcell.com"
+                                    class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+                            <div>
+                                <label class="text-sm font-bold text-gray-400 mb-2 block">Teléfono</label>
+                                <input type="tel" value="951 123 4567"
+                                    class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+                            <div>
+                                <label class="text-sm font-bold text-gray-400 mb-2 block">Rol</label>
+                                <input type="text" value="Administrador" disabled
+                                    class="w-full p-3 border border-gray-700 rounded-xl bg-gray-950 text-gray-500 cursor-not-allowed uppercase text-xs font-bold tracking-wider">
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end">
+                            <button class="px-6 py-2 rounded-xl font-bold btn-neon">
+                                Actualizar perfil
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Cambiar contraseña -->
+                    <div
+                        class="bg-gray-900 p-8 rounded-3xl shadow-lg shadow-black/20 border border-gray-800 config-section">
+                        <h3 class="text-xl font-bold mb-6 flex items-center gap-3 text-white">
+                            <span class="text-2xl">🔒</span> Seguridad
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="text-sm font-bold text-gray-400 mb-2 block">Contraseña actual</label>
+                                <input type="password" placeholder="••••••••"
+                                    class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+                            <div>
+                                <label class="text-sm font-bold text-gray-400 mb-2 block">Nueva contraseña</label>
+                                <input type="password" placeholder="Mínimo 8 caracteres"
+                                    class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+                            <div>
+                                <label class="text-sm font-bold text-gray-400 mb-2 block">Confirmar contraseña</label>
+                                <input type="password" placeholder="Repite la contraseña"
+                                    class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end">
+                            <button class="px-6 py-2 rounded-xl font-bold btn-neon-gray text-sm">
+                                Cambiar contraseña
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Configuración de la tienda -->
+                    <div
+                        class="bg-gray-900 p-8 rounded-3xl shadow-lg shadow-black/20 border border-gray-800 config-section">
+                        <h3 class="text-xl font-bold mb-6 flex items-center gap-3 text-white">
+                            <span class="text-2xl">🏪</span> Información del Negocio
+                        </h3>
+                        <div class="grid grid-cols-1 gap-6">
+                            <div>
+                                <label class="text-sm font-bold text-gray-400 mb-2 block">Nombre del negocio</label>
+                                <input type="text" value="FitzCell - Reparaciones y Accesorios"
+                                    class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+                            <div>
+                                <label class="text-sm font-bold text-gray-400 mb-2 block">Dirección</label>
+                                <input type="text" value="Av. Independencia #12, San Pablo Huixtepec, Oax."
+                                    class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+                            <div>
+                                <label class="text-sm font-bold text-gray-400 mb-2 block">Teléfono de contacto</label>
+                                <input type="text" value="951 123 4567"
+                                    class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+                            <div>
+                                <label class="text-sm font-bold text-gray-400 mb-2 block">Email</label>
+                                <input type="email" value="contacto@fitzcell.com"
+                                    class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+                            <div>
+                                <label class="text-sm font-bold text-gray-400 mb-2 block">RFC</label>
+                                <input type="text" value="FICM890123XYZ"
+                                    class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end">
+                            <button class="px-6 py-2 rounded-xl font-bold btn-neon">
+                                Guardar cambios
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Preferencias del sistema -->
+                    <div
+                        class="bg-gray-900 p-8 rounded-3xl shadow-lg shadow-black/20 border border-gray-800 config-section">
+                        <h3 class="text-xl font-bold mb-6 flex items-center gap-3 text-white">
+                            <span class="text-2xl">⚙️</span> <span data-i18n="settings_preferences">Preferencias</span>
+                        </h3>
+                        <div class="space-y-4">
+                            <div
+                                class="flex items-center justify-between p-4 bg-gray-800/50 rounded-2xl border border-gray-700">
+                                <div>
+                                    <p class="font-bold text-white">Notificaciones por correo</p>
+                                    <p class="text-sm text-gray-400">Recibir alertas de stock bajo y nuevas órdenes</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" checked class="sr-only peer">
+                                    <div
+                                        class="w-11 h-6 bg-gray-700 rounded-full peer peer-checked:bg-brand transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full">
+                                    </div>
+                                </label>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <!-- Usuarios del sistema (solo admin) -->
+                    <div
+                        class="bg-gray-900 p-8 rounded-3xl shadow-lg shadow-black/20 border border-gray-800 config-section">
+                        <h3 class="text-xl font-bold mb-6 flex items-center gap-3 text-white">
+                            <span class="text-2xl">👥</span> Usuarios del Sistema
+                        </h3>
+                        <div class="space-y-4">
+                            <div
+                                class="flex items-center justify-between p-4 bg-gray-950 rounded-2xl border border-gray-800">
+                                <div>
+                                    <p class="font-bold text-white">Isaac Fitz</p>
+                                    <p class="text-sm text-gray-400">isaac@fitzcell.com · Administrador</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button
+                                        class="text-[10px] bg-brand/10 text-brand px-3 py-1 rounded-full font-bold border border-brand/20 uppercase">Activo</button>
+                                    <button class="text-gray-500 hover:text-white transition-colors">✏️</button>
+                                </div>
+                            </div>
+
+                            <div
+                                class="flex items-center justify-between p-4 bg-gray-950 rounded-2xl border border-gray-800">
+                                <div>
+                                    <p class="font-bold text-white">María González</p>
+                                    <p class="text-sm text-gray-400">maria@fitzcell.com · Vendedor</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button
+                                        class="text-[10px] bg-brand/10 text-brand px-3 py-1 rounded-full font-bold border border-brand/20 uppercase">Activo</button>
+                                    <button class="text-gray-500 hover:text-white transition-colors">✏️</button>
+                                </div>
+                            </div>
+
+                            <div
+                                class="flex items-center justify-between p-4 bg-gray-950 rounded-2xl border border-gray-800 opacity-60">
+                                <div>
+                                    <p class="font-bold text-white">Carlos López</p>
+                                    <p class="text-sm text-gray-400">carlos@fitzcell.com · Técnico</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button
+                                        class="text-[10px] bg-gray-800 text-gray-500 px-3 py-1 rounded-full font-bold border border-gray-700 uppercase">Inactivo</button>
+                                    <button class="text-gray-500 hover:text-white transition-colors">✏️</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <button
+                                class="w-full py-4 rounded-xl font-bold text-sm btn-neon-gray border-dashed border-2">
+                                + Invitar nuevo usuario
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Copia de seguridad -->
+                    <div
+                        class="bg-gray-900 p-8 rounded-3xl shadow-lg shadow-black/20 border border-gray-800 config-section">
+                        <h3 class="text-xl font-bold mb-6 flex items-center gap-3 text-white">
+                            <span class="text-2xl">💾</span> Copias de Seguridad
+                        </h3>
+                        <div class="space-y-4">
+                            <div
+                                class="flex items-center justify-between p-4 bg-gray-800/50 rounded-2xl border border-gray-700">
+                                <div>
+                                    <p class="font-bold text-white">Última copia de seguridad</p>
+                                    <p class="text-sm text-gray-400">02 Mar 2026, 03:00 AM · Completa</p>
+                                </div>
+                                <div class="download-container">
+                                    <label class="download-label">
+                                        <input type="checkbox" class="download-input" />
+                                        <span class="download-circle">
+                                            <svg class="download-icon" aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" stroke-linecap="round"
+                                                    stroke-linejoin="round" stroke-width="1.5"
+                                                    d="M12 19V5m0 14-4-4m4 4 4-4"></path>
+                                            </svg>
+                                            <div class="download-square"></div>
+                                        </span>
+                                        <p class="download-title">Descargar</p>
+                                        <p class="download-title">Listo</p>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div
+                                class="flex items-center justify-between p-4 bg-gray-800/50 rounded-2xl border border-gray-700">
+                                <div>
+                                    <p class="font-bold text-white">Tamaño de la base de datos</p>
+                                    <p class="text-sm text-gray-400">156 MB</p>
+                                </div>
+                                <button class="px-6 py-2 rounded-xl font-bold btn-neon">
+                                    Respaldar ahora
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

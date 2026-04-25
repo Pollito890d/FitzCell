@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="bg-gray-950">
 
 <head>
     <meta charset="UTF-8">
@@ -7,50 +7,62 @@
     <title>Historial de Ventas - FitzCell Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' },
+                base: '#0a0a0b'
+              }
+            }
+          }
+        }
+    </script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: #f8fafc;
         }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="../media/images/fitzcell_logo.svg" />
 </head>
 
-<body class="p-8">
-    <div class="animate-pop">
-        <div class="flex justify-between items-center mb-8">
+<body class="p-8 bg-base text-gray-100 min-h-screen">
+    <div class="animate-pop max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
                 <h2 class="text-3xl font-bold">Historial de Ventas</h2>
-                <p class="text-slate-500 mt-1">Consulta todas las transacciones realizadas</p>
+                <p class="text-gray-400 mt-1">Consulta todas las transacciones realizadas</p>
             </div>
             <div class="flex gap-3">
                 <button onclick="exportarVentas()"
-                    class="border border-slate-200 px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors">
-                    📥 Exportar
+                    class="bg-gray-900 border border-gray-800 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors text-white">
+                    📥 Exportar Excel
                 </button>
                 <button onclick="window.location.href='admin-ventas.html'"
-                    class="bg-emerald-500 text-white px-6 py-2 rounded-xl font-bold hover:bg-emerald-600 transition-colors">
+                    class="px-6 py-2 rounded-xl font-bold btn-neon">
                     + Nueva Venta
                 </button>
             </div>
         </div>
 
         <!-- Filtros -->
-        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-gray-900 p-6 rounded-3xl shadow-lg shadow-black/20 border border-gray-800 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div>
-                    <label class="text-xs font-bold text-slate-400 mb-1 block">Desde</label>
-                    <input type="date" class="w-full p-3 border rounded-xl" value="2026-03-01">
+                    <label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase tracking-widest">Desde</label>
+                    <input type="date" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-brand" value="2026-03-01">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-slate-400 mb-1 block">Hasta</label>
-                    <input type="date" class="w-full p-3 border rounded-xl" value="2026-03-02">
+                    <label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase tracking-widest">Hasta</label>
+                    <input type="date" class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-brand" value="2026-03-02">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-slate-400 mb-1 block">Método de pago</label>
-                    <select class="w-full p-3 border rounded-xl">
+                    <label class="text-[10px] font-bold text-gray-500 mb-2 block uppercase tracking-widest">Método de pago</label>
+                    <select class="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-brand">
                         <option>Todos</option>
                         <option>Efectivo</option>
                         <option>Tarjeta</option>
@@ -59,8 +71,8 @@
                 </div>
                 <div class="flex items-end">
                     <button
-                        class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-emerald-600 transition-colors">
-                        Filtrar
+                        class="w-full bg-gray-800 border border-gray-700 text-white py-3 rounded-xl font-bold hover:bg-gray-700 transition-colors">
+                        Filtrar resultados
                     </button>
                 </div>
             </div>
@@ -68,127 +80,121 @@
 
         <!-- Resumen de ventas -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                <p class="text-xs font-bold text-slate-400 uppercase">Ventas del período</p>
-                <p class="text-3xl font-bold text-emerald-600 mt-2">$24,350</p>
-                <p class="text-sm text-slate-500 mt-1">vs período anterior +15%</p>
+            <div class="bg-gray-900 p-6 rounded-3xl shadow-lg shadow-black/20 border border-gray-800">
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Ventas del período</p>
+                <p class="text-3xl font-black text-brand mt-2">$24,350</p>
+                <p class="text-xs text-gray-400 mt-2 font-medium">📈 +15% vs período anterior</p>
             </div>
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                <p class="text-xs font-bold text-slate-400 uppercase">Número de transacciones</p>
-                <p class="text-3xl font-bold text-blue-600 mt-2">48</p>
-                <p class="text-sm text-slate-500 mt-1">Ticket promedio: $507</p>
+            <div class="bg-gray-900 p-6 rounded-3xl shadow-lg shadow-black/20 border border-gray-800">
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Transacciones</p>
+                <p class="text-3xl font-black text-white mt-2">48</p>
+                <p class="text-xs text-gray-400 mt-2 font-medium">Ticket promedio: <span class="text-brand">$507</span></p>
             </div>
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                <p class="text-xs font-bold text-slate-400 uppercase">Producto más vendido</p>
-                <p class="text-3xl font-bold text-amber-600 mt-2">Micas</p>
-                <p class="text-sm text-slate-500 mt-1">28 unidades vendidas</p>
+            <div class="bg-gray-900 p-6 rounded-3xl shadow-lg shadow-black/20 border border-gray-800">
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Producto Estrella</p>
+                <p class="text-3xl font-black text-amber-500 mt-2">Micas</p>
+                <p class="text-xs text-gray-400 mt-2 font-medium">28 unidades vendidas</p>
             </div>
         </div>
 
         <!-- Tabla de ventas -->
-        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-slate-50 border-b">
-                    <tr class="text-xs font-bold text-slate-400 uppercase">
-                        <th class="px-6 py-4">Folio</th>
-                        <th class="px-6 py-4">Fecha</th>
-                        <th class="px-6 py-4">Productos</th>
-                        <th class="px-6 py-4">Método de pago</th>
-                        <th class="px-6 py-4">Total</th>
-                        <th class="px-6 py-4">Vendedor</th>
-                        <th class="px-6 py-4 text-right">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y text-sm">
-                    <tr class="hover:bg-slate-50">
-                        <td class="px-6 py-4 font-bold">VTA-2503</td>
-                        <td class="px-6 py-4">02 Mar 2026, 11:30</td>
-                        <td class="px-6 py-4">Cargador, Funda</td>
-                        <td class="px-6 py-4">Efectivo</td>
-                        <td class="px-6 py-4 font-bold text-emerald-600">$870</td>
-                        <td class="px-6 py-4">Isaac</td>
-                        <td class="px-6 py-4 text-right">
-                            <button onclick="verDetalleVenta('VTA-2503')"
-                                class="text-blue-500 hover:underline mr-3">Ver</button>
-                            <button onclick="imprimirTicket('VTA-2503')"
-                                class="text-slate-500 hover:underline">Imprimir</button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-slate-50">
-                        <td class="px-6 py-4 font-bold">VTA-2502</td>
-                        <td class="px-6 py-4">02 Mar 2026, 10:15</td>
-                        <td class="px-6 py-4">Audífonos, Mica x2</td>
-                        <td class="px-6 py-4">Tarjeta</td>
-                        <td class="px-6 py-4 font-bold text-emerald-600">$850</td>
-                        <td class="px-6 py-4">María</td>
-                        <td class="px-6 py-4 text-right">
-                            <button onclick="verDetalleVenta('VTA-2502')"
-                                class="text-blue-500 hover:underline mr-3">Ver</button>
-                            <button onclick="imprimirTicket('VTA-2502')"
-                                class="text-slate-500 hover:underline">Imprimir</button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-slate-50">
-                        <td class="px-6 py-4 font-bold">VTA-2501</td>
-                        <td class="px-6 py-4">01 Mar 2026, 18:45</td>
-                        <td class="px-6 py-4">Powerbank, Cargador</td>
-                        <td class="px-6 py-4">Transferencia</td>
-                        <td class="px-6 py-4 font-bold text-emerald-600">$1,130</td>
-                        <td class="px-6 py-4">Isaac</td>
-                        <td class="px-6 py-4 text-right">
-                            <button onclick="verDetalleVenta('VTA-2501')"
-                                class="text-blue-500 hover:underline mr-3">Ver</button>
-                            <button onclick="imprimirTicket('VTA-2501')"
-                                class="text-slate-500 hover:underline">Imprimir</button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-slate-50">
-                        <td class="px-6 py-4 font-bold">VTA-2500</td>
-                        <td class="px-6 py-4">01 Mar 2026, 14:20</td>
-                        <td class="px-6 py-4">Funda iPhone x3</td>
-                        <td class="px-6 py-4">Efectivo</td>
-                        <td class="px-6 py-4 font-bold text-emerald-600">$960</td>
-                        <td class="px-6 py-4">Carlos</td>
-                        <td class="px-6 py-4 text-right">
-                            <button onclick="verDetalleVenta('VTA-2500')"
-                                class="text-blue-500 hover:underline mr-3">Ver</button>
-                            <button onclick="imprimirTicket('VTA-2500')"
-                                class="text-slate-500 hover:underline">Imprimir</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="bg-gray-900 rounded-3xl shadow-lg shadow-black/20 border border-gray-800 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-950/50 border-b border-gray-800">
+                        <tr class="text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                            <th class="px-6 py-5">Folio</th>
+                            <th class="px-6 py-5">Fecha</th>
+                            <th class="px-6 py-5">Productos</th>
+                            <th class="px-6 py-5">Pago</th>
+                            <th class="px-6 py-5">Total</th>
+                            <th class="px-6 py-5">Vendedor</th>
+                            <th class="px-6 py-5 text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-800 text-sm">
+                        <tr class="hover:bg-gray-800/30 transition-colors">
+                            <td class="px-6 py-4 font-bold text-brand">VTA-2503</td>
+                            <td class="px-6 py-4 text-gray-300">02 Mar, 11:30</td>
+                            <td class="px-6 py-4 text-gray-400">Cargador, Funda</td>
+                            <td class="px-6 py-4">
+                                <span class="bg-gray-950 border border-gray-800 px-2 py-1 rounded text-xs">Efectivo</span>
+                            </td>
+                            <td class="px-6 py-4 font-black text-brand">$870</td>
+                            <td class="px-6 py-4 text-gray-300">Isaac</td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex justify-end gap-3 text-xs">
+                                    <button onclick="verDetalleVenta('VTA-2503')" class="text-brand font-bold hover:underline">Ver</button>
+                                    <button onclick="imprimirTicket('VTA-2503')" class="text-gray-500 hover:text-white transition-colors">Recibo</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-800/30 transition-colors">
+                            <td class="px-6 py-4 font-bold text-brand">VTA-2502</td>
+                            <td class="px-6 py-4 text-gray-300">02 Mar, 10:15</td>
+                            <td class="px-6 py-4 text-gray-400">Audífonos, Mica x2</td>
+                            <td class="px-6 py-4">
+                                <span class="bg-gray-950 border border-gray-800 px-2 py-1 rounded text-xs">Tarjeta</span>
+                            </td>
+                            <td class="px-6 py-4 font-black text-brand">$850</td>
+                            <td class="px-6 py-4 text-gray-300">María</td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex justify-end gap-3 text-xs">
+                                    <button onclick="verDetalleVenta('VTA-2502')" class="text-brand font-bold hover:underline">Ver</button>
+                                    <button onclick="imprimirTicket('VTA-2502')" class="text-gray-500 hover:text-white transition-colors">Recibo</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-800/30 transition-colors">
+                            <td class="px-6 py-4 font-bold text-brand">VTA-2501</td>
+                            <td class="px-6 py-4 text-gray-300">01 Mar, 18:45</td>
+                            <td class="px-6 py-4 text-gray-400">Powerbank, Cargador</td>
+                            <td class="px-6 py-4">
+                                <span class="bg-gray-950 border border-gray-800 px-2 py-1 rounded text-xs">Transf.</span>
+                            </td>
+                            <td class="px-6 py-4 font-black text-brand">$1,130</td>
+                            <td class="px-6 py-4 text-gray-300">Isaac</td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex justify-end gap-3 text-xs">
+                                    <button onclick="verDetalleVenta('VTA-2501')" class="text-brand font-bold hover:underline">Ver</button>
+                                    <button onclick="imprimirTicket('VTA-2501')" class="text-gray-500 hover:text-white transition-colors">Recibo</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Paginación -->
-        <div class="flex justify-between items-center mt-8">
-            <p class="text-sm text-slate-500">Mostrando 1-4 de 48 ventas</p>
+        <div class="flex flex-col md:flex-row justify-between items-center mt-8 gap-4">
+            <p class="text-xs text-gray-500 font-medium">Mostrando 1-4 de 48 ventas registradas</p>
             <div class="flex gap-2">
                 <button
-                    class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">←</button>
+                    class="w-10 h-10 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center hover:bg-gray-800 transition-colors text-gray-400 font-bold">←</button>
                 <button
-                    class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center">1</button>
+                    class="w-10 h-10 rounded-xl bg-brand text-gray-950 flex items-center justify-center font-black btn-neon">1</button>
                 <button
-                    class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">2</button>
+                    class="w-10 h-10 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center hover:bg-gray-800 transition-colors text-white font-bold">2</button>
                 <button
-                    class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">3</button>
+                    class="w-10 h-10 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center hover:bg-gray-800 transition-colors text-white font-bold">3</button>
                 <button
-                    class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">→</button>
+                    class="w-10 h-10 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center hover:bg-gray-800 transition-colors text-gray-400 font-bold">→</button>
             </div>
         </div>
     </div>
 
     <script>
         function verDetalleVenta(folio) {
-            alert(`Mostrando detalle de venta: ${folio}`);
+            alert(`📋 Detalle de transacción: ${folio}`);
         }
 
         function imprimirTicket(folio) {
-            alert(`Imprimiendo ticket: ${folio}`);
+            alert(`🖨️ Generando ticket PDF para ${folio}...`);
         }
 
         function exportarVentas() {
-            alert('Exportando historial de ventas a Excel...');
+            alert('📊 Exportando base de datos a formato .xlsx');
         }
     </script>
 </body>

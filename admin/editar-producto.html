@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es" class="bg-gray-950">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Producto - FitzCell Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' },
+                        base: '#0a0a0b'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <script src="../js/auth.js"></script>
+    <script src="../js/data.js"></script>
+    <script src="../js/sidebar.js"></script>
+    <link rel="icon" type="image/svg+xml" href="../media/images/fitzcell_logo.svg" />
+</head>
+
+<body class="bg-base text-gray-100 min-h-screen">
+    <script>renderSidebar('inventario');</script>
+
+    <!-- Contenido principal -->
+    <div class="md:ml-64 min-h-screen">
+        <div class="pt-16 md:pt-0 p-6 fade-in">
+            <div class="max-w-3xl mx-auto">
+                <div class="flex items-center gap-4 mb-8">
+                    <a href="inventario.html" class="text-2xl hover:text-brand transition-colors">←</a>
+                    <h2 class="text-3xl font-bold">Editar Producto</h2>
+                    <span
+                        class="text-sm bg-gray-800 text-gray-400 px-3 py-1 rounded-full font-bold border border-gray-700">ID:
+                        1</span>
+                </div>
+
+                <div class="bg-gray-900 p-8 rounded-3xl shadow-lg shadow-black/20 border border-gray-800">
+                    <form onsubmit="actualizarProducto(event)">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="col-span-2">
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Nombre del producto *</label>
+                                <input type="text" value="Cargador Samsung 25W" required
+                                    class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Categoría *</label>
+                                <select required
+                                    class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
+                                    <option value="">Seleccionar categoría</option>
+                                    <option selected>Cargadores</option>
+                                    <option>Fundas</option>
+                                    <option>Audio</option>
+                                    <option>Micas</option>
+                                    <option>Repuestos</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Precio *</label>
+                                <input type="number" value="450" required min="0" step="0.01"
+                                    class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Stock actual *</label>
+                                <input type="number" value="12" required min="0"
+                                    class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Stock mínimo *</label>
+                                <input type="number" value="5" required min="0"
+                                    class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+
+                            <div class="col-span-2">
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Descripción</label>
+                                <textarea rows="4"
+                                    class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">Carga super rápida certificada para modelos S21, S22, S23. Incluye cable USB-C.</textarea>
+                            </div>
+
+                            <div class="col-span-2">
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Proveedor</label>
+                                <input type="text" value="Samsung México"
+                                    class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+
+                            <div class="col-span-2">
+                                <label class="block text-sm font-bold text-gray-400 mb-2">Código de barras / SKU</label>
+                                <input type="text" value="SAM-25W-USB-C"
+                                    class="w-full bg-gray-800 border-gray-700 p-3 rounded-xl text-white focus:outline-none input-fitz">
+                            </div>
+
+                            <div class="col-span-2">
+                                <label class="block text-sm font-bold text-gray-400 mb-2 text-white">Imagen del
+                                    producto</label>
+                                <div
+                                    class="flex items-center gap-6 p-4 bg-gray-800/50 rounded-2xl border border-gray-700">
+                                    <div
+                                        class="w-24 h-24 bg-gray-800 rounded-2xl border border-gray-700 flex items-center justify-center text-4xl shadow-inner shadow-black/40">
+                                        🔌
+                                    </div>
+                                    <div class="flex-1">
+                                        <button type="button"
+                                            class="px-4 py-2 rounded-xl text-sm font-bold btn-neon-gray">
+                                            Cambiar imagen
+                                        </button>
+                                        <p class="text-xs text-gray-500 mt-2">PNG, JPG hasta 2MB</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Historial de movimientos -->
+                        <div class="mt-8 pt-6 border-t border-gray-800">
+                            <h4 class="font-bold text-lg mb-4 text-white">Historial de movimientos</h4>
+                            <div class="space-y-3">
+                                <div
+                                    class="flex justify-between items-center text-sm p-2 hover:bg-gray-800/50 rounded-lg transition-colors">
+                                    <span class="text-gray-500">02 Mar 2026</span>
+                                    <span class="font-bold text-gray-300">Venta</span>
+                                    <span class="text-rose-500 font-bold">-1 unidad</span>
+                                    <span class="text-gray-500 text-xs">Stock: 15 → 14</span>
+                                </div>
+                                <div
+                                    class="flex justify-between items-center text-sm p-2 hover:bg-gray-800/50 rounded-lg transition-colors">
+                                    <span class="text-gray-500">01 Mar 2026</span>
+                                    <span class="font-bold text-gray-300">Compra</span>
+                                    <span class="text-brand font-bold">+10 unidades</span>
+                                    <span class="text-gray-500 text-xs">Stock: 5 → 15</span>
+                                </div>
+                                <div
+                                    class="flex justify-between items-center text-sm p-2 hover:bg-gray-800/50 rounded-lg transition-colors">
+                                    <span class="text-gray-500">28 Feb 2026</span>
+                                    <span class="font-bold text-gray-300">Ajuste</span>
+                                    <span class="text-amber-500 font-bold">Ajuste manual</span>
+                                    <span class="text-gray-500 text-xs">Stock: 4 → 5</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 justify-end mt-8 pt-6 border-t border-gray-800">
+                            <button type="button" onclick="eliminarProducto()"
+                                class="px-8 py-4 rounded-xl font-bold btn-neon-red">
+                                Eliminar
+                            </button>
+                            <a href="inventario.html" class="px-8 py-4 rounded-xl font-bold btn-neon-gray">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="px-6 py-3 rounded-xl font-bold btn-neon">
+                                🔄 Actualizar Producto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                function actualizarProducto(event) {
+                    event.preventDefault();
+                    alert('Producto actualizado exitosamente');
+                    window.location.href = 'inventario.html';
+                }
+
+                function eliminarProducto() {
+                    if (confirm('¿Estás seguro de eliminar este producto? Esta acción no se puede deshacer.')) {
+                        alert('Producto eliminado');
+                        window.location.href = 'inventario.html';
+                    }
+                }
+            </script>
+        </div>
+    </div>
+</body>
+
+</html>

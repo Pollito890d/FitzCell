@@ -1,32 +1,23 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="bg-gray-950">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FitzCell - Sistema de Gestión</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .hero-gradient {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' },
+                base: '#0a0a0b'
+              }
+            }
+          }
         }
-
-        .sidebar-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #10b981;
-        }
-
-        .sidebar-item.active {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-            border-right: 4px solid #10b981;
-        }
-
-        .animate-pop {
-            animation: pop 0.3s ease-out;
-        }
-
+    </script>
         @keyframes pop {
             0% {
                 transform: scale(0.95);
@@ -42,7 +33,7 @@
         .step-line {
             width: 2px;
             height: 100%;
-            background: #e2e8f0;
+            background: #1f2937;
             position: absolute;
             left: 15px;
             top: 20px;
@@ -53,100 +44,35 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            border: 2px solid #e2e8f0;
-            background: white;
+            border: 2px solid #374151;
+            background: #0a0a0b;
             z-index: 10;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 14px;
+            color: #94a3b8;
         }
 
         .step-dot.active {
-            border-color: #10b981;
-            background: #10b981;
-            color: white;
+            border-color: #07B76B;
+            background: #07B76B;
+            color: #0a0a0b;
+        }
+
+        .sidebar-item.active {
+            background: rgba(7, 183, 107, 0.1);
+            color: #07B76B;
+            border-right: 4px solid #07B76B;
         }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="icon" type="image/svg+xml" href="../media/images/fitzcell_logo.svg" />
 </head>
-
-<body class="bg-slate-50 text-slate-900">
-
-    <!-- HEADER CLIENTE (Solo visible en vistas de cliente) -->
-    <header id="main-header" class="bg-[#0f172a] text-white sticky top-0 z-50 shadow-xl">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('cliente-home')">
-                <span class="text-2xl">📱</span>
-                <h1 class="text-xl font-bold tracking-tighter">FITZCELL<span class="text-emerald-400">.</span></h1>
-            </div>
-
-            <nav class="hidden md:flex gap-8 text-sm font-medium">
-                <button onclick="switchView('cliente-home')"
-                    class="hover:text-emerald-400 transition-colors">Inicio</button>
-                <button onclick="switchView('cliente-tienda')"
-                    class="hover:text-emerald-400 transition-colors">Tienda</button>
-                <button onclick="switchView('cliente-rastreo')"
-                    class="hover:text-emerald-400 transition-colors">Rastreo</button>
-                <button onclick="switchView('cliente-nosotros')"
-                    class="hover:text-emerald-400 transition-colors">Nosotros</button>
-            </nav>
-
-            <div class="flex items-center gap-5">
-                <button onclick="switchView('cliente-carrito')"
-                    class="relative p-2 hover:bg-white/10 rounded-full transition-all flex items-center gap-2">
-                    <span>🛒</span>
-                    <span id="cart-count"
-                        class="bg-emerald-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#0f172a]">0</span>
-                </button>
-                <button onclick="switchView('gestion-login')"
-                    class="hidden sm:block text-xs border border-white/20 px-4 py-2 rounded-lg hover:bg-white hover:text-slate-900 transition-all font-bold uppercase tracking-wider">Acceso
-                    Staff</button>
-            </div>
-        </div>
-    </header>
-
-    <!-- LAYOUT DE ADMINISTRACIÓN (Oculto por defecto) -->
-    <div id="admin-layout" class="hidden flex h-screen overflow-hidden">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-[#0f172a] text-slate-400 flex flex-col">
-            <div class="p-6 border-b border-white/5 flex items-center gap-3">
-                <span class="text-emerald-400 font-bold">STAFF</span>
-                <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">Admin</span>
-            </div>
-            <nav class="flex-1 py-6">
-                <button onclick="switchAdminView('dash')" id="nav-dash"
-                    class="sidebar-item active w-full flex items-center gap-3 px-6 py-4 text-sm font-medium transition-all">
-                    <span>📊</span> Dashboard
-                </button>
-                <button onclick="switchAdminView('inventario')" id="nav-inventario"
-                    class="sidebar-item w-full flex items-center gap-3 px-6 py-4 text-sm font-medium transition-all">
-                    <span>📦</span> Inventario
-                </button>
-                <button onclick="switchAdminView('reparaciones')" id="nav-reparaciones"
-                    class="sidebar-item w-full flex items-center gap-3 px-6 py-4 text-sm font-medium transition-all">
-                    <span>🛠️</span> Reparaciones
-                </button>
-                <button onclick="switchAdminView('ventas')" id="nav-ventas"
-                    class="sidebar-item w-full flex items-center gap-3 px-6 py-4 text-sm font-medium transition-all">
-                    <span>💰</span> Ventas
-                </button>
-            </nav>
-            <div class="p-6 border-t border-white/5">
-                <button onclick="logout()"
-                    class="w-full flex items-center gap-3 text-sm font-medium hover:text-white transition-all">
-                    <span>🚪</span> Cerrar Sesión
-                </button>
-            </div>
-        </aside>
-        <!-- Contenido Admin -->
-        <main id="admin-container" class="flex-1 overflow-y-auto bg-slate-50 p-8">
-            <!-- Contenido dinámico admin -->
-        </main>
-    </div>
 
     <!-- CONTENEDOR PRINCIPAL CLIENTE -->
     <main id="app-container" class="min-h-[80vh]">
@@ -154,26 +80,26 @@
     </main>
 
     <!-- FOOTER CLIENTE -->
-    <footer id="main-footer" class="bg-white border-t border-slate-200 pt-16 pb-8">
+    <footer id="main-footer" class="bg-gray-900 border-t border-gray-700 pt-16 pb-8">
         <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 text-sm">
             <div>
                 <h1 class="text-lg font-bold mb-6">FITZCELL</h1>
-                <p class="text-slate-500 leading-relaxed">Tecnología confiable en San Pablo Huixtepec.</p>
+                <p class="text-gray-400 leading-relaxed">Tecnología confiable en San Pablo Huixtepec.</p>
             </div>
             <div>
                 <h4 class="font-bold mb-6">Soporte</h4>
-                <ul class="space-y-4 text-slate-500">
-                    <li><button onclick="openModal('garantia')" class="hover:text-emerald-600">Garantía</button></li>
-                    <li><button onclick="openModal('faq')" class="hover:text-emerald-600">FAQ</button></li>
+                <ul class="space-y-4 text-gray-400">
+                    <li><button onclick="openModal('garantia')" class="hover:text-brand-dark">Garantía</button></li>
+                    <li><button onclick="openModal('faq')" class="hover:text-brand-dark">FAQ</button></li>
                 </ul>
             </div>
             <div>
-                <h4 class="font-bold mb-6 text-slate-800">Ubicación</h4>
-                <p class="text-slate-500">📍 Av. Independencia #12</p>
+                <h4 class="font-bold mb-6 text-gray-200">Ubicación</h4>
+                <p class="text-gray-400">📍 Av. Independencia #12</p>
             </div>
             <div>
-                <h4 class="font-bold mb-6 text-slate-800">Contacto</h4>
-                <p class="text-slate-500">📞 951 123 4567</p>
+                <h4 class="font-bold mb-6 text-gray-200">Contacto</h4>
+                <p class="text-gray-400">📞 951 123 4567</p>
             </div>
         </div>
     </footer>
@@ -183,7 +109,7 @@
         class="fixed inset-0 bg-slate-900/80 hidden justify-center items-center z-[100] p-4 backdrop-blur-sm"
         onclick="closeModal()">
         <div id="modal-container"
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden p-8 animate-pop"
+            class="bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden p-8 animate-pop"
             onclick="event.stopPropagation()">
             <div id="modal-content"></div>
         </div>
@@ -270,52 +196,52 @@
                     <header class="flex justify-between items-end mb-10">
                         <div>
                             <h2 class="text-3xl font-bold">Resumen General</h2>
-                            <p class="text-slate-500">Bienvenido, Isaac. Esto sucede hoy.</p>
+                            <p class="text-gray-400">Bienvenido, Isaac. Esto sucede hoy.</p>
                         </div>
                         <div class="text-right">
-                            <span class="text-xs font-bold text-slate-400 uppercase">Hoy es</span>
+                            <span class="text-xs font-bold text-gray-500 uppercase">Hoy es</span>
                             <p class="font-bold">2 de Marzo, 2026</p>
                         </div>
                     </header>
 
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-                        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                            <p class="text-xs font-bold text-slate-400 uppercase mb-2">Ventas Hoy</p>
-                            <h3 class="text-2xl font-bold text-emerald-600">$7,200.00</h3>
+                        <div class="bg-gray-900 p-6 rounded-3xl shadow-lg shadow-black/20 border border-gray-800">
+                            <p class="text-xs font-bold text-gray-500 uppercase mb-2">Ventas Hoy</p>
+                            <h3 class="text-2xl font-bold text-brand-dark">$7,200.00</h3>
                         </div>
-                        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                            <p class="text-xs font-bold text-slate-400 uppercase mb-2">Equipos Listos</p>
-                            <h3 class="text-2xl font-bold text-blue-600">5</h3>
+                        <div class="bg-gray-900 p-6 rounded-3xl shadow-lg shadow-black/20 border border-gray-800">
+                            <p class="text-xs font-bold text-gray-500 uppercase mb-2">Equipos Listos</p>
+                            <h3 class="text-2xl font-bold text-green-600">5</h3>
                         </div>
-                        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                            <p class="text-xs font-bold text-slate-400 uppercase mb-2">En Reparación</p>
+                        <div class="bg-gray-900 p-6 rounded-3xl shadow-lg shadow-black/20 border border-gray-800">
+                            <p class="text-xs font-bold text-gray-500 uppercase mb-2">En Reparación</p>
                             <h3 class="text-2xl font-bold text-amber-500">12</h3>
                         </div>
-                        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                            <p class="text-xs font-bold text-slate-400 uppercase mb-2">Stock Bajo</p>
+                        <div class="bg-gray-900 p-6 rounded-3xl shadow-lg shadow-black/20 border border-gray-800">
+                            <p class="text-xs font-bold text-gray-500 uppercase mb-2">Stock Bajo</p>
                             <h3 class="text-2xl font-bold text-rose-500">3</h3>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div class="lg:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+                        <div class="lg:col-span-2 bg-gray-900 p-8 rounded-3xl shadow-lg shadow-black/20 border border-gray-800">
                             <h4 class="font-bold mb-6">Ingresos de la semana</h4>
                             <canvas id="ventasChart" height="150"></canvas>
                         </div>
-                        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+                        <div class="bg-gray-900 p-8 rounded-3xl shadow-lg shadow-black/20 border border-gray-800">
                             <h4 class="font-bold mb-6">Actividad Reciente</h4>
                             <div class="space-y-6">
                                 <div class="flex gap-4">
-                                    <div class="w-2 h-2 rounded-full bg-emerald-500 mt-2"></div>
-                                    <div><p class="text-sm font-bold">Venta realizada</p><p class="text-xs text-slate-400">Cargador Samsung - $450</p></div>
+                                    <div class="w-2 h-2 rounded-full bg-brand-light mt-2"></div>
+                                    <div><p class="text-sm font-bold">Venta realizada</p><p class="text-xs text-gray-500">Cargador Samsung - $450</p></div>
                                 </div>
                                 <div class="flex gap-4">
-                                    <div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
-                                    <div><p class="text-sm font-bold">Reparación Finalizada</p><p class="text-xs text-slate-400">Moto G52 (Pantalla)</p></div>
+                                    <div class="w-2 h-2 rounded-full bg-green-500 mt-2"></div>
+                                    <div><p class="text-sm font-bold">Reparación Finalizada</p><p class="text-xs text-gray-500">Moto G52 (Pantalla)</p></div>
                                 </div>
                                 <div class="flex gap-4">
                                     <div class="w-2 h-2 rounded-full bg-amber-500 mt-2"></div>
-                                    <div><p class="text-sm font-bold">Nuevo Ingreso</p><p class="text-xs text-slate-400">iPhone 14 (Humedad)</p></div>
+                                    <div><p class="text-sm font-bold">Nuevo Ingreso</p><p class="text-xs text-gray-500">iPhone 14 (Humedad)</p></div>
                                 </div>
                             </div>
                         </div>
@@ -330,13 +256,13 @@
                 <div class="animate-pop">
                     <div class="flex justify-between items-center mb-10">
                         <h2 class="text-3xl font-bold">Gestión de Inventario</h2>
-                        <button class="bg-emerald-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-emerald-500/20 hover:scale-105 transition-all">+ Nuevo Producto</button>
+                        <button class="px-6 py-3 rounded-xl font-bold btn-neon">+ Nuevo Producto</button>
                     </div>
 
-                    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="bg-gray-900 rounded-3xl shadow-lg shadow-black/20 border border-gray-800 overflow-hidden">
                         <table class="w-full text-left">
-                            <thead class="bg-slate-50 border-b">
-                                <tr class="text-xs font-bold text-slate-400 uppercase">
+                            <thead class="bg-gray-950 border-b">
+                                <tr class="text-xs font-bold text-gray-500 uppercase">
                                     <th class="px-6 py-4">Producto</th>
                                     <th class="px-6 py-4">Categoría</th>
                                     <th class="px-6 py-4">Stock</th>
@@ -346,18 +272,18 @@
                             </thead>
                             <tbody class="divide-y text-sm">
                                 ${data.productos.map(p => `
-                                    <tr class="hover:bg-slate-50 transition-colors">
+                                    <tr class="hover:bg-gray-950 transition-colors">
                                         <td class="px-6 py-4 flex items-center gap-3">
                                             <span class="text-2xl">${p.img}</span>
                                             <span class="font-bold">${p.nombre}</span>
                                         </td>
-                                        <td class="px-6 py-4 text-slate-500">${p.cat}</td>
+                                        <td class="px-6 py-4 text-gray-400">${p.cat}</td>
                                         <td class="px-6 py-4">
-                                            <span class="px-2 py-1 rounded-lg font-bold ${p.stock < 5 ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-600'}">${p.stock} pzas</span>
+                                            <span class="px-2 py-1 rounded-lg font-bold ${p.stock < 5 ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-brand-dark'}">${p.stock} pzas</span>
                                         </td>
-                                        <td class="px-6 py-4 font-bold text-slate-700">$${p.precio}</td>
+                                        <td class="px-6 py-4 font-bold text-gray-300">$${p.precio}</td>
                                         <td class="px-6 py-4 text-right">
-                                            <button class="text-blue-500 font-bold hover:underline">Editar</button>
+                                            <button class="text-green-500 font-bold hover:underline">Editar</button>
                                         </td>
                                     </tr>
                                 `).join('')}
@@ -374,15 +300,15 @@
                     <h2 class="text-3xl font-bold mb-10">Ordenes de Servicio</h2>
                     <div class="grid grid-cols-1 gap-4">
                         ${data.ordenes.map(o => `
-                            <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col md:flex-row justify-between items-center">
+                            <div class="bg-gray-900 p-6 rounded-3xl border border-gray-800 shadow-lg shadow-black/20 flex flex-col md:flex-row justify-between items-center">
                                 <div>
-                                    <span class="text-xs font-bold text-slate-400">${o.folio}</span>
+                                    <span class="text-xs font-bold text-gray-500">${o.folio}</span>
                                     <h4 class="text-xl font-bold">${o.equipo}</h4>
-                                    <p class="text-sm text-slate-500">${o.cliente} - <span class="text-emerald-600">${o.falla}</span></p>
+                                    <p class="text-sm text-gray-400">${o.cliente} - <span class="text-brand-dark">${o.falla}</span></p>
                                 </div>
                                 <div class="flex items-center gap-6 mt-4 md:mt-0">
                                     <div class="text-right">
-                                        <p class="text-xs uppercase font-bold text-slate-400 mb-1">Estatus</p>
+                                        <p class="text-xs uppercase font-bold text-gray-500 mb-1">Estatus</p>
                                         <select class="bg-emerald-50 border-none text-emerald-700 text-xs font-bold py-2 px-4 rounded-xl outline-none">
                                             <option selected>${o.estado}</option>
                                             <option>Diagnóstico</option>
@@ -391,7 +317,7 @@
                                             <option>Entregado</option>
                                         </select>
                                     </div>
-                                    <button class="bg-slate-100 p-4 rounded-2xl hover:bg-slate-200 transition-colors">📄</button>
+                                    <button class="bg-gray-800 p-4 rounded-2xl hover:bg-gray-700 transition-colors">📄</button>
                                 </div>
                             </div>
                         `).join('')}
@@ -405,7 +331,7 @@
                 <div class="animate-pop text-center py-20">
                     <span class="text-6xl mb-6 block">🛒</span>
                     <h2 class="text-3xl font-bold">Terminal de Punto de Venta</h2>
-                    <p class="text-slate-500 mb-8">Selecciona productos para generar una nota de venta física.</p>
+                    <p class="text-gray-400 mb-8">Selecciona productos para generar una nota de venta física.</p>
                     <button class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-bold">Abrir Caja</button>
                 </div>
             `;
@@ -440,18 +366,18 @@
             container.innerHTML = `
                 <section class="hero-gradient text-white py-32 px-6">
                     <div class="max-w-7xl mx-auto text-center">
-                        <h2 class="text-5xl md:text-7xl font-extrabold leading-tight">Tu tecnología en <span class="text-emerald-400">buenas manos</span>.</h2>
-                        <p class="text-slate-400 mt-6 text-lg max-w-2xl mx-auto">Reparaciones garantizadas y accesorios de alta calidad.</p>
+                        <h2 class="text-5xl md:text-7xl font-extrabold leading-tight">Tu tecnología en <span class="text-brand">buenas manos</span>.</h2>
+                        <p class="text-gray-500 mt-6 text-lg max-w-2xl mx-auto">Reparaciones garantizadas y accesorios de alta calidad.</p>
                         <div class="mt-10 flex justify-center gap-4">
-                            <button onclick="switchView('cliente-rastreo')" class="bg-emerald-500 hover:bg-emerald-600 px-8 py-4 rounded-xl font-bold shadow-lg">Rastrear Equipo</button>
-                            <button onclick="switchView('cliente-tienda')" class="bg-white/10 px-8 py-4 rounded-xl font-bold hover:bg-white hover:text-slate-900 transition-all">Tienda</button>
+                            <button onclick="switchView('cliente-rastreo')" class="px-8 py-4 rounded-xl font-bold btn-neon">Rastrear Equipo</button>
+                            <button onclick="switchView('cliente-tienda')" class="bg-gray-900/10 px-8 py-4 rounded-xl font-bold hover:bg-gray-900 hover:text-white transition-all">Tienda</button>
                         </div>
                     </div>
                 </section>
                 <section class="py-24 max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-                    <div class="p-8 bg-white rounded-3xl border">⚡ <h3 class="font-bold my-3">Rápido</h3><p class="text-sm text-slate-500">Reparaciones en el mismo día.</p></div>
-                    <div class="p-8 bg-white rounded-3xl border">🛡️ <h3 class="font-bold my-3">Seguro</h3><p class="text-sm text-slate-500">Garantía por escrito en cada nota.</p></div>
-                    <div class="p-8 bg-white rounded-3xl border">💎 <h3 class="font-bold my-3">Calidad</h3><p class="text-sm text-slate-500">Piezas originales o AAA.</p></div>
+                    <div class="p-8 bg-gray-900 rounded-3xl border">⚡ <h3 class="font-bold my-3">Rápido</h3><p class="text-sm text-gray-400">Reparaciones en el mismo día.</p></div>
+                    <div class="p-8 bg-gray-900 rounded-3xl border">🛡️ <h3 class="font-bold my-3">Seguro</h3><p class="text-sm text-gray-400">Garantía por escrito en cada nota.</p></div>
+                    <div class="p-8 bg-gray-900 rounded-3xl border">💎 <h3 class="font-bold my-3">Calidad</h3><p class="text-sm text-gray-400">Piezas originales o AAA.</p></div>
                 </section>
             `;
         }
@@ -460,7 +386,7 @@
             container.innerHTML = `
                 <div class="max-w-4xl mx-auto py-16 px-6">
                     <div class="text-center mb-12"><h2 class="text-4xl font-bold">Rastreo de Reparación</h2></div>
-                    <div class="flex gap-2 p-2 bg-white border rounded-2xl shadow-sm mb-16">
+                    <div class="flex gap-2 p-2 bg-gray-900 border rounded-2xl shadow-lg shadow-black/20 mb-16">
                         <input type="text" id="folio-input" placeholder="ORD-123" class="flex-1 px-4 py-3 outline-none font-bold uppercase">
                         <button onclick="consultarOrden()" class="bg-slate-900 text-white px-8 rounded-xl font-bold">Buscar</button>
                     </div>
@@ -474,27 +400,27 @@
             const res = document.getElementById('res-rastreo');
             const o = data.ordenes.find(x => x.folio === input);
             if (!o) { res.innerHTML = "No encontrado"; return; }
-            res.innerHTML = `<div class="bg-white p-8 rounded-3xl border animate-pop"><h3 class="text-2xl font-bold">${o.equipo}</h3><p>${o.estado}</p></div>`;
+            res.innerHTML = `<div class="bg-gray-900 p-8 rounded-3xl border animate-pop"><h3 class="text-2xl font-bold">${o.equipo}</h3><p>${o.estado}</p></div>`;
         }
 
         function renderTienda(container) {
             container.innerHTML = `<div class="max-w-7xl mx-auto py-12 px-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                ${data.productos.map(p => `<div class="bg-white p-6 rounded-3xl border card-product"><p class="text-4xl mb-4">${p.img}</p><h4 class="font-bold">${p.nombre}</h4><p class="text-emerald-600 font-bold">$${p.precio}</p><button onclick="agregarAlCarrito(${p.id})" class="mt-4 w-full bg-slate-900 text-white py-2 rounded-xl text-sm">Añadir</button></div>`).join('')}
+                ${data.productos.map(p => `<div class="bg-gray-900 p-6 rounded-3xl border card-product"><p class="text-4xl mb-4">${p.img}</p><h4 class="font-bold">${p.nombre}</h4><p class="text-brand-dark font-bold">$${p.precio}</p><button onclick="agregarAlCarrito(${p.id})" class="mt-4 w-full bg-slate-900 text-white py-2 rounded-xl text-sm">Añadir</button></div>`).join('')}
             </div>`;
         }
 
         function renderNosotros(container) {
-            container.innerHTML = `<div class="max-w-4xl mx-auto py-20 px-6 text-center"><h2 class="text-4xl font-bold mb-6">Nosotros</h2><p class="text-slate-500 leading-relaxed">En FitzCell nos apasiona devolverle la vida a tus equipos...</p></div>`;
+            container.innerHTML = `<div class="max-w-4xl mx-auto py-20 px-6 text-center"><h2 class="text-4xl font-bold mb-6">Nosotros</h2><p class="text-gray-400 leading-relaxed">En FitzCell nos apasiona devolverle la vida a tus equipos...</p></div>`;
         }
 
         function renderLogin(container) {
             container.innerHTML = `<div class="h-screen bg-slate-900 flex items-center justify-center p-6">
-                <div class="bg-white/10 p-10 rounded-3xl border border-white/10 w-full max-w-sm text-center">
-                    <h2 class="text-2xl font-bold mb-6 text-emerald-400">STAFF LOGIN</h2>
-                    <input type="text" placeholder="Usuario" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl mb-4 outline-none text-white focus:border-emerald-500">
-                    <input type="password" placeholder="Pass" class="w-full bg-white/5 border border-white/10 p-3 rounded-xl mb-6 outline-none text-white focus:border-emerald-500">
-                    <button onclick="loginAdmin()" class="w-full bg-emerald-500 py-3 rounded-xl font-bold text-slate-900">Ingresar</button>
-                    <button onclick="switchView('cliente-home')" class="text-xs text-slate-400 mt-4 block mx-auto">Volver al Portal</button>
+                <div class="bg-gray-900/10 p-10 rounded-3xl border border-white/10 w-full max-w-sm text-center">
+                    <h2 class="text-2xl font-bold mb-6 text-brand">STAFF LOGIN</h2>
+                    <input type="text" placeholder="Usuario" class="w-full bg-gray-900/5 border border-white/10 p-3 rounded-xl mb-4 outline-none text-white focus:border-brand-light">
+                    <input type="password" placeholder="Pass" class="w-full bg-gray-900/5 border border-white/10 p-3 rounded-xl mb-6 outline-none text-white focus:border-brand-light">
+                    <button onclick="loginAdmin()" class="w-full py-3 rounded-xl font-bold btn-neon">Ingresar</button>
+                    <button onclick="switchView('cliente-home')" class="text-xs text-gray-500 mt-4 block mx-auto">Volver al Portal</button>
                 </div>
             </div>`;
         }
