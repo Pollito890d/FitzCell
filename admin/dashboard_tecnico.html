@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Técnico - FitzCell</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#07B76B' }, base: '#0a0a0b' } } } }</script>
+</head>
+<body class="bg-base text-gray-100 min-h-screen flex">
+  <aside class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col">
+    <h2 class="text-2xl font-bold text-white mb-6"><span class="text-brand">⚡</span> FitzCell</h2>
+    <div class="mb-4 text-xs font-bold text-brand bg-brand/10 p-2 rounded">ROL: TÉCNICO</div>
+    <nav class="flex-1 space-y-2">
+      <a href="#" class="block p-3 bg-brand/10 text-brand rounded-lg font-bold border border-brand/20">📱 Órdenes</a>
+      <a href="#" class="block p-3 text-gray-400 hover:bg-gray-800 rounded-lg">🛠️ Diagnóstico</a>
+      <a href="#" class="block p-3 text-gray-400 hover:bg-gray-800 rounded-lg">⚙️ Piezas Usadas</a>
+      <a href="#" class="block p-3 text-gray-400 hover:bg-gray-800 rounded-lg">📜 Garantías</a>
+    </nav>
+    <button onclick="logout()" class="p-3 bg-red-900/20 text-red-400 rounded-lg font-bold hover:bg-red-900/40">Cerrar Sesión</button>
+  </aside>
+  <main class="flex-1 p-10">
+    <h1 class="text-3xl font-bold mb-8">Órdenes <span class="text-brand">Asignadas</span></h1>
+    <div class="bg-gray-900 border border-gray-800 p-10 rounded-2xl text-center"><p class="text-gray-500">Módulos en construcción...</p></div>
+  </main>
+  <script>
+    const rol = localStorage.getItem('rol');
+    if(rol !== 'tecnico' && rol !== 'encargado') { window.location.href = '../login.html'; }
+    function logout() { localStorage.clear(); window.location.href = '../login.html'; }
+  </script>
+</body>
+</html>

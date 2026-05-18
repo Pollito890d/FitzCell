@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -32,10 +32,11 @@
       </a>
       <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
         <a href="index.html" class="hover:text-brand transition">Inicio</a>
-        <a href="tienda.html" class="hover:text-brand transition">Tienda</a>
-        <a href="carrito.html" class="hover:text-brand transition flex items-center gap-1">Carrito <span id="nav-cart-count" class="bg-brand text-gray-950 text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span></a>
+        
+        
         <a href="rastreo.html" class="text-brand">Rastrear equipo</a>
         <a href="faq.html" class="hover:text-brand transition">Políticas</a>
+        <a href="login.html" class="hover:text-brand transition font-bold text-white border border-gray-700 px-3 py-1.5 rounded-lg bg-gray-800">🔑 Ingresar</a>
         <a href="rastreo.html" class="ml-2 px-4 py-2 bg-brand text-gray-950 font-semibold rounded-lg btn-neon">📱 Buscar mi equipo</a>
       </div>
       <button class="md:hidden text-gray-400 hover:text-white" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
@@ -44,10 +45,11 @@
     </div>
     <div id="mobileMenu" class="hidden md:hidden bg-gray-900 border-t border-gray-800 px-4 pb-4">
       <a href="index.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-brand">Inicio</a>
-      <a href="tienda.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-brand">Tienda</a>
-      <a href="carrito.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-brand flex items-center gap-2">Carrito <span id="mobile-nav-cart-count" class="bg-brand text-gray-950 text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span></a>
+      
+      
       <a href="rastreo.html" class="block py-2 text-brand text-sm font-medium">Rastrear equipo</a>
       <a href="faq.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-brand">Políticas</a>
+      <a href="login.html" class="block py-2 text-white text-sm font-bold hover:text-brand">🔑 Ingresar</a>
     </div>
   </nav>
 
@@ -239,5 +241,15 @@
         </div>`;
     }
   </script>
+  <!-- Burbuja de Contacto -->
+  <a href="https://api.whatsapp.com/send?phone=%2B5219515862992" target="_blank"
+    class="fixed bottom-6 right-6 bg-[#07B76B] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform z-50 flex items-center justify-center group" style="box-shadow: 0 10px 25px rgba(7,183,107,0.5);">
+    <span class="text-3xl">💬</span>
+    <span class="absolute right-16 bg-gray-900 text-white border border-gray-700 text-sm px-4 py-2 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap font-bold pointer-events-none">
+      ¿Alguna duda o pregunta? ¡Contáctanos!
+    </span>
+  </a>
 </body>
 </html>
+
+

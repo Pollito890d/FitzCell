@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - FitzCell</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' }, base: '#0a0a0b' } } }
+    }
+  </script>
+</head>
+<body class="bg-base text-gray-100 min-h-screen flex items-center justify-center p-4">
+  <!-- Regresar -->
+  <a href="index.html" class="absolute top-6 left-6 flex items-center gap-2 text-gray-400 hover:text-white transition">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+    Volver al sitio
+  </a>
+
+  <div class="bg-gray-900 border border-gray-800 rounded-3xl p-8 md:p-12 shadow-2xl w-full max-w-md relative overflow-hidden">
+    <div class="absolute -top-10 -right-10 w-32 h-32 bg-brand rounded-full blur-3xl opacity-20"></div>
+
+    <div class="text-center mb-8 relative z-10">
+      <img src="media/images/fitzcell_logo.svg" alt="FitzCell Logo" class="h-10 w-auto mx-auto mb-4">
+      <h2 class="text-2xl font-bold">Acceso al <span class="text-brand">Sistema</span></h2>
+      <p class="text-sm text-gray-400 mt-2">Ingresa tus credenciales de empleado</p>
+    </div>
+
+    <form id="loginForm" class="space-y-5 relative z-10">
+      <div>
+        <label class="block text-sm font-medium text-gray-400 mb-1">Correo Electrónico</label>
+        <input type="email" id="email" required class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition" placeholder="empleado@fitzcell.com">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-400 mb-1">Contraseña</label>
+        <input type="password" id="password" required class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition" placeholder="********">
+      </div>
+      <div id="loginMsg" class="hidden text-sm p-3 rounded-lg text-center font-medium"></div>
+      <button type="submit" id="btnLogin" class="w-full py-3 bg-brand text-gray-950 font-bold rounded-xl hover:bg-brand-light transition" style="box-shadow: 0 0 15px rgba(7,183,107,0.4);">
+        Iniciar Sesión
+      </button>
+    </form>
+  </div>
+</body>
+</html>
+
