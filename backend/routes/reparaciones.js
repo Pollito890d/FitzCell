@@ -1,6 +1,6 @@
 ﻿const express = require('express');
 const router = express.Router();
-const supabase = require('../supabaseClient');
+const supabase = require('../config/supabase');
 
 // Obtener todas las reparaciones
 router.get('/', async (req, res) => {
@@ -90,3 +90,4 @@ router.post('/solicitud', async (req, res) => {
 });
 
 module.exports = router;
+

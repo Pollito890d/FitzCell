@@ -1,6 +1,6 @@
 ﻿const express = require('express');
 const router = express.Router();
-const supabase = require('../supabaseClient');
+const supabase = require('../config/supabase');
 
 // Obtener total de ingresos (Suma de Ventas y Reparaciones)
 router.get('/ingresos', async (req, res) => {
@@ -29,3 +29,4 @@ router.get('/ingresos', async (req, res) => {
 });
 
 module.exports = router;
+
