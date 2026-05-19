@@ -1,12 +1,13 @@
 ﻿const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const supabase = require('../supabaseClient');
 
 // Obtener inventario
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM inventario');
-        res.json(rows);
+        const { data, error } = await supabase.from('producto').select('*');
+        if (error) throw error;
+        res.json(data);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error al obtener inventario' });
@@ -15,13 +16,14 @@ router.get('/', async (req, res) => {
 
 // Agregar producto
 router.post('/', async (req, res) => {
-    const { nombre, cantidad, minimo, proveedor, precio, categoria } = req.body;
+    const { nombre_producto, stock, categoria, precio_compra, precio_venta } = req.body;
     try {
-        const [result] = await db.query(
-            'INSERT INTO inventario (nombre, cantidad, minimo, proveedor, precio, categoria) VALUES (?, ?, ?, ?, ?, ?)',
-            [nombre, cantidad || 0, minimo || 1, proveedor, precio || 0.00, categoria]
-        );
-        res.status(201).json({ message: 'Producto agregado', id: result.insertId });
+        const { data, error } = await supabase
+            .from('producto')
+            .insert([{ nombre_producto, stock: stock || 0, categoria, precio_compra, precio_venta }])
+            .select();
+        if (error) throw error;
+        res.status(201).json({ message: 'Producto agregado', id: data[0].id_producto });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error al crear producto' });
@@ -30,13 +32,15 @@ router.post('/', async (req, res) => {
 
 // Actualizar producto
 router.put('/:id', async (req, res) => {
-    const { nombre, cantidad, minimo, proveedor, precio, categoria } = req.body;
+    const { nombre_producto, stock, categoria, precio_compra, precio_venta } = req.body;
     try {
-        const [result] = await db.query(
-            'UPDATE inventario SET nombre=?, cantidad=?, minimo=?, proveedor=?, precio=?, categoria=? WHERE id=?',
-            [nombre, cantidad, minimo, proveedor, precio, categoria, req.params.id]
-        );
-        if (result.affectedRows === 0) return res.status(404).json({ message: 'Producto no encontrado' });
+        const { data, error } = await supabase
+            .from('producto')
+            .update({ nombre_producto, stock, categoria, precio_compra, precio_venta })
+            .eq('id_producto', req.params.id)
+            .select();
+        if (error) throw error;
+        if (data.length === 0) return res.status(404).json({ message: 'Producto no encontrado' });
         res.json({ message: 'Producto actualizado' });
     } catch (error) {
         console.error(error);
@@ -45,4 +49,3 @@ router.put('/:id', async (req, res) => {
 });
 
 module.exports = router;
-
