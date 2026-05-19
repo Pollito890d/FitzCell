@@ -6,343 +6,98 @@
   <title>Panel de Encargado - FitzCell</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = { 
-      theme: { extend: { colors: { brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' }, base: '#0a0a0b' } } } 
-    }
-  </script>
-  <style>
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #0a0a0b; }
-    ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #374151; }
-    .fade-in { animation: fadeIn 0.3s ease-in-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  </style>
-</head>
-<body class="bg-base text-gray-100 min-h-screen flex overflow-hidden">
-  
-  <!-- Sidebar -->
-  <aside class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col z-20 h-screen">
-    <div class="mb-6 flex items-center">
-      <img src="../media/images/fitzcell_logo.svg" alt="FitzCell Logo" class="h-12 w-auto object-contain">
-    </div>
-    <div class="mb-6 text-xs font-bold text-brand bg-brand/10 p-2 rounded text-center tracking-widest border border-brand/20">
-      ROL: ENCARGADO
-    </div>
-    
-    <nav class="flex-1 space-y-2">
-      <a href="#" onclick="showSection('sec-resumen')" id="nav-sec-resumen" class="nav-item block p-3 bg-brand/10 text-brand rounded-lg font-bold border border-brand/20 transition-all">📊 Resumen</a>
-      <a href="#" onclick="showSection('sec-inventario')" id="nav-sec-inventario" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📦 Inventario</a>
-      <a href="#" onclick="showSection('sec-empleados')" id="nav-sec-empleados" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">👥 Empleados</a>
-      <a href="#" onclick="showSection('sec-reparaciones')" id="nav-sec-reparaciones" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📱 Reparaciones globales</a>
-      <a href="#" onclick="showSection('sec-ventas')" id="nav-sec-ventas" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">💰 Historial de Ventas</a>
-    </nav>
-    
-    <button onclick="logout()" class="mt-auto p-3 bg-red-900/20 text-red-400 rounded-lg font-bold hover:bg-red-900/40 border border-red-900/50 transition-all flex justify-center items-center gap-2">
-      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-      Cerrar Sesión
-    </button>
-  </aside>
-
-  <!-- Main Content -->
-  <main class="flex-1 p-8 h-screen overflow-y-auto relative">
-    
-    <!-- Decoración de fondo -->
-    <div class="absolute top-0 right-0 w-96 h-96 bg-brand rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
-
-    <!-- SECCIÓN: RESUMEN -->
-    <section id="sec-resumen" class="fade-in block">
-      <header class="mb-10 flex justify-between items-end">
-        <div>
-          <h1 class="text-3xl font-bold mb-1">Visión <span class="text-brand">Global</span></h1>
-          <p class="text-gray-400">Resumen de las métricas principales del día.</p>
-        </div>
-      </header>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div class="bg-gray-900/80 backdrop-blur-md border border-gray-800 p-6 rounded-2xl shadow-lg relative overflow-hidden">
-          <div class="absolute top-0 right-0 w-24 h-24 bg-brand/10 rounded-bl-full blur-xl"></div>
-          <p class="text-gray-400 text-sm font-medium mb-1">Ingresos Hoy</p>
-          <h3 id="res-ingresos" class="text-3xl font-bold text-white">.00</h3>
-        </div>
-        <div class="bg-gray-900/80 backdrop-blur-md border border-gray-800 p-6 rounded-2xl shadow-lg">
-          <p class="text-gray-400 text-sm font-medium mb-1">Equipos en Reparación</p>
-          <h3 id="res-reparaciones" class="text-3xl font-bold text-white">0</h3>
-        </div>
-        <div class="bg-gray-900/80 backdrop-blur-md border border-red-900/30 p-6 rounded-2xl shadow-lg relative overflow-hidden">
-          <div class="absolute top-0 right-0 w-24 h-24 bg-red-500/10 rounded-bl-full blur-xl"></div>
-          <p class="text-gray-400 text-sm font-medium mb-1">Alertas de Stock</p>
-          <h3 id="res-alertas" class="text-3xl font-bold text-red-400">0 refacciones</h3>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-6">
-          <h3 class="text-lg font-bold mb-4 text-white">Últimas Reparaciones</h3>
-          <div id="res-ultimas-rep" class="space-y-3">
-             <p class="text-gray-500 text-sm">Cargando...</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN: INVENTARIO -->
-    <section id="sec-inventario" class="fade-in hidden">
-      <header class="mb-8 flex justify-between items-end">
-        <div>
-          <h1 class="text-3xl font-bold mb-1">Catálogo de <span class="text-brand">Inventario</span></h1>
-          <p class="text-gray-400">Control de refacciones y existencias</p>
-        </div>
-      </header>
-      
-      <div class="flex gap-4 mb-6 overflow-x-auto pb-2" id="inv-categorias">
-        <!-- Categorías se generarán dinámicamente aquí -->
-      </div>
-
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-gray-950 border-b border-gray-800 text-gray-400 text-sm">
-                <th class="p-4 font-semibold">Refacción</th>
-                <th class="p-4 font-semibold">Categoría</th>
-                <th class="p-4 font-semibold">Costo</th>
-                <th class="p-4 font-semibold">Precio Venta</th>
-                <th class="p-4 font-semibold text-center">Stock</th>
-              </tr>
-            </thead>
-            <tbody id="inv-tbody" class="divide-y divide-gray-800 text-sm">
-              <tr><td colspan="5" class="p-4 text-center text-gray-500">Cargando inventario...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN: EMPLEADOS -->
-    <section id="sec-empleados" class="fade-in hidden">
-      <header class="mb-8 flex justify-between items-end">
-        <div>
-          <h1 class="text-3xl font-bold mb-1">Gestión de <span class="text-brand">Personal</span></h1>
-          <p class="text-gray-400">Alta y control de técnicos y vendedores.</p>
-        </div>
-      </header>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="emp-lista">
-        <p class="text-gray-500 col-span-2">Cargando empleados...</p>
-      </div>
-    </section>
-
-    <!-- SECCIÓN: REPARACIONES GLOBALES -->
-    <section id="sec-reparaciones" class="fade-in hidden">
-      <header class="mb-8">
-        <h1 class="text-3xl font-bold mb-1">Reparaciones <span class="text-brand">Activas</span></h1>
-        <p class="text-gray-400">Monitor en tiempo real del taller.</p>
-      </header>
-      
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-gray-950 border-b border-gray-800 text-gray-400 text-sm">
-              <th class="p-4 font-semibold">Folio</th>
-              <th class="p-4 font-semibold">Dispositivo</th>
-              <th class="p-4 font-semibold">Falla Reportada</th>
-              <th class="p-4 font-semibold">Costo Aprox</th>
-              <th class="p-4 font-semibold text-center">Estado</th>
-            </tr>
-          </thead>
-          <tbody id="rep-tbody" class="divide-y divide-gray-800 text-sm">
-            <tr><td colspan="5" class="p-4 text-center text-gray-500">Cargando...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- SECCIÓN: VENTAS GLOBALES -->
-    <section id="sec-ventas" class="fade-in hidden">
-      <header class="mb-8">
-        <h1 class="text-3xl font-bold mb-1">Historial de <span class="text-brand">Ventas</span></h1>
-        <p class="text-gray-400">Ingresos generados por el área de mostrador.</p>
-      </header>
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-gray-950 border-b border-gray-800 text-gray-400 text-sm">
-              <th class="p-4 font-semibold">ID Venta</th>
-              <th class="p-4 font-semibold">Fecha</th>
-              <th class="p-4 font-semibold">Método Pago</th>
-              <th class="p-4 font-semibold text-right">Total</th>
-            </tr>
-          </thead>
-          <tbody id="ven-tbody" class="divide-y divide-gray-800 text-sm">
-            <tr><td colspan="4" class="p-4 text-center text-gray-500">Cargando...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-  </main>
-
-  <script>
-    // Seguridad de roles
-    const r = localStorage.getItem('fitzcell_rol'); 
+    const r = localStorage.getItem('fitzcell_rol');
     if(r !== 'encargado' && r !== 'admin') { window.location.href = '../login.html'; }
-    
-    function logout() { 
-      localStorage.clear(); 
-      window.location.href = '../login.html'; 
-    }
+    function logout() { localStorage.clear(); window.location.href = '../login.html'; }
+    const fmt = (v) => new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(v||0);
 
-    const formatCurrency = (val) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val);
-
-    // Lógica SPA (Single Page Application)
-    function showSection(sectionId) {
-      document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden'));
-      document.getElementById(sectionId).classList.remove('hidden');
+    function showSection(id) {
+      document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
       document.querySelectorAll('.nav-item').forEach(el => {
-        el.classList.remove('bg-brand/10', 'text-brand', 'font-bold', 'border', 'border-brand/20');
-        el.classList.add('text-gray-400', 'hover:bg-gray-800');
+        el.classList.remove('bg-brand/10','text-brand','font-bold','border','border-brand/20');
+        el.classList.add('text-gray-400','hover:bg-gray-800');
       });
-      const activeLink = document.getElementById('nav-' + sectionId);
-      if (activeLink) {
-        activeLink.classList.remove('text-gray-400', 'hover:bg-gray-800');
-        activeLink.classList.add('bg-brand/10', 'text-brand', 'font-bold', 'border', 'border-brand/20');
-      }
-      
-      // Load data lazily based on section
-      if(sectionId === 'sec-resumen') loadResumen();
-      if(sectionId === 'sec-inventario') loadInventario();
-      if(sectionId === 'sec-empleados') loadEmpleados();
-      if(sectionId === 'sec-reparaciones') loadReparaciones();
-      if(sectionId === 'sec-ventas') loadVentas();
+      const a = document.getElementById('nav-'+id);
+      if(a){ a.classList.remove('text-gray-400','hover:bg-gray-800'); a.classList.add('bg-brand/10','text-brand','font-bold','border','border-brand/20'); }
+      const loaders = { 'sec-resumen':loadResumen,'sec-inventario':loadInventario,'sec-empleados':loadEmpleados,'sec-reparaciones':loadReparaciones,'sec-ventas':loadVentas };
+      if(loaders[id]) loaders[id]();
     }
 
-    let allInventory = [];
+    let allInv = [];
 
-    async function loadResumen() {
-      try {
-        const res = await fetch('/api/reparaciones');
-        if(res.ok) {
-          const data = await res.json();
-          document.getElementById('res-reparaciones').innerText = data.length;
-          
-          let html = '';
-          data.slice(0, 3).forEach(rep => {
-            html += `<div class="flex justify-between items-center bg-gray-950 p-4 rounded-xl border border-gray-800">
-               <div><p class="font-bold">${rep.codigo_seguimiento}</p></div>
-               <span class="px-3 py-1 bg-brand/10 text-brand text-xs font-bold rounded-full border border-brand/20">${rep.estado}</span>
-             </div>`;
+    async function loadResumen(){
+      try{
+        const r1 = await fetch('/api/reparaciones');
+        const r2 = await fetch('/api/crm/ingresos');
+        if(r1.ok){
+          const d = await r1.json();
+          document.getElementById('res-reparaciones').innerText = d.length;
+          let h = '';
+          d.slice(0,3).forEach(rep => {
+            h += '<div class="flex justify-between items-center bg-gray-950 p-4 rounded-xl border border-gray-800"><p class="font-bold">' + (rep.codigo_seguimiento||'—') + '</p><span class="px-3 py-1 bg-brand/10 text-brand text-xs font-bold rounded-full border border-brand/20">' + rep.estado + '</span></div>';
           });
-          document.getElementById('res-ultimas-rep').innerHTML = html || '<p class="text-gray-500 text-sm">No hay reparaciones activas.</p>';
+          document.getElementById('res-ultimas-rep').innerHTML = h || '<p class="text-gray-500 text-sm">Sin reparaciones activas.</p>';
         }
-        
-        // Ventas
-        const vRes = await fetch('/api/crm/ingresos');
-        if(vRes.ok) {
-          const vData = await vRes.json();
-          document.getElementById('res-ingresos').innerText = formatCurrency(vData.total_ingresos || 0);
-        }
-      } catch(e) { console.error(e); }
+        if(r2.ok){ const d = await r2.json(); document.getElementById('res-ingresos').innerText = fmt(d.total_ingresos); }
+      }catch(e){ console.error(e); }
     }
 
-    async function loadInventario() {
-      try {
+    async function loadInventario(){
+      try{
         const res = await fetch('/api/inventario');
-        if(res.ok) {
-          allInventory = await res.json();
-          renderCategorias();
-          renderInventario(null); // Show all initially
-          
-          // Alertas de stock
-          const alertas = allInventory.filter(p => p.stock <= 5).length;
-          document.getElementById('res-alertas').innerText = alertas + ' refacciones';
+        if(res.ok){
+          allInv = await res.json();
+          renderCats();
+          renderInv(null);
+          const al = allInv.filter(p => p.stock <= 5).length;
+          document.getElementById('res-alertas').innerText = al + ' refacciones';
         }
-      } catch(e) { console.error(e); }
+      }catch(e){ console.error(e); }
     }
 
-    function renderCategorias() {
-      const cats = [...new Set(allInventory.map(item => item.categoria))];
-      let html = <button onclick="renderInventario(null)" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Todas</button>;
+    function renderCats(){
+      const cats = [...new Set(allInv.map(i => i.categoria))];
+      let h = '<button onclick="renderInv(null)" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Todas</button>';
       cats.forEach(c => {
-        if(c) {
-          html += <button onclick="renderInventario('${c}')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-brand text-white rounded-lg text-sm font-bold transition">${c}</button>;
-        }
+        if(c) h += '<button onclick="renderInv('' + c + '')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-brand text-white rounded-lg text-sm font-bold transition">' + c + '</button>';
       });
-      document.getElementById('inv-categorias').innerHTML = html;
+      document.getElementById('inv-categorias').innerHTML = h;
     }
 
-    function renderInventario(categoria) {
-      let data = allInventory;
-      if(categoria) data = allInventory.filter(item => item.categoria === categoria);
-      
-      let html = '';
-      data.forEach(item => {
-        let stockCls = item.stock <= 5 ? "bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-900/50" : "";
-        html += `<tr class="hover:bg-gray-800/50 transition">
-          <td class="p-4 font-medium">${item.nombre_producto}</td>
-          <td class="p-4 text-gray-400">+(item.categoria || 'Sin Cat')+</td>
-          <td class="p-4">${formatCurrency(item.precio_compra)}</td>
-          <td class="p-4 font-bold text-brand">${formatCurrency(item.precio_venta)}</td>
-          <td class="p-4 text-center"><span class="${stockCls}">${item.stock}</span></td>
-        </tr>`;
+    function renderInv(cat){
+      const data = cat ? allInv.filter(i => i.categoria === cat) : allInv;
+      let h = '';
+      data.forEach(it => {
+        const sc = it.stock <= 5 ? 'bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-900/50' : '';
+        h += '<tr class="hover:bg-gray-800/50 transition"><td class="p-4 font-medium">' + it.nombre_producto + '</td><td class="p-4 text-gray-400">' + (it.categoria||'—') + '</td><td class="p-4">' + fmt(it.precio_compra) + '</td><td class="p-4 font-bold text-brand">' + fmt(it.precio_venta) + '</td><td class="p-4 text-center"><span class="' + sc + '">' + it.stock + '</span></td></tr>';
       });
-      document.getElementById('inv-tbody').innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-gray-500">No hay productos</td></tr>';
+      document.getElementById('inv-tbody').innerHTML = h || '<tr><td colspan="5" class="p-4 text-center text-gray-500">Sin productos</td></tr>';
     }
 
-    async function loadEmpleados() {
-      // Para efectos visuales rápidos, crearemos unas tarjetas. Idealmente esto viene de una API '/api/auth/users'
-      // Dado que usamos Supabase y RLS, este endpoint no está expuesto directamente para leer todos los usuarios en nuestro diseño actual (excepto si creamos un backend route para ello).
-      // Solo mostraremos 2 mock users para el diseño, ya que la petición pide que la tabla se base en BD, 
-      // Si existiera el endpoint /api/empleados, lo llamaríamos aquí.
-      let html = `<div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 flex items-center gap-4">
-          <div class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-xl">C</div>
-          <div class="flex-1">
-            <h3 class="font-bold text-lg">Carlos</h3>
-            <p class="text-gray-400 text-sm">carlos@fitzcell.com</p>
-          </div>
-          <span class="px-3 py-1 bg-blue-900/30 text-blue-400 text-xs font-bold rounded-full border border-blue-900/50">Técnico</span>
-        </div>
-        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 flex items-center gap-4">
-          <div class="w-12 h-12 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-500 font-bold text-xl">A</div>
-          <div class="flex-1">
-            <h3 class="font-bold text-lg">Ana</h3>
-            <p class="text-gray-400 text-sm">ana@fitzcell.com</p>
-          </div>
-          <span class="px-3 py-1 bg-pink-900/30 text-pink-400 text-xs font-bold rounded-full border border-pink-900/50">Ventas</span>
-        </div>`;
-      document.getElementById('emp-lista').innerHTML = html;
+    function loadEmpleados(){
+      document.getElementById('emp-lista').innerHTML = '<div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 flex items-center gap-4"><div class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-xl">C</div><div class="flex-1"><h3 class="font-bold text-lg">Carlos</h3><p class="text-gray-400 text-sm">carlos@fitzcell.com</p></div><span class="px-3 py-1 bg-blue-900/30 text-blue-400 text-xs font-bold rounded-full border border-blue-900/50">Técnico</span></div><div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 flex items-center gap-4"><div class="w-12 h-12 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-500 font-bold text-xl">A</div><div class="flex-1"><h3 class="font-bold text-lg">Ana</h3><p class="text-gray-400 text-sm">ana@fitzcell.com</p></div><span class="px-3 py-1 bg-pink-900/30 text-pink-400 text-xs font-bold rounded-full border border-pink-900/50">Ventas</span></div>';
     }
 
-    async function loadReparaciones() {
-      try {
+    async function loadReparaciones(){
+      try{
         const res = await fetch('/api/reparaciones');
-        if(res.ok) {
-          const data = await res.json();
-          let html = '';
-          data.forEach(rep => {
-            html += `<tr class="hover:bg-gray-800/50 transition">
-              <td class="p-4 font-bold text-white">${rep.codigo_seguimiento}</td>
-              <td class="p-4 text-gray-400">Equipo ID: ${rep.id_dispositivo}</td>
-              <td class="p-4 text-gray-400 truncate max-w-xs">${rep.falla_reportada}</td>
-              <td class="p-4 font-bold text-brand">${formatCurrency(rep.costo)}</td>
-              <td class="p-4 text-center"><span class="px-2 py-1 bg-gray-800 rounded text-xs border border-gray-700">${rep.estado}</span></td>
-            </tr>`;
+        if(res.ok){
+          const d = await res.json();
+          let h = '';
+          d.forEach(rep => {
+            h += '<tr class="hover:bg-gray-800/50 transition"><td class="p-4 font-bold text-white">' + (rep.codigo_seguimiento||'—') + '</td><td class="p-4 text-gray-400">ID: ' + (rep.id_dispositivo||'—') + '</td><td class="p-4 text-gray-400 truncate max-w-xs">' + (rep.falla_reportada||'—') + '</td><td class="p-4 font-bold text-brand">' + fmt(rep.costo) + '</td><td class="p-4 text-center"><span class="px-2 py-1 bg-gray-800 rounded text-xs border border-gray-700">' + rep.estado + '</span></td></tr>';
           });
-          document.getElementById('rep-tbody').innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-gray-500">No hay órdenes</td></tr>';
+          document.getElementById('rep-tbody').innerHTML = h || '<tr><td colspan="5" class="p-4 text-center text-gray-500">Sin órdenes</td></tr>';
         }
-      } catch(e) {}
+      }catch(e){ console.error(e); }
     }
 
-    async function loadVentas() {
-      try {
-        const res = await fetch('/api/inventario'); // Fallback si no hay API de historial de ventas
-        document.getElementById('ven-tbody').innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">Historial de tickets no disponible temporalmente.</td></tr>';
-      } catch(e) {}
+    function loadVentas(){
+      document.getElementById('ven-tbody').innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">Sin historial disponible.</td></tr>';
     }
 
-    // Inicializar SPA
     showSection('sec-resumen');
-
   </script>
 </body>
 </html>
