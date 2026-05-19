@@ -1,10 +1,159 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Técnico - FitzCell</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { 
+      theme: { extend: { colors: { brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' }, base: '#0a0a0b' } } } 
+    }
+  </script>
+  <style>
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0a0a0b; }
+    ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #374151; }
+    .fade-in { animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-base text-gray-100 min-h-screen flex overflow-hidden">
+  
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col z-20 h-screen">
+    <div class="mb-6 flex items-center">
+      <img src="../media/images/fitzcell_logo.svg" alt="FitzCell Logo" class="h-12 w-auto object-contain">
+    </div>
+    <div class="mb-6 text-xs font-bold text-blue-400 bg-blue-900/20 p-2 rounded text-center tracking-widest border border-blue-900/50">
+      ROL: TÉCNICO
+    </div>
+    
+    <nav class="flex-1 space-y-2">
+      <a href="#" onclick="showSection('sec-ordenes')" id="nav-sec-ordenes" class="nav-item block p-3 bg-brand/10 text-brand rounded-lg font-bold border border-brand/20 transition-all">📋 Mis Órdenes</a>
+      <a href="#" onclick="showSection('sec-diagnostico')" id="nav-sec-diagnostico" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🔧 Diagnóstico</a>
+      <a href="#" onclick="showSection('sec-garantias')" id="nav-sec-garantias" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🛡️ Garantías</a>
+    </nav>
+    
+    <button onclick="logout()" class="mt-auto p-3 bg-red-900/20 text-red-400 rounded-lg font-bold hover:bg-red-900/40 border border-red-900/50 transition-all flex justify-center items-center gap-2">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+      Cerrar Sesión
+    </button>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-8 h-screen overflow-y-auto relative">
+    
+    <div class="absolute top-0 left-1/2 w-96 h-96 bg-blue-500 rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
+
+    <!-- SECCIÓN: ÓRDENES -->
+    <section id="sec-ordenes" class="fade-in block">
+      <header class="mb-10 flex justify-between items-end">
+        <div>
+          <h1 class="text-3xl font-bold mb-1">Órdenes <span class="text-brand">Asignadas</span></h1>
+          <p class="text-gray-400">Equipos pendientes de revisión y reparación.</p>
+        </div>
+      </header>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" id="lista-ordenes">
+        <p class="text-gray-500">Cargando órdenes desde Supabase...</p>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: DIAGNÓSTICO -->
+    <section id="sec-diagnostico" class="fade-in hidden">
+      <header class="mb-6 flex justify-between items-end">
+        <div>
+          <h1 class="text-3xl font-bold mb-1">Panel de <span class="text-brand">Diagnóstico</span></h1>
+          <p class="text-gray-400 mb-2">Captura el diagnóstico y descuenta piezas del inventario.</p>
+          <div class="inline-flex items-center gap-2 px-3 py-1 bg-gray-900 border border-gray-700 rounded-lg text-sm text-gray-300">
+            <span>Dispositivo en mesa:</span>
+            <span id="dispositivo-activo" class="font-bold text-white">Ninguno seleccionado</span>
+            <button onclick="showSection('sec-ordenes')" class="text-brand ml-2 hover:underline text-xs">Cambiar</button>
+          </div>
+        </div>
+        <div class="bg-gray-900 px-4 py-2 rounded-xl border border-gray-800 flex items-center gap-3">
+          <span class="text-gray-400 text-sm">Folio Activo:</span>
+          <span id="folio-activo" class="font-bold text-brand text-lg">Ninguno</span>
+        </div>
+      </header>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Formulario Diagnostico -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 flex flex-col">
+          <h3 class="text-xl font-bold mb-6 border-b border-gray-800 pb-4">Detalles del Equipo</h3>
+          
+          <div class="space-y-5 flex-1">
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-1">Diagnóstico del Técnico</label>
+              <textarea id="diag-texto" rows="4" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition" placeholder="Describe qué le falla al equipo y qué se necesita hacer..."></textarea>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-1">Cambiar Estado</label>
+              <select id="diag-estado" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition appearance-none">
+                <option value="Diagnosticando">Diagnosticando</option>
+                <option value="Esperando Refacción">Esperando Refacción</option>
+                <option value="Reparando">Reparando</option>
+                <option value="Listo para Entrega">Listo para Entrega</option>
+                <option value="Sin Reparación">Sin Reparación / Entregar</option>
+              </select>
+            </div>
+          </div>
+          
+          <button class="mt-6 w-full bg-brand text-gray-950 py-3 rounded-xl font-bold hover:bg-brand-light transition shadow-[0_0_15px_rgba(7,183,107,0.3)]">
+            Guardar Diagnóstico
+          </button>
+        </div>
+
+        <!-- Inventario a utilizar -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 flex flex-col">
+          <h3 class="text-xl font-bold mb-6 border-b border-gray-800 pb-4">Refacciones a Utilizar</h3>
+          
+          <div class="mb-4">
+            <div class="flex gap-2">
+              <input type="text" id="buscador-refaccion" placeholder="Escribe para buscar refacción en DB..." class="flex-1 bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+            </div>
+            <!-- Lista desplegable de busqueda -->
+            <div id="resultados-refaccion" class="mt-2 bg-gray-950 border border-gray-700 rounded-xl overflow-hidden hidden max-h-40 overflow-y-auto">
+              <!-- Resultados DB dinámicos -->
+            </div>
+          </div>
+
+          <div id="lista-piezas-usadas" class="flex-1 space-y-3 mb-6 overflow-y-auto">
+             <p class="text-gray-500 text-sm text-center mt-10">No has seleccionado ninguna refacción.</p>
+          </div>
+
+          <div class="bg-blue-900/20 border border-blue-900/50 rounded-xl p-4 flex gap-3 text-blue-300 text-sm mt-auto">
+            <svg class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <p>Al guardar el diagnóstico, las piezas listadas aquí se descontarán automáticamente del inventario general.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: GARANTÍAS -->
+    <section id="sec-garantias" class="fade-in hidden">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold mb-1">Validación de <span class="text-brand">Garantías</span></h1>
+        <p class="text-gray-400">Verifica si un equipo sigue cubierto por reparación previa.</p>
+      </header>
+
+      <div class="max-w-2xl mx-auto mt-10">
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-xl text-center">
+          <svg class="w-16 h-16 text-gray-700 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+          <h2 class="text-xl font-bold mb-2">Ingresa el Folio de Reparación</h2>
+          <div class="flex gap-2 max-w-sm mx-auto mb-6">
+            <input type="text" placeholder="FITZ-XXXX" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-center text-xl text-white focus:border-brand outline-none uppercase tracking-widest font-mono">
+          </div>
+          <button class="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-xl font-bold transition">Consultar Cobertura</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
   <script>
     const r = localStorage.getItem('fitzcell_rol');
     if(r !== 'tecnico' && r !== 'admin') { window.location.href = '../login.html'; }
@@ -45,7 +194,7 @@
               '<div class="flex justify-between items-start mb-4"><div><span class="text-xs font-bold text-gray-400 tracking-wider">FOLIO</span><h3 class="text-xl font-bold text-white">' + folio + '</h3></div>' +
               '<span class="px-3 py-1 text-xs font-bold rounded-full ' + bc + '">' + rep.estado + '</span></div>' +
               '<div class="mb-6 flex-1"><p class="text-sm text-gray-300 font-bold mb-1">Dispositivo ID: ' + (rep.id_dispositivo||'—') + '</p><p class="text-sm text-gray-500 italic">"' + falla + '"</p></div>' +
-              '<button onclick="irADiagnostico('' + folio + '','' + rep.id_dispositivo + '','' + falla + '','' + rep.estado + '')" class="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg text-sm font-bold transition">Atender Equipo</button>' +
+              '<button onclick="irADiagnostico(\'' + folio + '\',\'' + rep.id_dispositivo + '\',\'' + falla + '\',\'' + rep.estado + '\')" class="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg text-sm font-bold transition">Atender Equipo</button>' +
               '</div>';
           });
           document.getElementById('lista-ordenes').innerHTML = h || '<p class="text-gray-500">No hay órdenes asignadas.</p>';
@@ -68,7 +217,7 @@
             let h = '';
             matches.forEach(m => {
               const nom = m.nombre_producto.replace(/'/g,"");
-              h += '<div class="p-3 border-b border-gray-800 hover:bg-gray-800 cursor-pointer flex justify-between" onclick="agregarPieza('' + nom + '',' + m.id_producto + ')"><span class="text-sm font-medium">' + m.nombre_producto + '</span><span class="text-xs text-brand bg-brand/10 px-2 rounded">Stock: ' + m.stock + '</span></div>';
+              h += '<div class="p-3 border-b border-gray-800 hover:bg-gray-800 cursor-pointer flex justify-between" onclick="agregarPieza(\'' + nom + '\',' + m.id_producto + ')"><span class="text-sm font-medium">' + m.nombre_producto + '</span><span class="text-xs text-brand bg-brand/10 px-2 rounded">Stock: ' + m.stock + '</span></div>';
             });
             resultadosBox.innerHTML = h;
           } else {

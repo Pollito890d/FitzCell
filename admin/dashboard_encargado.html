@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -6,6 +6,179 @@
   <title>Panel de Encargado - FitzCell</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
+    tailwind.config = { 
+      theme: { extend: { colors: { brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' }, base: '#0a0a0b' } } } 
+    }
+  </script>
+  <style>
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0a0a0b; }
+    ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #374151; }
+    .fade-in { animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-base text-gray-100 min-h-screen flex overflow-hidden">
+  
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col z-20 h-screen">
+    <div class="mb-6 flex items-center">
+      <img src="../media/images/fitzcell_logo.svg" alt="FitzCell Logo" class="h-12 w-auto object-contain">
+    </div>
+    <div class="mb-6 text-xs font-bold text-brand bg-brand/10 p-2 rounded text-center tracking-widest border border-brand/20">
+      ROL: ENCARGADO
+    </div>
+    
+    <nav class="flex-1 space-y-2">
+      <a href="#" onclick="showSection('sec-resumen')" id="nav-sec-resumen" class="nav-item block p-3 bg-brand/10 text-brand rounded-lg font-bold border border-brand/20 transition-all">📊 Resumen</a>
+      <a href="#" onclick="showSection('sec-inventario')" id="nav-sec-inventario" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📦 Inventario</a>
+      <a href="#" onclick="showSection('sec-empleados')" id="nav-sec-empleados" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">👥 Empleados</a>
+      <a href="#" onclick="showSection('sec-reparaciones')" id="nav-sec-reparaciones" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📱 Reparaciones globales</a>
+      <a href="#" onclick="showSection('sec-ventas')" id="nav-sec-ventas" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">💰 Historial de Ventas</a>
+    </nav>
+    
+    <button onclick="logout()" class="mt-auto p-3 bg-red-900/20 text-red-400 rounded-lg font-bold hover:bg-red-900/40 border border-red-900/50 transition-all flex justify-center items-center gap-2">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+      Cerrar Sesión
+    </button>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-8 h-screen overflow-y-auto relative">
+    
+    <!-- Decoración de fondo -->
+    <div class="absolute top-0 right-0 w-96 h-96 bg-brand rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
+
+    <!-- SECCIÓN: RESUMEN -->
+    <section id="sec-resumen" class="fade-in block">
+      <header class="mb-10 flex justify-between items-end">
+        <div>
+          <h1 class="text-3xl font-bold mb-1">Visión <span class="text-brand">Global</span></h1>
+          <p class="text-gray-400">Resumen de las métricas principales del día.</p>
+        </div>
+      </header>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="bg-gray-900/80 backdrop-blur-md border border-gray-800 p-6 rounded-2xl shadow-lg relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-brand/10 rounded-bl-full blur-xl"></div>
+          <p class="text-gray-400 text-sm font-medium mb-1">Ingresos Hoy</p>
+          <h3 id="res-ingresos" class="text-3xl font-bold text-white">.00</h3>
+        </div>
+        <div class="bg-gray-900/80 backdrop-blur-md border border-gray-800 p-6 rounded-2xl shadow-lg">
+          <p class="text-gray-400 text-sm font-medium mb-1">Equipos en Reparación</p>
+          <h3 id="res-reparaciones" class="text-3xl font-bold text-white">0</h3>
+        </div>
+        <div class="bg-gray-900/80 backdrop-blur-md border border-red-900/30 p-6 rounded-2xl shadow-lg relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-red-500/10 rounded-bl-full blur-xl"></div>
+          <p class="text-gray-400 text-sm font-medium mb-1">Alertas de Stock</p>
+          <h3 id="res-alertas" class="text-3xl font-bold text-red-400">0 refacciones</h3>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-6">
+          <h3 class="text-lg font-bold mb-4 text-white">Últimas Reparaciones</h3>
+          <div id="res-ultimas-rep" class="space-y-3">
+             <p class="text-gray-500 text-sm">Cargando...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: INVENTARIO -->
+    <section id="sec-inventario" class="fade-in hidden">
+      <header class="mb-8 flex justify-between items-end">
+        <div>
+          <h1 class="text-3xl font-bold mb-1">Catálogo de <span class="text-brand">Inventario</span></h1>
+          <p class="text-gray-400">Control de refacciones y existencias</p>
+        </div>
+      </header>
+      
+      <div class="flex gap-4 mb-6 overflow-x-auto pb-2" id="inv-categorias">
+        <!-- Categorías se generarán dinámicamente aquí -->
+      </div>
+
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-950 border-b border-gray-800 text-gray-400 text-sm">
+                <th class="p-4 font-semibold">Refacción</th>
+                <th class="p-4 font-semibold">Categoría</th>
+                <th class="p-4 font-semibold">Costo</th>
+                <th class="p-4 font-semibold">Precio Venta</th>
+                <th class="p-4 font-semibold text-center">Stock</th>
+              </tr>
+            </thead>
+            <tbody id="inv-tbody" class="divide-y divide-gray-800 text-sm">
+              <tr><td colspan="5" class="p-4 text-center text-gray-500">Cargando inventario...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: EMPLEADOS -->
+    <section id="sec-empleados" class="fade-in hidden">
+      <header class="mb-8 flex justify-between items-end">
+        <div>
+          <h1 class="text-3xl font-bold mb-1">Gestión de <span class="text-brand">Personal</span></h1>
+          <p class="text-gray-400">Alta y control de técnicos y vendedores.</p>
+        </div>
+      </header>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="emp-lista">
+        <p class="text-gray-500 col-span-2">Cargando empleados...</p>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: REPARACIONES GLOBALES -->
+    <section id="sec-reparaciones" class="fade-in hidden">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold mb-1">Reparaciones <span class="text-brand">Activas</span></h1>
+        <p class="text-gray-400">Monitor en tiempo real del taller.</p>
+      </header>
+      
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-950 border-b border-gray-800 text-gray-400 text-sm">
+              <th class="p-4 font-semibold">Folio</th>
+              <th class="p-4 font-semibold">Dispositivo</th>
+              <th class="p-4 font-semibold">Falla Reportada</th>
+              <th class="p-4 font-semibold">Costo Aprox</th>
+              <th class="p-4 font-semibold text-center">Estado</th>
+            </tr>
+          </thead>
+          <tbody id="rep-tbody" class="divide-y divide-gray-800 text-sm">
+            <tr><td colspan="5" class="p-4 text-center text-gray-500">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: VENTAS GLOBALES -->
+    <section id="sec-ventas" class="fade-in hidden">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold mb-1">Historial de <span class="text-brand">Ventas</span></h1>
+        <p class="text-gray-400">Ingresos generados por el área de mostrador.</p>
+      </header>
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-950 border-b border-gray-800 text-gray-400 text-sm">
+              <th class="p-4 font-semibold">ID Venta</th>
+              <th class="p-4 font-semibold">Fecha</th>
+              <th class="p-4 font-semibold">Método Pago</th>
+              <th class="p-4 font-semibold text-right">Total</th>
+            </tr>
+          </thead>
+          <tbody id="ven-tbody" class="divide-y divide-gray-800 text-sm">
+            <tr><td colspan="4" class="p-4 text-center text-gray-500">Cargando...</td></tr>
+          </tbody>
+        </table>
+      <  <script>
     const r = localStorage.getItem('fitzcell_rol');
     if(r !== 'encargado' && r !== 'admin') { window.location.href = '../login.html'; }
     function logout() { localStorage.clear(); window.location.href = '../login.html'; }
@@ -60,7 +233,7 @@
       const cats = [...new Set(allInv.map(i => i.categoria))];
       let h = '<button onclick="renderInv(null)" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Todas</button>';
       cats.forEach(c => {
-        if(c) h += '<button onclick="renderInv('' + c + '')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-brand text-white rounded-lg text-sm font-bold transition">' + c + '</button>';
+        if(c) h += '<button onclick="renderInv(\'' + c + '\')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-brand text-white rounded-lg text-sm font-bold transition">' + c + '</button>';
       });
       document.getElementById('inv-categorias').innerHTML = h;
     }

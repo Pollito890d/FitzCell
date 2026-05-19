@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const router = express.Router();
 const supabase = require('../config/supabase');
 
@@ -7,7 +7,7 @@ router.get('/', async (req, res) => {
     try {
         const { data, error } = await supabase
             .from('orden_reparacion')
-            .select('*, cliente:id_cliente(nombre_completo)')
+            .select('*, dispositivo(cliente(nombre_completo))')
             .order('fecha_ingreso', { ascending: false });
         if (error) throw error;
         res.json(data);
@@ -22,7 +22,7 @@ router.get('/:folio', async (req, res) => {
     try {
         const { data, error } = await supabase
             .from('orden_reparacion')
-            .select('*, cliente:id_cliente(nombre_completo)')
+            .select('*, dispositivo(cliente(nombre_completo))')
             .eq('codigo_seguimiento', req.params.folio)
             .single();
         if (error) {

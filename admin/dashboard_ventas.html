@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -282,7 +282,7 @@
         let stockCls = p.stock <= 5 ? "bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-900/50" : "";
         html += `<tr class="hover:bg-gray-800/50 transition">
           <td class="p-4 font-medium">${p.nombre_producto}</td>
-          <td class="p-4 text-gray-400">' + (p.categoria||'-') + '</td>
+          <td class="p-4 text-gray-400">${p.categoria || '-'}</td>
           <td class="p-4 font-bold text-brand">${formatCurrency(p.precio_venta)}</td>
           <td class="p-4 text-center"><span class="${stockCls}">${p.stock}</span></td>
         </tr>`;

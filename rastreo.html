@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -7,6 +7,106 @@
   <meta name="description" content="Consulta el estado de tu reparación en FitzCell ingresando tu número de folio." />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' },
+            base: '#0a0a0b'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="js/data.js"></script>
+  <link rel="icon" type="image/svg+xml" href="media/images/fitzcell_logo.svg" />
+</head>
+<body class="bg-base text-gray-100 min-h-screen">
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 w-full z-50 bg-base/90 backdrop-blur border-b border-gray-800/50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2 group">
+        <img src="media/images/fitzcell_logo.svg" alt="FitzCell Logo" class="h-9 w-auto hover:opacity-80 transition object-contain">
+        
+      </a>
+      <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-400">
+        <a href="index.html" class="hover:text-brand transition">Inicio</a>
+        
+        
+        
+      </div>
+      <button class="md:hidden text-gray-400 hover:text-white" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden bg-gray-900 border-t border-gray-800 px-4 pb-4">
+      <a href="index.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-brand">Inicio</a>
+      
+      
+      <a href="rastreo.html" class="block py-2 text-brand text-sm font-medium">Rastrear equipo</a>
+      <a href="faq.html" class="block py-2 text-gray-300 text-sm font-medium hover:text-brand">Políticas</a>
+      <a href="login.html" class="block py-2 text-white text-sm font-bold hover:text-brand">Ingresar</a>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="pt-24 pb-20 min-h-screen">
+    <div class="max-w-2xl mx-auto px-4">
+
+      <!-- Encabezado -->
+      <div class="text-center mb-10 fade-in">
+        <div class="text-5xl mb-4">🔍</div>
+        <h1 class="text-3xl md:text-4xl font-extrabold mb-3">Rastrear mi <span class="text-brand">equipo</span></h1>
+        <p class="text-gray-400">Ingresa el número de folio que recibiste al dejar tu equipo y consulta el estado actual de tu reparación.</p>
+      </div>
+
+      <!-- Buscador -->
+      <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800 mb-8 fade-in">
+        <label for="folioInput" class="block text-sm font-semibold text-gray-300 mb-2">Número de folio</label>
+        <div class="flex gap-3">
+          <input
+            id="folioInput"
+            type="text"
+            placeholder="Ej. FTZ-001"
+            maxlength="10"
+            class="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none transition uppercase input-fitz"
+            onkeydown="if(event.key==='Enter') buscarFolio()"
+          />
+          <button onclick="buscarFolio()" class="px-6 py-3 bg-brand text-gray-950 font-bold rounded-xl btn-neon">
+            Buscar
+          </button>
+        </div>
+        <p class="text-xs text-gray-600 mt-2">El folio está impreso en tu comprobante de ingreso. Ejemplo: FTZ-001</p>
+      </div>
+
+      <!-- Resultado -->
+      <div id="resultado" class="hidden"></div>
+
+      <!-- Estado vacío / demo -->
+      <div id="estadoVacio" class="text-center py-12 text-gray-600">
+        <div class="text-6xl mb-4 opacity-30">📋</div>
+        <p class="text-sm">Tus datos aparecerán aquí una vez que ingreses tu folio</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-base border-t border-gray-800 py-6">
+    <div class="max-w-6xl mx-auto px-4 text-center text-sm text-gray-600">
+      © 2026 FitzCell · <a href="faq.html" class="hover:text-brand">Políticas de garantía</a>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const count = localStorage.getItem('cartCount') || '0';
+      const navCart = document.getElementById('nav-cart-count');
+      const mobileNavCart = document.getElementById('mobile-nav-cart-count');
+      if (navCart) navCart.innerText = count;
+      if (mobileNavCart) mobileNavCart.innerText = count;
+    });
+
     function estadoBadge(estado){
       const colores = {
         'Pendiente':'bg-yellow-500/10 text-yellow-400 border border-yellow-500/30',
@@ -52,14 +152,17 @@
             '</div>' +
             '<div class="p-6 space-y-4">' +
               '<div class="grid grid-cols-2 gap-4 text-sm">' +
-                '<div><div class="text-gray-500 text-xs mb-1">Dispositivo</div><div class="font-semibold">ID: ' + (rep.id_dispositivo||'—') + '</div></div>' +
+                '<div><div class="text-gray-500 text-xs mb-1">Cliente</div><div class="font-semibold">' + (rep.cliente?.nombre_completo || rep.dispositivo?.cliente?.nombre_completo || '—') + '</div></div>' +
+                '<div><div class="text-gray-500 text-xs mb-1">Dispositivo (ID)</div><div class="font-semibold">' + (rep.id_dispositivo||'—') + '</div></div>' +
+                '<div><div class="text-gray-500 text-xs mb-1">Fecha Ingreso</div><div class="font-semibold text-gray-300">' + (rep.fecha_ingreso ? new Date(rep.fecha_ingreso).toLocaleDateString('es-MX') : '—') + '</div></div>' +
                 '<div><div class="text-gray-500 text-xs mb-1">Falla Reportada</div><div class="font-semibold text-gray-300">' + (rep.falla_reportada||'—') + '</div></div>' +
               '</div>' +
               '<div class="bg-gray-800/60 rounded-xl p-4 grid grid-cols-2 gap-3 text-center text-sm border border-gray-700/50">' +
-                '<div><div class="text-gray-500 text-xs mb-1">Costo Total</div><div class="font-bold text-white">' + fmt(rep.costo) + '</div></div>' +
+                '<div><div class="text-gray-500 text-xs mb-1">Costo Estimado/Total</div><div class="font-bold text-white">' + fmt(rep.costo) + '</div></div>' +
                 '<div><div class="text-gray-500 text-xs mb-1">Anticipo Pagado</div><div class="font-bold text-brand">' + fmt(rep.anticipo) + '</div></div>' +
               '</div>' +
-              (rep.estado === 'Listo para Entrega' ? '<div class="bg-amber-900/20 border border-amber-700/40 rounded-xl p-4 text-center"><div class="text-amber-400 font-semibold mb-1">🎉 ¡Tu equipo ya está listo!</div><div class="text-xs text-gray-400">Pasa a recogerlo al taller con tu comprobante.</div></div>' : '') +
+              (rep.estado === 'Listo para Entrega' || rep.estado === 'Listo' ? '<div class="bg-amber-900/20 border border-amber-700/40 rounded-xl p-4 text-center"><div class="text-amber-400 font-semibold mb-1">🎉 ¡Tu equipo ya está listo!</div><div class="text-xs text-gray-400">Pasa a recogerlo al taller con tu comprobante.</div></div>' : '') +
+              (rep.estado === 'Entregado' ? '<div class="bg-emerald-900/20 border border-emerald-700/40 rounded-xl p-4 text-center"><div class="text-emerald-400 font-semibold mb-1">✅ Equipo entregado</div><div class="text-xs text-gray-400">Este equipo ya fue devuelto a su dueño.</div></div>' : '') +
             '</div>' +
           '</div>';
       }catch(e){
