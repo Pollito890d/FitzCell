@@ -46,7 +46,7 @@ router.post('/solicitud', async (req, res) => {
         let { data: existingClient, error: errClient } = await supabase
             .from('cliente')
             .select('id_cliente')
-            .or(correo_electronico.eq.+cliente_email+,telefono.eq.+cliente_telefono)
+            .or(`correo_electronico.eq.${cliente_email},telefono.eq.${cliente_telefono}`)
             .limit(1);
 
         if (existingClient && existingClient.length > 0) {
@@ -90,4 +90,5 @@ router.post('/solicitud', async (req, res) => {
 });
 
 module.exports = router;
+
 
