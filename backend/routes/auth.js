@@ -9,7 +9,7 @@ router.post('/register', async (req, res) => {
     
     try {
         const { data, error } = await supabase
-            .from('Usuario')
+            .from('usuario')
             .insert([
                 { nombre, email, password_hash: password, rol: rol || 'tecnico' }
             ])
@@ -34,7 +34,7 @@ router.post('/login', async (req, res) => {
     try {
         // Consultar el usuario en Supabase (Ojo con las mayúsculas en 'Usuario')
         const { data: user, error } = await supabase
-            .from('Usuario')
+            .from('usuario')
             .select('*')
             .eq('email', email)
             .eq('password_hash', password)
@@ -59,4 +59,5 @@ router.post('/login', async (req, res) => {
 });
 
 module.exports = router;
+
 
