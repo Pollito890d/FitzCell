@@ -30,8 +30,10 @@
     <div class="bg-gray-900 border border-gray-800 p-10 rounded-2xl text-center"><p class="text-gray-500">Módulos en construcción...</p></div>
   </main>
   <script>
-    if(localStorage.getItem('rol') !== 'encargado') { window.location.href = '../login.html'; }
+    const r = localStorage.getItem('fitzcell_rol'); if(r !== 'encargado' && r !== 'admin') { window.location.href = '../login.html'; }
     function logout() { localStorage.clear(); window.location.href = '../login.html'; }
   </script>
 </body>
 </html>
+
+
