@@ -41,7 +41,7 @@ router.post('/login', async (req, res) => {
             .single();
 
         if (error || !user) {
-            return res.status(401).json({ message: 'Credenciales inválidas' });
+            return res.status(401).json({ message: error ? 'DB ERROR: ' + error.message : 'Credenciales inválidas (No user found)' });
         }
 
         // Generar Token JWT válido por 8 horas
@@ -59,3 +59,4 @@ router.post('/login', async (req, res) => {
 });
 
 module.exports = router;
+
