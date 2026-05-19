@@ -43,7 +43,65 @@
       </button>
     </form>
   </div>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('btnLogin');
+      const msg = document.getElementById('loginMsg');
+      
+      btn.innerText = 'Verificando...';
+      btn.disabled = true;
+      msg.classList.add('hidden');
+      
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          msg.innerText = data.message || 'Error de credenciales';
+          msg.classList.remove('hidden', 'bg-green-900', 'text-green-300');
+          msg.classList.add('bg-red-900', 'text-red-300');
+          btn.innerText = 'Iniciar Sesión';
+          btn.disabled = false;
+          return;
+        }
+        
+        // Guardar token y rol
+        localStorage.setItem('fitzcell_token', data.token);
+        localStorage.setItem('fitzcell_rol', data.rol);
+        localStorage.setItem('fitzcell_nombre', data.nombre);
+        
+        msg.innerText = 'Acceso Correcto. Redirigiendo...';
+        msg.classList.remove('hidden', 'bg-red-900', 'text-red-300');
+        msg.classList.add('bg-green-900', 'text-green-300');
+        
+        // Redirigir según el rol
+        setTimeout(() => {
+          if (data.rol === 'admin' || data.rol === 'encargado') window.location.href = 'admin/dashboard_encargado.html';
+          else if (data.rol === 'tecnico') window.location.href = 'admin/dashboard_tecnico.html';
+          else if (data.rol === 'ventas') window.location.href = 'admin/dashboard_ventas.html';
+          else window.location.href = 'index.html';
+        }, 1000);
+        
+      } catch (err) {
+        msg.innerText = 'Error de conexión con el servidor';
+        msg.classList.remove('hidden', 'bg-green-900', 'text-green-300');
+        msg.classList.add('bg-red-900', 'text-red-300');
+        btn.innerText = 'Iniciar Sesión';
+        btn.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>
+
 
 
