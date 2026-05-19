@@ -3,30 +3,173 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel de Ventas - FitzCell</title>
+  <title>Panel Ventas - FitzCell</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#07B76B' }, base: '#0a0a0b' } } } }</script>
+  <script>tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#a855f7' }, base: '#0a0a0b' } } } }</script>
+  <style>
+    .spa-view { animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
 </head>
 <body class="bg-base text-gray-100 min-h-screen flex">
-  <aside class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col">
-    <h2 class="text-2xl font-bold text-white mb-6"><span class="text-brand">⚡</span> FitzCell</h2>
-    <div class="mb-4 text-xs font-bold text-brand bg-brand/10 p-2 rounded">ROL: VENTAS</div>
-    <nav class="flex-1 space-y-2">
-      <a href="#" class="block p-3 bg-brand/10 text-brand rounded-lg font-bold border border-brand/20">💰 Punto de Venta</a>
-      <a href="#" class="block p-3 text-gray-400 hover:bg-gray-800 rounded-lg">🧾 Comprobantes</a>
-      <a href="#" class="block p-3 text-gray-400 hover:bg-gray-800 rounded-lg">📦 Inventario</a>
+  
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col z-10 shadow-2xl relative">
+    <h2 class="text-2xl font-bold text-white mb-6"><span class="text-brand">💳</span> FitzCell</h2>
+    <div class="mb-4 text-xs font-bold text-brand bg-brand/10 p-2 rounded text-center uppercase tracking-widest border border-brand/20">Ventas</div>
+    
+    <nav class="flex-1 space-y-2 mt-4" id="navMenu">
+      <a href="#" data-target="view-pos" class="nav-link block p-3 bg-brand/10 text-brand rounded-lg font-bold border border-brand/20 transition-all">🛒 Punto de Venta</a>
+      <a href="#" data-target="view-comprobantes" class="nav-link block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🧾 Comprobantes</a>
+      <a href="#" data-target="view-inventario" class="nav-link block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📦 Inventario</a>
     </nav>
-    <button onclick="logout()" class="p-3 bg-red-900/20 text-red-400 rounded-lg font-bold hover:bg-red-900/40">Cerrar Sesión</button>
+    
+    <button onclick="logout()" class="mt-auto p-3 bg-red-900/10 border border-red-900/30 text-red-400 rounded-lg font-bold hover:bg-red-900/30 transition-all">Cerrar Sesión</button>
   </aside>
-  <main class="flex-1 p-10">
-    <h1 class="text-3xl font-bold mb-8">Punto de <span class="text-brand">Venta</span></h1>
-    <div class="bg-gray-900 border border-gray-800 p-10 rounded-2xl text-center"><p class="text-gray-500">Módulos en construcción...</p></div>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto relative flex flex-col">
+    <!-- Glow effect de fondo -->
+    <div class="absolute top-0 right-0 w-96 h-96 bg-brand rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
+
+    <!-- VISTA: PUNTO DE VENTA (POS) -->
+    <section id="view-pos" class="spa-view block relative z-10 flex-1 p-6 h-full flex flex-col lg:flex-row gap-6">
+      <!-- Izquierda: Catálogo -->
+      <div class="flex-1 flex flex-col">
+        <h1 class="text-3xl font-bold mb-6">Punto de <span class="text-brand">Venta</span></h1>
+        <div class="mb-4 flex gap-4">
+          <input type="text" placeholder="Buscar accesorio o refacción..." class="flex-1 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition">
+          <button class="bg-gray-800 text-white px-6 rounded-xl hover:bg-gray-700 transition">Buscar</button>
+        </div>
+        
+        <!-- Grid de Productos Rápidos -->
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 flex-1 content-start">
+          <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl cursor-pointer hover:border-brand/50 hover:bg-gray-800 transition text-center">
+            <div class="text-3xl mb-2">🔌</div>
+            <p class="font-bold text-white text-sm">Cable USB-C</p>
+            <p class="text-brand text-xs">.00</p>
+          </div>
+          <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl cursor-pointer hover:border-brand/50 hover:bg-gray-800 transition text-center">
+            <div class="text-3xl mb-2">🔋</div>
+            <p class="font-bold text-white text-sm">Cubo Carga Rápida</p>
+            <p class="text-brand text-xs">.00</p>
+          </div>
+          <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl cursor-pointer hover:border-brand/50 hover:bg-gray-800 transition text-center">
+            <div class="text-3xl mb-2">📱</div>
+            <p class="font-bold text-white text-sm">Mica Cristal Templado</p>
+            <p class="text-brand text-xs">.00</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Derecha: Ticket / Cuenta -->
+      <div class="w-full lg:w-96 bg-gray-900 border border-gray-800 rounded-2xl flex flex-col overflow-hidden shadow-2xl">
+        <div class="p-4 bg-gray-800/50 border-b border-gray-800 font-bold text-lg text-center">Ticket Actual</div>
+        <div class="flex-1 p-4 overflow-y-auto space-y-3">
+          <!-- Item Ticket -->
+          <div class="flex justify-between items-center text-sm">
+            <div class="flex items-center gap-2">
+              <span class="bg-gray-800 px-2 py-0.5 rounded text-xs">x1</span>
+              <span class="text-gray-300">Cable USB-C</span>
+            </div>
+            <span class="font-bold text-white">.00</span>
+          </div>
+          <div class="flex justify-between items-center text-sm">
+            <div class="flex items-center gap-2">
+              <span class="bg-gray-800 px-2 py-0.5 rounded text-xs">x2</span>
+              <span class="text-gray-300">Mica Cristal</span>
+            </div>
+            <span class="font-bold text-white">.00</span>
+          </div>
+        </div>
+        <div class="p-6 bg-gray-950 border-t border-gray-800">
+          <div class="flex justify-between text-gray-400 mb-2 text-sm"><span>Subtotal</span><span>.00</span></div>
+          <div class="flex justify-between text-white font-bold text-2xl mb-6"><span>Total</span><span class="text-brand">.00</span></div>
+          <button class="w-full bg-brand text-gray-900 font-bold py-4 rounded-xl hover:bg-brand/90 transition shadow-[0_0_15px_rgba(168,85,247,0.3)] text-lg">
+            Cobrar Venta
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA: COMPROBANTES -->
+    <section id="view-comprobantes" class="spa-view hidden relative z-10 p-10">
+      <h1 class="text-3xl font-bold mb-2">Historial de <span class="text-brand">Ventas</span></h1>
+      <p class="text-gray-400 mb-8">Reimpresión de tickets y comprobantes.</p>
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+        <table class="w-full text-left text-sm border-collapse">
+          <thead><tr class="text-gray-500 border-b border-gray-800"><th class="pb-3">Folio</th><th class="pb-3">Fecha</th><th class="pb-3">Monto</th><th class="pb-3">Acción</th></tr></thead>
+          <tbody>
+            <tr class="border-b border-gray-800/50"><td class="py-4 text-white">#VNT-0042</td><td class="py-4 text-gray-400">Hoy, 12:45 PM</td><td class="py-4 text-brand font-bold">.00</td><td class="py-4"><button class="text-gray-400 hover:text-white">Imprimir</button></td></tr>
+            <tr><td class="py-4 text-white">#VNT-0041</td><td class="py-4 text-gray-400">Ayer, 04:10 PM</td><td class="py-4 text-brand font-bold">,200.00</td><td class="py-4"><button class="text-gray-400 hover:text-white">Imprimir</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VISTA: INVENTARIO (Lectura) -->
+    <section id="view-inventario" class="spa-view hidden relative z-10 p-10">
+      <h1 class="text-3xl font-bold mb-2">Consulta de <span class="text-brand">Inventario</span></h1>
+      <p class="text-gray-400 mb-8">Verifica existencias antes de vender (Modo Lectura).</p>
+      <div class="bg-gray-900/80 border border-gray-800 rounded-2xl overflow-hidden">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-800/50 text-gray-400 text-sm border-b border-gray-800">
+              <th class="p-4 font-medium">Producto</th>
+              <th class="p-4 font-medium">Stock Disponible</th>
+              <th class="p-4 font-medium">Precio Público</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm" id="inventarioTableVentas">
+            <!-- Rellenado con JS abajo -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
   </main>
+
   <script>
-    const rol = localStorage.getItem('fitzcell_rol');
-    if(rol !== 'ventas' && rol !== 'encargado') { window.location.href = '../login.html'; }
+    const rol = localStorage.getItem('fitzcell_rol'); 
+    if(rol !== 'ventas' && rol !== 'admin') { window.location.href = '../login.html'; }
     function logout() { localStorage.clear(); window.location.href = '../login.html'; }
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.spa-view');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        navLinks.forEach(l => {
+          l.classList.remove('bg-brand/10', 'text-brand', 'border', 'border-brand/20', 'font-bold');
+          l.classList.add('text-gray-400', 'hover:bg-gray-800');
+        });
+        e.currentTarget.classList.remove('text-gray-400', 'hover:bg-gray-800');
+        e.currentTarget.classList.add('bg-brand/10', 'text-brand', 'border', 'border-brand/20', 'font-bold');
+        
+        sections.forEach(sec => {
+          sec.classList.remove('block');
+          sec.classList.add('hidden');
+        });
+        const targetId = e.currentTarget.getAttribute('data-target');
+        document.getElementById(targetId).classList.remove('hidden');
+        document.getElementById(targetId).classList.add('block');
+      });
+    });
+
+    const refacciones = ["Mica Cristal Templado", "Funda Silicón Transparente", "Cable USB-C (Carga Rápida)", "Cargador Completo 20W", "Audífonos Bluetooth", "Pantalla", "Batería"];
+    const invTable = document.getElementById('inventarioTableVentas');
+    refacciones.forEach((item) => {
+      const stock = Math.floor(Math.random() * 20);
+      const pventa = Math.floor(Math.random() * 400) + 100;
+      invTable.innerHTML += 
+        <tr class="border-b border-gray-800/50 hover:bg-gray-800/30">
+          <td class="p-4 text-white font-medium">\</td>
+          <td class="p-4"><span class="\">\</span></td>
+          <td class="p-4 text-white font-bold">$\</td>
+        </tr>
+      ;
+    });
   </script>
 </body>
 </html>
-

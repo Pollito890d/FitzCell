@@ -3,31 +3,155 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel de Técnico - FitzCell</title>
+  <title>Panel Técnico - FitzCell</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#07B76B' }, base: '#0a0a0b' } } } }</script>
+  <script>tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#3b82f6' }, base: '#0a0a0b' } } } }</script>
+  <style>
+    /* Transiciones suaves para vistas */
+    .spa-view { animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
 </head>
 <body class="bg-base text-gray-100 min-h-screen flex">
-  <aside class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col">
-    <h2 class="text-2xl font-bold text-white mb-6"><span class="text-brand">⚡</span> FitzCell</h2>
-    <div class="mb-4 text-xs font-bold text-brand bg-brand/10 p-2 rounded">ROL: TÉCNICO</div>
-    <nav class="flex-1 space-y-2">
-      <a href="#" class="block p-3 bg-brand/10 text-brand rounded-lg font-bold border border-brand/20">📱 Órdenes</a>
-      <a href="#" class="block p-3 text-gray-400 hover:bg-gray-800 rounded-lg">🛠️ Diagnóstico</a>
-      <a href="#" class="block p-3 text-gray-400 hover:bg-gray-800 rounded-lg">⚙️ Piezas Usadas</a>
-      <a href="#" class="block p-3 text-gray-400 hover:bg-gray-800 rounded-lg">📜 Garantías</a>
+  
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col z-10 shadow-2xl relative">
+    <h2 class="text-2xl font-bold text-white mb-6"><span class="text-brand">🔧</span> FitzCell</h2>
+    <div class="mb-4 text-xs font-bold text-brand bg-brand/10 p-2 rounded text-center uppercase tracking-widest border border-brand/20">Técnico</div>
+    
+    <nav class="flex-1 space-y-2 mt-4" id="navMenu">
+      <a href="#" data-target="view-ordenes" class="nav-link block p-3 bg-brand/10 text-brand rounded-lg font-bold border border-brand/20 transition-all">📋 Mis Órdenes</a>
+      <a href="#" data-target="view-diagnostico" class="nav-link block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🩺 Diagnóstico & Piezas</a>
+      <a href="#" data-target="view-garantias" class="nav-link block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🛡️ Garantías</a>
     </nav>
-    <button onclick="logout()" class="p-3 bg-red-900/20 text-red-400 rounded-lg font-bold hover:bg-red-900/40">Cerrar Sesión</button>
+    
+    <button onclick="logout()" class="mt-auto p-3 bg-red-900/10 border border-red-900/30 text-red-400 rounded-lg font-bold hover:bg-red-900/30 transition-all">Cerrar Sesión</button>
   </aside>
-  <main class="flex-1 p-10">
-    <h1 class="text-3xl font-bold mb-8">Órdenes <span class="text-brand">Asignadas</span></h1>
-    <div class="bg-gray-900 border border-gray-800 p-10 rounded-2xl text-center"><p class="text-gray-500">Módulos en construcción...</p></div>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-10 overflow-y-auto relative">
+    <!-- Glow effect de fondo -->
+    <div class="absolute top-0 right-0 w-96 h-96 bg-brand rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
+
+    <!-- VISTA: ORDENES -->
+    <section id="view-ordenes" class="spa-view block relative z-10">
+      <h1 class="text-3xl font-bold mb-2">Equipos <span class="text-brand">Asignados</span></h1>
+      <p class="text-gray-400 mb-8">Cola de trabajo y reparaciones pendientes.</p>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Tarjeta de Orden 1 -->
+        <div class="bg-gray-900/80 border border-gray-800 p-6 rounded-2xl flex flex-col hover:border-brand/50 transition-colors">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <span class="text-xs bg-yellow-900/30 text-yellow-500 font-bold px-2 py-1 rounded border border-yellow-900/50">Pendiente</span>
+              <h3 class="text-xl font-bold text-white mt-2">iPhone 13 Pro <span class="text-gray-500 text-sm font-normal">#FITZ-1001</span></h3>
+            </div>
+            <button class="bg-gray-800 hover:bg-brand hover:text-white text-gray-400 p-2 rounded-lg transition-colors">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </button>
+          </div>
+          <p class="text-gray-400 text-sm mb-4 flex-1">"Pantalla estrellada y mancha negra en la esquina."</p>
+          <div class="text-xs text-gray-500 border-t border-gray-800 pt-3">Ingreso: Hoy, 10:30 AM</div>
+        </div>
+
+        <!-- Tarjeta de Orden 2 -->
+        <div class="bg-gray-900/80 border border-gray-800 p-6 rounded-2xl flex flex-col hover:border-brand/50 transition-colors">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <span class="text-xs bg-brand/20 text-brand font-bold px-2 py-1 rounded border border-brand/30">Reparando</span>
+              <h3 class="text-xl font-bold text-white mt-2">Galaxy S22 <span class="text-gray-500 text-sm font-normal">#FITZ-1002</span></h3>
+            </div>
+            <button class="bg-gray-800 hover:bg-brand hover:text-white text-gray-400 p-2 rounded-lg transition-colors">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </button>
+          </div>
+          <p class="text-gray-400 text-sm mb-4 flex-1">"La batería no le dura ni 2 horas, se apaga solo."</p>
+          <div class="text-xs text-gray-500 border-t border-gray-800 pt-3">Ingreso: Ayer, 4:15 PM</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA: DIAGNOSTICO Y PIEZAS -->
+    <section id="view-diagnostico" class="spa-view hidden relative z-10">
+      <h1 class="text-3xl font-bold mb-2">Módulo de <span class="text-brand">Diagnóstico</span></h1>
+      <p class="text-gray-400 mb-8">Actualiza el estado y registra las refacciones utilizadas.</p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
+          <div class="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+            <h3 class="text-lg font-bold text-white mb-4">Reporte Técnico</h3>
+            <textarea class="w-full bg-gray-950 border border-gray-800 rounded-xl p-4 text-gray-300 focus:border-brand outline-none transition h-32" placeholder="Escribe el diagnóstico detallado aquí..."></textarea>
+            
+            <div class="mt-4 flex gap-4">
+              <select class="flex-1 bg-gray-950 border border-gray-800 rounded-xl p-3 text-gray-300 focus:border-brand outline-none">
+                <option>Cambiar Estado...</option>
+                <option>Diagnosticando</option>
+                <option>Reparando</option>
+                <option>Listo para entrega</option>
+              </select>
+              <button class="bg-brand text-gray-900 font-bold px-6 py-3 rounded-xl hover:bg-brand/90 transition shadow-[0_0_15px_rgba(59,130,246,0.3)]">Guardar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+          <h3 class="text-lg font-bold text-white mb-4">Piezas Utilizadas</h3>
+          <p class="text-sm text-gray-400 mb-4">Selecciona del inventario para descontar stock.</p>
+          
+          <select class="w-full bg-gray-950 border border-gray-800 rounded-xl p-3 text-gray-300 focus:border-brand outline-none mb-4" id="selectPiezas">
+            <option>Buscar pieza...</option>
+            <!-- Generado por JS -->
+          </select>
+          <button class="w-full border border-gray-700 text-gray-300 font-bold px-4 py-2 rounded-xl hover:bg-gray-800 transition">+ Añadir a la orden</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA: GARANTIAS -->
+    <section id="view-garantias" class="spa-view hidden relative z-10">
+      <h1 class="text-3xl font-bold mb-2">Gestión de <span class="text-brand">Garantías</span></h1>
+      <p class="text-gray-400 mb-8">Aplica o consulta coberturas de reparaciones anteriores.</p>
+      <div class="mt-8 bg-gray-900 border border-gray-800 p-10 rounded-2xl text-center"><p class="text-gray-500">Buscador de folios en construcción...</p></div>
+    </section>
+
   </main>
+
   <script>
-    const rol = localStorage.getItem('fitzcell_rol');
-    if(rol !== 'tecnico' && rol !== 'encargado') { window.location.href = '../login.html'; }
+    // 1. Seguridad de Sesión
+    const rol = localStorage.getItem('fitzcell_rol'); 
+    if(rol !== 'tecnico' && rol !== 'admin') { window.location.href = '../login.html'; }
     function logout() { localStorage.clear(); window.location.href = '../login.html'; }
+
+    // 2. Navegación SPA
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.spa-view');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        navLinks.forEach(l => {
+          l.classList.remove('bg-brand/10', 'text-brand', 'border', 'border-brand/20', 'font-bold');
+          l.classList.add('text-gray-400', 'hover:bg-gray-800');
+        });
+        e.currentTarget.classList.remove('text-gray-400', 'hover:bg-gray-800');
+        e.currentTarget.classList.add('bg-brand/10', 'text-brand', 'border', 'border-brand/20', 'font-bold');
+        
+        sections.forEach(sec => {
+          sec.classList.remove('block');
+          sec.classList.add('hidden');
+        });
+        const targetId = e.currentTarget.getAttribute('data-target');
+        document.getElementById(targetId).classList.remove('hidden');
+        document.getElementById(targetId).classList.add('block');
+      });
+    });
+
+    // Rellenar select de piezas
+    const select = document.getElementById('selectPiezas');
+    const piezas = ["Pantalla", "Batería", "Centro de carga", "Flex de carga", "Flex de encendido", "Cámaras", "Altavoz", "Tapa trasera"];
+    piezas.forEach(p => {
+      select.innerHTML += <option>\</option>;
+    });
   </script>
 </body>
 </html>
-
