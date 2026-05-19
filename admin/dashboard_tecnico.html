@@ -23,9 +23,9 @@
   
   <!-- Sidebar -->
   <aside class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col z-20 h-screen">
-    <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-      <span class="text-brand">⚡</span> FitzCell
-    </h2>
+    <div class="mb-6 flex items-center">
+      <img src="../media/images/fitzcell_logo.svg" alt="FitzCell Logo" class="h-12 w-auto object-contain">
+    </div>
     <div class="mb-6 text-xs font-bold text-blue-400 bg-blue-900/20 p-2 rounded text-center tracking-widest border border-blue-900/50">
       ROL: TÉCNICO
     </div>
@@ -45,7 +45,6 @@
   <!-- Main Content -->
   <main class="flex-1 p-8 h-screen overflow-y-auto relative">
     
-    <!-- Decoración de fondo -->
     <div class="absolute top-0 left-1/2 w-96 h-96 bg-blue-500 rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
 
     <!-- SECCIÓN: ÓRDENES -->
@@ -57,48 +56,22 @@
         </div>
       </header>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Tarjeta de Orden 1 -->
-        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-brand/50 transition">
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <span class="text-xs font-bold text-gray-400 tracking-wider">FOLIO</span>
-              <h3 class="text-xl font-bold text-white">FITZ-1002</h3>
-            </div>
-            <span class="px-3 py-1 bg-yellow-500/10 text-yellow-500 text-xs font-bold rounded-full border border-yellow-500/20">Pendiente</span>
-          </div>
-          <div class="mb-4">
-            <p class="text-sm text-gray-300 font-bold mb-1">Samsung Galaxy S22 (Negro)</p>
-            <p class="text-sm text-gray-500 italic">"La batería se descarga en 2 horas."</p>
-          </div>
-          <button onclick="irADiagnostico('FITZ-1002', 'Samsung Galaxy S22')" class="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg text-sm font-bold transition">Atender Equipo</button>
-        </div>
-
-        <!-- Tarjeta de Orden 2 -->
-        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-brand/50 transition relative overflow-hidden">
-          <div class="absolute top-0 right-0 w-2 h-full bg-yellow-500"></div>
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <span class="text-xs font-bold text-gray-400 tracking-wider">FOLIO</span>
-              <h3 class="text-xl font-bold text-white">FITZ-1005</h3>
-            </div>
-            <span class="px-3 py-1 bg-yellow-500/10 text-yellow-500 text-xs font-bold rounded-full border border-yellow-500/20">Diagnosticando</span>
-          </div>
-          <div class="mb-4">
-            <p class="text-sm text-gray-300 font-bold mb-1">iPhone 11 (Blanco)</p>
-            <p class="text-sm text-gray-500 italic">"No enciende, se mojó ligeramente."</p>
-          </div>
-          <button onclick="irADiagnostico('FITZ-1005', 'iPhone 11')" class="w-full bg-brand hover:bg-brand-light text-gray-900 py-2 rounded-lg text-sm font-bold transition shadow-[0_0_10px_rgba(7,183,107,0.3)]">Continuar Diagnóstico</button>
-        </div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" id="lista-ordenes">
+        <p class="text-gray-500">Cargando órdenes desde Supabase...</p>
       </div>
     </section>
 
     <!-- SECCIÓN: DIAGNÓSTICO -->
     <section id="sec-diagnostico" class="fade-in hidden">
-      <header class="mb-8 flex justify-between items-end">
+      <header class="mb-6 flex justify-between items-end">
         <div>
           <h1 class="text-3xl font-bold mb-1">Panel de <span class="text-brand">Diagnóstico</span></h1>
-          <p class="text-gray-400">Captura el diagnóstico y descuenta piezas del inventario.</p>
+          <p class="text-gray-400 mb-2">Captura el diagnóstico y descuenta piezas del inventario.</p>
+          <div class="inline-flex items-center gap-2 px-3 py-1 bg-gray-900 border border-gray-700 rounded-lg text-sm text-gray-300">
+            <span>Dispositivo en mesa:</span>
+            <span id="dispositivo-activo" class="font-bold text-white">Ninguno seleccionado</span>
+            <button onclick="showSection('sec-ordenes')" class="text-brand ml-2 hover:underline text-xs">Cambiar</button>
+          </div>
         </div>
         <div class="bg-gray-900 px-4 py-2 rounded-xl border border-gray-800 flex items-center gap-3">
           <span class="text-gray-400 text-sm">Folio Activo:</span>
@@ -108,60 +81,51 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Formulario Diagnostico -->
-        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8">
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 flex flex-col">
           <h3 class="text-xl font-bold mb-6 border-b border-gray-800 pb-4">Detalles del Equipo</h3>
           
-          <div class="space-y-5">
+          <div class="space-y-5 flex-1">
             <div>
               <label class="block text-sm font-medium text-gray-400 mb-1">Diagnóstico del Técnico</label>
-              <textarea rows="4" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition" placeholder="Describe qué le falla al equipo y qué se necesita hacer..."></textarea>
+              <textarea id="diag-texto" rows="4" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition" placeholder="Describe qué le falla al equipo y qué se necesita hacer..."></textarea>
             </div>
             
             <div>
               <label class="block text-sm font-medium text-gray-400 mb-1">Cambiar Estado</label>
-              <select class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition appearance-none">
-                <option>Diagnosticando</option>
-                <option>Esperando Refacción</option>
-                <option>Reparando</option>
-                <option>Listo para Entrega</option>
-                <option>Sin Reparación / Entregar</option>
+              <select id="diag-estado" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition appearance-none">
+                <option value="Diagnosticando">Diagnosticando</option>
+                <option value="Esperando Refacción">Esperando Refacción</option>
+                <option value="Reparando">Reparando</option>
+                <option value="Listo para Entrega">Listo para Entrega</option>
+                <option value="Sin Reparación">Sin Reparación / Entregar</option>
               </select>
             </div>
-
-            <button class="w-full bg-brand text-gray-950 py-3 rounded-xl font-bold hover:bg-brand-light transition shadow-[0_0_15px_rgba(7,183,107,0.3)]">
-              Guardar Diagnóstico
-            </button>
           </div>
+          
+          <button class="mt-6 w-full bg-brand text-gray-950 py-3 rounded-xl font-bold hover:bg-brand-light transition shadow-[0_0_15px_rgba(7,183,107,0.3)]">
+            Guardar Diagnóstico
+          </button>
         </div>
 
         <!-- Inventario a utilizar -->
-        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8">
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 flex flex-col">
           <h3 class="text-xl font-bold mb-6 border-b border-gray-800 pb-4">Refacciones a Utilizar</h3>
           
-          <div class="mb-6">
+          <div class="mb-4">
             <div class="flex gap-2">
-              <input type="text" placeholder="Buscar refacción (Ej. Pantalla iPhone...)" class="flex-1 bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition">
-              <button class="bg-gray-800 hover:bg-gray-700 px-4 py-3 rounded-xl transition text-white font-bold">+</button>
+              <input type="text" id="buscador-refaccion" placeholder="Escribe para buscar refacción en DB..." class="flex-1 bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+            </div>
+            <!-- Lista desplegable de busqueda -->
+            <div id="resultados-refaccion" class="mt-2 bg-gray-950 border border-gray-700 rounded-xl overflow-hidden hidden max-h-40 overflow-y-auto">
+              <!-- Resultados DB dinámicos -->
             </div>
           </div>
 
-          <div class="space-y-3 mb-6">
-            <!-- Pieza 1 -->
-            <div class="flex justify-between items-center bg-gray-950 p-4 rounded-xl border border-gray-800">
-              <div>
-                <p class="font-bold text-sm">Batería Original</p>
-                <p class="text-xs text-gray-500">Samsung Galaxy S22</p>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="text-gray-400 text-sm">x1</span>
-                <button class="text-red-400 hover:text-red-300">
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                </button>
-              </div>
-            </div>
+          <div id="lista-piezas-usadas" class="flex-1 space-y-3 mb-6 overflow-y-auto">
+             <p class="text-gray-500 text-sm text-center mt-10">No has seleccionado ninguna refacción.</p>
           </div>
 
-          <div class="bg-blue-900/20 border border-blue-900/50 rounded-xl p-4 flex gap-3 text-blue-300 text-sm">
+          <div class="bg-blue-900/20 border border-blue-900/50 rounded-xl p-4 flex gap-3 text-blue-300 text-sm mt-auto">
             <svg class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             <p>Al guardar el diagnóstico, las piezas listadas aquí se descontarán automáticamente del inventario general.</p>
           </div>
@@ -202,23 +166,127 @@
     function showSection(sectionId) {
       document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden'));
       document.getElementById(sectionId).classList.remove('hidden');
-      
       document.querySelectorAll('.nav-item').forEach(el => {
         el.classList.remove('bg-brand/10', 'text-brand', 'font-bold', 'border', 'border-brand/20');
         el.classList.add('text-gray-400', 'hover:bg-gray-800');
       });
-      
       const activeLink = document.getElementById('nav-' + sectionId);
       if (activeLink) {
         activeLink.classList.remove('text-gray-400', 'hover:bg-gray-800');
         activeLink.classList.add('bg-brand/10', 'text-brand', 'font-bold', 'border', 'border-brand/20');
       }
+
+      if(sectionId === 'sec-ordenes') loadOrdenes();
     }
 
-    function irADiagnostico(folio, modelo) {
-      document.getElementById('folio-activo').innerText = folio + ' (' + modelo + ')';
+    function irADiagnostico(folio, equipoId, falla, estadoActual) {
+      document.getElementById('folio-activo').innerText = folio;
+      document.getElementById('dispositivo-activo').innerText = "Equipo ID: " + equipoId;
+      document.getElementById('diag-texto').value = falla || "";
+      
+      const estadoSelect = document.getElementById('diag-estado');
+      for(let i=0; i<estadoSelect.options.length; i++) {
+        if(estadoSelect.options[i].value === estadoActual) {
+           estadoSelect.selectedIndex = i; break;
+        }
+      }
+      
       showSection('sec-diagnostico');
     }
+
+    async function loadOrdenes() {
+      try {
+        const res = await fetch('/api/reparaciones');
+        if (res.ok) {
+          const data = await res.json();
+          let html = '';
+          data.forEach(rep => {
+             // Basic styling color depending on status
+             let badgeCls = 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20';
+             if(rep.estado === 'Reparando') badgeCls = 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+             
+             html += 
+             <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-brand/50 transition flex flex-col">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <span class="text-xs font-bold text-gray-400 tracking-wider">FOLIO</span>
+                  <h3 class="text-xl font-bold text-white">+rep.codigo_seguimiento+</h3>
+                </div>
+                <span class="px-3 py-1 text-xs font-bold rounded-full +badgeCls+">+rep.estado+</span>
+              </div>
+              <div class="mb-6 flex-1">
+                <p class="text-sm text-gray-300 font-bold mb-1">Dispositivo ID: +rep.id_dispositivo+</p>
+                <p class="text-sm text-gray-500 italic">"+(rep.falla_reportada || 'Sin detalles') +"</p>
+              </div>
+              <button onclick="irADiagnostico('+rep.codigo_seguimiento+', '+rep.id_dispositivo+', '+rep.falla_reportada+', '+rep.estado+')" class="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg text-sm font-bold transition">Atender Equipo</button>
+            </div>;
+          });
+          document.getElementById('lista-ordenes').innerHTML = html || '<p class="text-gray-500">No hay órdenes asignadas.</p>';
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    // Buscador de Refacciones en BD
+    const buscador = document.getElementById('buscador-refaccion');
+    const resultadosBox = document.getElementById('resultados-refaccion');
+    
+    buscador.addEventListener('input', async (e) => {
+      const txt = e.target.value.toLowerCase();
+      if(txt.length < 2) {
+        resultadosBox.classList.add('hidden');
+        return;
+      }
+      
+      try {
+        const res = await fetch('/api/inventario');
+        if(res.ok) {
+          const inv = await res.json();
+          const matches = inv.filter(p => p.nombre_producto.toLowerCase().includes(txt) && p.stock > 0);
+          
+          if(matches.length > 0) {
+            let html = '';
+            matches.forEach(m => {
+              html += 
+              <div class="p-3 border-b border-gray-800 hover:bg-gray-800 cursor-pointer flex justify-between" 
+                   onclick="agregarPieza('+m.nombre_producto+', +m.id_producto+)">
+                <span class="text-sm font-medium">+m.nombre_producto+</span>
+                <span class="text-xs text-brand bg-brand/10 px-2 rounded">Stock: +m.stock+</span>
+              </div>;
+            });
+            resultadosBox.innerHTML = html;
+            resultadosBox.classList.remove('hidden');
+          } else {
+            resultadosBox.innerHTML = '<div class="p-3 text-xs text-gray-500">No se encontraron piezas en stock</div>';
+            resultadosBox.classList.remove('hidden');
+          }
+        }
+      } catch(err) {}
+    });
+
+    function agregarPieza(nombre, id) {
+       resultadosBox.classList.add('hidden');
+       buscador.value = '';
+       
+       const lista = document.getElementById('lista-piezas-usadas');
+       if(lista.innerHTML.includes('No has seleccionado')) lista.innerHTML = '';
+       
+       const div = document.createElement('div');
+       div.className = "flex justify-between items-center bg-gray-950 p-4 rounded-xl border border-gray-800";
+       div.innerHTML = 
+          <div>
+            <p class="font-bold text-sm">+nombre+</p>
+            <p class="text-xs text-gray-500">ID Producto: +id+</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-gray-400 text-sm">x1</span>
+            <button class="text-red-400 hover:text-red-300" onclick="this.parentElement.parentElement.remove()">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+            </button>
+          </div>;
+       lista.appendChild(div);
+    }
+
+    showSection('sec-ordenes');
   </script>
 </body>
 </html>
