@@ -228,11 +228,10 @@
           
           let html = '';
           data.slice(0, 3).forEach(rep => {
-            html += 
-             <div class="flex justify-between items-center bg-gray-950 p-4 rounded-xl border border-gray-800">
-               <div><p class="font-bold">+rep.codigo_seguimiento+</p></div>
-               <span class="px-3 py-1 bg-brand/10 text-brand text-xs font-bold rounded-full border border-brand/20">+rep.estado+</span>
-             </div>;
+            html += `<div class="flex justify-between items-center bg-gray-950 p-4 rounded-xl border border-gray-800">
+               <div><p class="font-bold">${rep.codigo_seguimiento}</p></div>
+               <span class="px-3 py-1 bg-brand/10 text-brand text-xs font-bold rounded-full border border-brand/20">${rep.estado}</span>
+             </div>`;
           });
           document.getElementById('res-ultimas-rep').innerHTML = html || '<p class="text-gray-500 text-sm">No hay reparaciones activas.</p>';
         }
@@ -266,7 +265,7 @@
       let html = <button onclick="renderInventario(null)" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Todas</button>;
       cats.forEach(c => {
         if(c) {
-          html += <button onclick="renderInventario('+c+')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-brand text-white rounded-lg text-sm font-bold transition">+c+</button>;
+          html += <button onclick="renderInventario('${c}')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-brand text-white rounded-lg text-sm font-bold transition">${c}</button>;
         }
       });
       document.getElementById('inv-categorias').innerHTML = html;
@@ -279,14 +278,13 @@
       let html = '';
       data.forEach(item => {
         let stockCls = item.stock <= 5 ? "bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-900/50" : "";
-        html += 
-        <tr class="hover:bg-gray-800/50 transition">
-          <td class="p-4 font-medium">+item.nombre_producto+</td>
+        html += `<tr class="hover:bg-gray-800/50 transition">
+          <td class="p-4 font-medium">${item.nombre_producto}</td>
           <td class="p-4 text-gray-400">+(item.categoria || 'Sin Cat')+</td>
-          <td class="p-4">+formatCurrency(item.precio_compra)+</td>
-          <td class="p-4 font-bold text-brand">+formatCurrency(item.precio_venta)+</td>
-          <td class="p-4 text-center"><span class="+stockCls+">+item.stock+</span></td>
-        </tr>;
+          <td class="p-4">${formatCurrency(item.precio_compra)}</td>
+          <td class="p-4 font-bold text-brand">${formatCurrency(item.precio_venta)}</td>
+          <td class="p-4 text-center"><span class="${stockCls}">${item.stock}</span></td>
+        </tr>`;
       });
       document.getElementById('inv-tbody').innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-gray-500">No hay productos</td></tr>';
     }
@@ -296,8 +294,7 @@
       // Dado que usamos Supabase y RLS, este endpoint no está expuesto directamente para leer todos los usuarios en nuestro diseño actual (excepto si creamos un backend route para ello).
       // Solo mostraremos 2 mock users para el diseño, ya que la petición pide que la tabla se base en BD, 
       // Si existiera el endpoint /api/empleados, lo llamaríamos aquí.
-      let html = 
-        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 flex items-center gap-4">
+      let html = `<div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 flex items-center gap-4">
           <div class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-xl">C</div>
           <div class="flex-1">
             <h3 class="font-bold text-lg">Carlos</h3>
@@ -312,7 +309,7 @@
             <p class="text-gray-400 text-sm">ana@fitzcell.com</p>
           </div>
           <span class="px-3 py-1 bg-pink-900/30 text-pink-400 text-xs font-bold rounded-full border border-pink-900/50">Ventas</span>
-        </div>;
+        </div>`;
       document.getElementById('emp-lista').innerHTML = html;
     }
 
@@ -323,14 +320,13 @@
           const data = await res.json();
           let html = '';
           data.forEach(rep => {
-            html += 
-            <tr class="hover:bg-gray-800/50 transition">
-              <td class="p-4 font-bold text-white">+rep.codigo_seguimiento+</td>
-              <td class="p-4 text-gray-400">Equipo ID: +rep.id_dispositivo+</td>
-              <td class="p-4 text-gray-400 truncate max-w-xs">+rep.falla_reportada+</td>
-              <td class="p-4 font-bold text-brand">+formatCurrency(rep.costo)+</td>
-              <td class="p-4 text-center"><span class="px-2 py-1 bg-gray-800 rounded text-xs border border-gray-700">+rep.estado+</span></td>
-            </tr>;
+            html += `<tr class="hover:bg-gray-800/50 transition">
+              <td class="p-4 font-bold text-white">${rep.codigo_seguimiento}</td>
+              <td class="p-4 text-gray-400">Equipo ID: ${rep.id_dispositivo}</td>
+              <td class="p-4 text-gray-400 truncate max-w-xs">${rep.falla_reportada}</td>
+              <td class="p-4 font-bold text-brand">${formatCurrency(rep.costo)}</td>
+              <td class="p-4 text-center"><span class="px-2 py-1 bg-gray-800 rounded text-xs border border-gray-700">${rep.estado}</span></td>
+            </tr>`;
           });
           document.getElementById('rep-tbody').innerHTML = html || '<tr><td colspan="5" class="p-4 text-center text-gray-500">No hay órdenes</td></tr>';
         }

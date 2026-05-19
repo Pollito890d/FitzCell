@@ -210,14 +210,13 @@
       
       let html = '';
       data.forEach(p => {
-         html += 
-         <div class="bg-gray-950 border border-gray-800 rounded-xl p-4 flex justify-between items-center hover:border-gray-700 transition cursor-pointer">
-           <div><p class="font-bold">+p.nombre_producto+</p><p class="text-sm text-gray-500">Stock: +p.stock+</p></div>
+         html += `<div class="bg-gray-950 border border-gray-800 rounded-xl p-4 flex justify-between items-center hover:border-gray-700 transition cursor-pointer">
+           <div><p class="font-bold">${p.nombre_producto}</p><p class="text-sm text-gray-500">Stock: ${p.stock}</p></div>
            <div class="flex items-center gap-4">
-             <span class="font-bold text-brand">+formatCurrency(p.precio_venta)+</span>
-             <button onclick="addTicket(+p.id_producto+, '+p.nombre_producto.replace(/'/g, "\\'")+', +p.precio_venta+)" class="bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-white font-bold transition">Añadir</button>
+             <span class="font-bold text-brand">${formatCurrency(p.precio_venta)}</span>
+             <button onclick="addTicket(${p.id_producto}, '+p.nombre_producto.replace(/'/g, "\\'")+', ${p.precio_venta})" class="bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-white font-bold transition">Añadir</button>
            </div>
-         </div>;
+         </div>`;
       });
       document.getElementById('pos-lista-productos').innerHTML = html || '<p class="text-gray-500 text-center">No se encontraron productos en stock</p>';
     }
@@ -251,15 +250,14 @@
       ticketItems.forEach((i, idx) => {
         let lineTotal = i.qty * i.precio;
         total += lineTotal;
-        html += 
-        <div class="flex justify-between items-center text-sm">
+        html += `<div class="flex justify-between items-center text-sm">
           <div class="flex items-center gap-2 flex-1">
-            <span class="bg-gray-800 px-2 rounded font-bold text-xs cursor-pointer text-red-400" onclick="removeTicket(+idx+)">x</span>
-            <span class="bg-gray-800 px-2 rounded font-bold text-xs">x+i.qty+</span>
-            <span class="truncate">+i.nombre+</span>
+            <span class="bg-gray-800 px-2 rounded font-bold text-xs cursor-pointer text-red-400" onclick="removeTicket(${idx})">x</span>
+            <span class="bg-gray-800 px-2 rounded font-bold text-xs">x${i.qty}</span>
+            <span class="truncate">${i.nombre}</span>
           </div>
-          <span class="font-bold pl-2">+formatCurrency(lineTotal)+</span>
-        </div>;
+          <span class="font-bold pl-2">${formatCurrency(lineTotal)}</span>
+        </div>`;
       });
       container.innerHTML = html;
       document.getElementById('ticket-subtotal').innerText = formatCurrency(total);
@@ -282,13 +280,12 @@
       let html = '';
       inventarioDB.forEach(p => {
         let stockCls = p.stock <= 5 ? "bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-900/50" : "";
-        html += 
-        <tr class="hover:bg-gray-800/50 transition">
-          <td class="p-4 font-medium">+p.nombre_producto+</td>
+        html += `<tr class="hover:bg-gray-800/50 transition">
+          <td class="p-4 font-medium">${p.nombre_producto}</td>
           <td class="p-4 text-gray-400">+(p.categoria||'-')+</td>
-          <td class="p-4 font-bold text-brand">+formatCurrency(p.precio_venta)+</td>
-          <td class="p-4 text-center"><span class="+stockCls+">+p.stock+</span></td>
-        </tr>;
+          <td class="p-4 font-bold text-brand">${formatCurrency(p.precio_venta)}</td>
+          <td class="p-4 text-center"><span class="${stockCls}">${p.stock}</span></td>
+        </tr>`;
       });
       document.getElementById('cat-tbody').innerHTML = html;
     }
@@ -298,13 +295,12 @@
         const res = await fetch('/api/crm/ingresos');
         if(res.ok) {
           // Si tuvieramos una api de GET /ventas iterariamos. Haremos mock por ahora para el ejemplo usando los ingresos.
-          let html = 
-          <tr class="hover:bg-gray-800/50 transition">
+          let html = `<tr class="hover:bg-gray-800/50 transition">
             <td class="p-4 font-bold text-white">V-1</td>
-            <td class="p-4 font-bold text-brand">+formatCurrency(300)+</td>
+            <td class="p-4 font-bold text-brand">${formatCurrency(300)}</td>
             <td class="p-4">Efectivo</td>
             <td class="p-4 text-center"><button class="text-brand hover:text-white underline" onclick="alert('Mostrando Modal del Ticket...')">Ver Ticket</button></td>
-          </tr>;
+          </tr>`;
           document.getElementById('com-tbody').innerHTML = html;
         }
       } catch(e){}
