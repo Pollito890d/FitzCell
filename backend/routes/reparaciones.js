@@ -49,7 +49,7 @@ router.get('/:folio', async (req, res) => {
 
 // Crear una solicitud de reparación (Pública)
 router.post('/solicitud', async (req, res) => {
-    const { cliente_nombre, cliente_telefono, cliente_email, modelo, falla } = req.body;
+    const { cliente_nombre, cliente_telefono, cliente_email, modelo, falla, folio_manual, anticipo } = req.body;
     
     try {
         // 1. Buscar o crear cliente
@@ -79,21 +79,24 @@ router.post('/solicitud', async (req, res) => {
         if(errDev) throw errDev;
         const deviceId = newDevice[0].id_dispositivo;
 
-        // 3. Generar folio para solicitud web
-        const folio = 'WEB-' + Math.floor(Date.now() / 1000).toString().substring(4);
+        // 3. Generar folio o usar manual
+        const folioFinal = folio_manual && folio_manual.trim() !== '' 
+            ? folio_manual.trim() 
+            : 'FITZ-' + Math.floor(Date.now() / 1000).toString().substring(4);
         
         // 4. Crear reparación
         const { error: errRep } = await supabase
             .from('orden_reparacion')
             .insert([{
-                codigo_seguimiento: folio,
+                codigo_seguimiento: folioFinal,
                 id_dispositivo: deviceId,
                 falla_reportada: falla,
+                anticipo: anticipo ? parseFloat(anticipo) : 0,
                 estado: 'Pendiente'
             }]);
         if(errRep) throw errRep;
 
-        res.status(201).json({ message: 'Solicitud enviada correctamente', folio });
+        res.status(201).json({ message: 'Solicitud enviada correctamente', folio: folioFinal });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error al procesar la solicitud' });

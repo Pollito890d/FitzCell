@@ -228,7 +228,6 @@
       </div>
     </section>
 
-    </section>
 
     <!-- SECCIÓN: NUEVA REPARACIÓN -->
     <section id="sec-nueva-reparacion" class="fade-in hidden">
@@ -264,6 +263,16 @@
           <div>
             <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Falla Reportada *</label>
             <textarea id="nr-falla" required rows="3" placeholder="Descripción detallada de la falla..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base"></textarea>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Folio (Opcional)</label>
+              <input type="text" id="nr-folio" placeholder="Ej. FITZ-1005" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base uppercase font-mono">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Anticipo ($)</label>
+              <input type="number" id="nr-anticipo" min="0" step="0.01" placeholder="0.00" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+            </div>
           </div>
           <button type="submit" class="w-full bg-brand text-gray-950 py-3 rounded-xl font-bold hover:bg-brand-light transition mt-2 shadow-[0_0_15px_rgba(7,183,107,0.3)] text-lg">
             Registrar Ingreso
@@ -490,7 +499,9 @@
         cliente_telefono: document.getElementById('nr-telefono').value.trim(),
         cliente_email: document.getElementById('nr-email').value.trim(),
         modelo: document.getElementById('nr-modelo').value.trim(),
-        falla: document.getElementById('nr-falla').value.trim()
+        falla: document.getElementById('nr-falla').value.trim(),
+        folio_manual: document.getElementById('nr-folio') ? document.getElementById('nr-folio').value.trim() : '',
+        anticipo: document.getElementById('nr-anticipo') ? parseFloat(document.getElementById('nr-anticipo').value) || 0 : 0
       };
       
       try {
