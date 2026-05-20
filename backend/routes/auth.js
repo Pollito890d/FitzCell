@@ -74,6 +74,22 @@ router.get('/users', async (req, res) => {
     }
 });
 
+// Eliminar un empleado
+router.delete('/users/:id', async (req, res) => {
+    try {
+        const { error } = await supabase
+            .from('usuario')
+            .delete()
+            .eq('id_usuario', req.params.id);
+        
+        if (error) throw error;
+        res.json({ message: 'Empleado eliminado exitosamente' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al eliminar el empleado' });
+    }
+});
+
 module.exports = router;
 
 

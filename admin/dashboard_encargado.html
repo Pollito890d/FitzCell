@@ -59,6 +59,7 @@
       <a href="#" onclick="showSection('sec-inventario')" id="nav-sec-inventario" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📦 Inventario</a>
       <a href="#" onclick="showSection('sec-empleados')" id="nav-sec-empleados" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">👥 Empleados</a>
       <a href="#" onclick="showSection('sec-reparaciones')" id="nav-sec-reparaciones" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📱 Reparaciones globales</a>
+      <a href="#" onclick="showSection('sec-nueva-reparacion')" id="nav-sec-nueva-reparacion" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">➕ Nueva Reparación</a>
       <a href="#" onclick="showSection('sec-ventas')" id="nav-sec-ventas" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">💰 Historial de Ventas</a>
     </nav>
     
@@ -139,7 +140,7 @@
                 <th class="p-4 font-semibold text-center">Acción</th>
               </tr>
             </thead>
-            <tbody id="inv-tbody" class="divide-y divide-gray-800 text-sm">
+            <tbody id="inv-tbody" class="divide-y divide-gray-800 text-base">
               <tr><td colspan="6" class="p-4 text-center text-gray-500">Cargando inventario...</td></tr>
             </tbody>
           </table>
@@ -183,10 +184,52 @@
               <th class="p-4 font-semibold text-center">Estado</th>
             </tr>
           </thead>
-          <tbody id="rep-tbody" class="divide-y divide-gray-800 text-sm">
+          <tbody id="rep-tbody" class="divide-y divide-gray-800 text-base">
             <tr><td colspan="5" class="p-4 text-center text-gray-500">Cargando...</td></tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: NUEVA REPARACIÓN -->
+    <section id="sec-nueva-reparacion" class="fade-in hidden">
+      <header class="mb-8 flex justify-between items-end">
+        <div>
+          <h1 class="text-3xl font-bold mb-1">Nueva <span class="text-brand">Reparación</span></h1>
+          <p class="text-gray-400">Ingreso de equipos al taller.</p>
+        </div>
+      </header>
+
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-lg max-w-2xl">
+        <form id="form-nueva-reparacion" onsubmit="crearNuevaReparacion(event)" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Nombre del Cliente *</label>
+              <input type="text" id="nr-cliente" required placeholder="Ej. Juan Pérez" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Teléfono *</label>
+              <input type="text" id="nr-telefono" required placeholder="Ej. 951 123 4567" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Correo Electrónico</label>
+              <input type="email" id="nr-email" placeholder="ejemplo@correo.com" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Modelo del Dispositivo *</label>
+              <input type="text" id="nr-modelo" required placeholder="Ej. iPhone 13 Pro" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Falla Reportada *</label>
+            <textarea id="nr-falla" required rows="3" placeholder="Descripción detallada de la falla..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base"></textarea>
+          </div>
+          <button type="submit" class="w-full bg-brand text-gray-950 py-3 rounded-xl font-bold hover:bg-brand-light transition mt-2 shadow-[0_0_15px_rgba(7,183,107,0.3)] text-lg">
+            Registrar Ingreso
+          </button>
+        </form>
       </div>
     </section>
 
@@ -207,7 +250,7 @@
               <th class="p-4 font-semibold text-center">Acción</th>
             </tr>
           </thead>
-          <tbody id="ven-tbody" class="divide-y divide-gray-800 text-sm">
+          <tbody id="ven-tbody" class="divide-y divide-gray-800 text-base">
             <tr><td colspan="4" class="p-4 text-center text-gray-500">Cargando...</td></tr>
           </tbody>
         </table>
@@ -571,7 +614,10 @@
                 <h3 class="font-bold text-lg text-white">${u.nombre}</h3>
                 <p class="text-gray-400 text-sm">${u.email}</p>
               </div>
-              ${roleBadge}
+              <div class="flex flex-col items-end gap-2">
+                ${roleBadge}
+                <button onclick="deleteEmpleado('${u.id_usuario}')" class="px-3 py-1 bg-red-900/20 text-red-400 hover:bg-red-900/40 border border-red-900/50 rounded-lg text-xs font-bold transition">Eliminar</button>
+              </div>
             </div>`;
           });
           document.getElementById('emp-lista').innerHTML = h || '<p class="text-gray-500 col-span-2 text-center py-10">No hay empleados registrados.</p>';
@@ -579,6 +625,52 @@
       } catch(e) {
         console.error(e);
         document.getElementById('emp-lista').innerHTML = '<p class="text-red-400 col-span-2 text-center">Error al cargar empleados.</p>';
+      }
+    }
+
+    async function deleteEmpleado(id) {
+      if(!confirm('¿Estás seguro de que deseas eliminar este empleado? Esta acción no se puede deshacer.')) return;
+      try {
+        const res = await fetch(`/api/auth/users/${id}`, { method: 'DELETE' });
+        if(res.ok) {
+          alert('Empleado eliminado exitosamente.');
+          loadEmpleados();
+        } else {
+          alert('Error al eliminar empleado.');
+        }
+      } catch(e) {
+        console.error(e);
+        alert('Error de conexión al eliminar empleado.');
+      }
+    }
+
+    async function crearNuevaReparacion(e) {
+      e.preventDefault();
+      const payload = {
+        cliente_nombre: document.getElementById('nr-cliente').value.trim(),
+        cliente_telefono: document.getElementById('nr-telefono').value.trim(),
+        cliente_email: document.getElementById('nr-email').value.trim(),
+        modelo: document.getElementById('nr-modelo').value.trim(),
+        falla: document.getElementById('nr-falla').value.trim()
+      };
+      
+      try {
+        const res = await fetch('/api/reparaciones/solicitud', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const d = await res.json();
+        if(res.ok) {
+          alert('✅ Reparación registrada exitosamente. Folio: ' + d.folio);
+          document.getElementById('form-nueva-reparacion').reset();
+          loadReparaciones();
+        } else {
+          alert('Error: ' + (d.message || 'No se pudo registrar la reparación.'));
+        }
+      } catch(error) {
+        console.error(error);
+        alert('Error de conexión al registrar la reparación.');
       }
     }
 
