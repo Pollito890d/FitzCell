@@ -68,7 +68,7 @@
   </aside>
 
   <!-- Main Content -->
-  <main class="flex-1 p-8 h-screen overflow-y-auto relative">
+  <main class="flex-1 p-8 h-screen overflow-y-auto overflow-x-hidden relative">
     
     <div class="absolute top-0 right-1/4 w-96 h-96 bg-pink-500 rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
 
@@ -83,10 +83,7 @@
         <!-- Lista de Productos -->
         <div class="flex-1 bg-gray-900 border border-gray-800 rounded-2xl p-6 flex flex-col min-h-0">
           <input type="text" id="pos-buscador" placeholder="Buscar accesorio o refacción..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition mb-4">
-          
-          <div class="flex gap-4 overflow-x-auto pb-2 mb-4" id="pos-categorias">
-             <!-- Categorías dinámicas en slider horizontal -->
-          </div>
+          <div class="flex gap-4 mb-6 overflow-x-auto pb-2" id="inv-categorias"><button onclick="renderInv(null)" class="whitespace-nowrap px-4 py-2 bg-brand text-gray-950 rounded-lg text-sm font-bold transition">Todas</button><button onclick="renderInv('Pantalla')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Pantalla</button><button onclick="renderInv('Batería')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Batería</button><button onclick="renderInv('Centro de carga')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Centro de carga</button><button onclick="renderInv('Flex de carga')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Flex de carga</button><button onclick="renderInv('Flex de encendido')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Flex de encendido</button><button onclick="renderInv('Tablilla de carga')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Tablilla de carga</button><button onclick="renderInv('Cámaras')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Cámaras</button><button onclick="renderInv('Altavoz')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Altavoz</button><button onclick="renderInv('Auricular')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Auricular</button><button onclick="renderInv('Micrófono')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Micrófono</button><button onclick="renderInv('Tapa trasera')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Tapa trasera</button><button onclick="renderInv('Chasis')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Chasis</button><button onclick="renderInv('Botones')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Botones</button><button onclick="renderInv('Face ID')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Face ID</button><button onclick="renderInv('Accesorio')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Accesorio</button></div>
 
           <div id="pos-lista-productos" class="flex-1 overflow-y-auto pr-2 space-y-3">
              <p class="text-gray-500 text-center mt-10">Cargando catálogo...</p>
@@ -321,7 +318,6 @@
         const res = await fetch('/api/inventario');
         if(res.ok) {
           inventarioDB = await res.json();
-          renderCats();
           renderPOS();
           renderInv(null);
         }
@@ -330,31 +326,7 @@
       }
     }
 
-    function renderCats() {
-      const cats = [...new Set(inventarioDB.map(i => i.categoria))].filter(Boolean);
-      let h = `<button onclick="selectCategory(null)" id="btn-cat-all" class="whitespace-nowrap px-4 py-2 bg-brand text-gray-950 rounded-lg text-sm font-bold transition shadow-sm">Todas</button>`;
-      cats.forEach(c => {
-        const escaped = c.replace(/'/g, "\\'");
-        h += `<button onclick="selectCategory('${escaped}')" id="btn-cat-${c.replace(/\s+/g, '-')}" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">${c}</button>`;
-      });
-      document.getElementById('pos-categorias').innerHTML = h;
-    }
-
-    function selectCategory(cat) {
-      activeCategory = cat;
-      document.querySelectorAll('#pos-categorias button').forEach(b => {
-        b.classList.remove('bg-brand', 'text-gray-950');
-        b.classList.add('bg-gray-800', 'text-white', 'hover:bg-gray-700');
-      });
-      
-      const targetId = cat ? 'btn-cat-' + cat.replace(/\s+/g, '-') : 'btn-cat-all';
-      const selectedBtn = document.getElementById(targetId);
-      if (selectedBtn) {
-        selectedBtn.classList.remove('bg-gray-800', 'text-white', 'hover:bg-gray-700');
-        selectedBtn.classList.add('bg-brand', 'text-gray-950');
-      }
-      renderPOS();
-    }
+    // selectCategory has been consolidated into renderInv
 
     function renderPOS() {
       let data = inventarioDB.filter(p => p.stock > 0);
@@ -471,10 +443,11 @@
 
     function renderInv(cat) {
       activeCatalogCategory = cat;
+      activeCategory = cat;
       
-      // Update button visual styles
-      const container = document.getElementById('inv-categorias');
-      if (container) {
+      // Update button visual styles for both POS and Catalog containers
+      const containers = document.querySelectorAll('#inv-categorias');
+      containers.forEach(container => {
         container.querySelectorAll('button').forEach(btn => {
           btn.classList.remove('bg-brand', 'text-gray-950');
           btn.classList.add('bg-gray-800', 'text-white', 'hover:bg-gray-700');
@@ -490,9 +463,10 @@
             btn.classList.add('bg-brand', 'text-gray-950');
           }
         });
-      }
+      });
       
       renderCatalogo();
+      renderPOS();
     }
 
     function renderCatalogo() {
