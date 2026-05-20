@@ -33,6 +33,7 @@
     <nav class="flex-1 space-y-2">
       <a href="#" onclick="showSection('sec-ordenes')" id="nav-sec-ordenes" class="nav-item block p-3 bg-brand/10 text-brand rounded-lg font-bold border border-brand/20 transition-all">📋 Mis Órdenes</a>
       <a href="#" onclick="showSection('sec-diagnostico')" id="nav-sec-diagnostico" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🔧 Diagnóstico</a>
+      <a href="#" onclick="showSection('sec-inventario-tec')" id="nav-sec-inventario-tec" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📦 Inventario</a>
       <a href="#" onclick="showSection('sec-garantias')" id="nav-sec-garantias" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🛡️ Garantías</a>
     </nav>
     
@@ -165,6 +166,40 @@
       </div>
     </section>
 
+    <!-- SECCIÓN: INVENTARIO TÉCNICO -->
+    <section id="sec-inventario-tec" class="fade-in hidden">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold mb-1">Inventario de <span class="text-brand">Refacciones</span></h1>
+        <p class="text-gray-400">Consulta de existencias y registro de ingreso de piezas.</p>
+      </header>
+
+      <div class="flex gap-4 mb-6 overflow-x-auto pb-2" id="inv-tec-categorias">
+        <!-- Categorías generadas dinámicamente -->
+      </div>
+
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
+        <div class="p-4 border-b border-gray-800 bg-gray-950">
+          <input type="text" id="inv-tec-buscador" placeholder="Buscar por nombre, categoría..." class="w-full bg-gray-900 border border-gray-800 rounded-lg px-4 py-2 text-white focus:border-brand outline-none transition text-sm">
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-gray-950 border-b border-gray-800 text-gray-400 text-sm">
+                <th class="p-4 font-semibold">Refacción</th>
+                <th class="p-4 font-semibold">Categoría</th>
+                <th class="p-4 font-semibold">Precio Venta</th>
+                <th class="p-4 font-semibold text-center">Stock</th>
+                <th class="p-4 font-semibold text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="inv-tec-tbody" class="divide-y divide-gray-800 text-sm">
+              <tr><td colspan="5" class="p-4 text-center text-gray-500">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- SECCIÓN: GARANTÍAS -->
     <section id="sec-garantias" class="fade-in hidden">
       <header class="mb-8">
@@ -189,10 +224,29 @@
 
   </main>
 
+  <!-- Modal de Agregar Stock (Técnico) -->
+  <div id="modal-stock-tec" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-gray-900 border border-gray-800 text-gray-100 w-96 p-6 rounded-2xl shadow-2xl relative">
+      <h2 class="text-xl font-bold text-white mb-1 flex justify-between items-center">
+        <span>➕ Agregar Stock</span>
+        <button onclick="cerrarModalStockTec()" class="text-gray-400 hover:text-white">❌</button>
+      </h2>
+      <p id="modal-stock-tec-nombre" class="text-sm text-gray-400 mb-6 border-b border-gray-800 pb-3"></p>
+      <div>
+        <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Cantidad a Agregar</label>
+        <input type="number" id="modal-stock-tec-cantidad" min="1" placeholder="Ej. 10" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+      </div>
+      <button onclick="confirmarAgregarStockTec()" class="mt-6 w-full bg-brand text-gray-950 py-3 rounded-xl font-bold hover:bg-brand-light transition shadow-[0_0_15px_rgba(7,183,107,0.3)]">
+        Confirmar Ingreso de Stock
+      </button>
+    </div>
+  </div>
+
   <script>
     const r = localStorage.getItem('fitzcell_rol');
     if(r !== 'tecnico' && r !== 'admin') { window.location.href = '../login.html'; }
     function logout() { localStorage.clear(); window.location.href = '../login.html'; }
+    const fmt = (v) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(v || 0);
 
     function showSection(id) {
       document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
@@ -208,6 +262,7 @@
       if(id === 'sec-diagnostico') {
         loadRefacciones();
       }
+      if(id === 'sec-inventario-tec') loadInvTec();
     }
 
     function irADiagnostico(folio, equipoId, idOrden, falla, estado, dispositivoText) {
@@ -276,6 +331,97 @@
           document.getElementById('lista-ordenes').innerHTML = h || '<p class="text-gray-500 col-span-3 text-center py-10">No hay órdenes asignadas pendientes.</p>';
         }
       }catch(e){ console.error(e); }
+    }
+
+    let invTecDB = [];
+    let invTecCatActiva = null;
+    let stockModalTecId = null;
+
+    async function loadInvTec() {
+      try {
+        const res = await fetch('/api/inventario');
+        if (res.ok) {
+          invTecDB = await res.json();
+          renderInvTecCats();
+          renderInvTec();
+        }
+      } catch(e) { console.error(e); }
+    }
+
+    function renderInvTecCats() {
+      const cats = [...new Set(invTecDB.map(i => i.categoria))].filter(Boolean);
+      let h = `<button onclick="filtrarInvTec(null)" class="whitespace-nowrap px-4 py-2 rounded-lg text-sm font-bold transition ${invTecCatActiva === null ? 'bg-brand text-gray-950' : 'bg-gray-800 hover:bg-gray-700 text-white'}">Todas</button>`;
+      cats.forEach(c => {
+        h += `<button onclick="filtrarInvTec('${c}')" class="whitespace-nowrap px-4 py-2 rounded-lg text-sm font-bold transition ${invTecCatActiva === c ? 'bg-brand text-gray-950' : 'bg-gray-800 hover:bg-gray-700 text-white'}">${c}</button>`;
+      });
+      document.getElementById('inv-tec-categorias').innerHTML = h;
+    }
+
+    function filtrarInvTec(cat) {
+      invTecCatActiva = cat;
+      renderInvTecCats();
+      renderInvTec();
+    }
+
+    function renderInvTec(filterText = '') {
+      const txt = (filterText || document.getElementById('inv-tec-buscador').value).toLowerCase().trim();
+      let data = invTecCatActiva ? invTecDB.filter(i => i.categoria === invTecCatActiva) : invTecDB;
+      if (txt) data = data.filter(i => (i.nombre_producto||'').toLowerCase().includes(txt) || (i.categoria||'').toLowerCase().includes(txt));
+      let h = '';
+      data.forEach(it => {
+        const sc = it.stock <= 5 ? 'bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-900/50' : '';
+        const nomEsc = it.nombre_producto.replace(/'/g, "\\'");
+        h += `<tr class="hover:bg-gray-800/50 transition">
+          <td class="p-4 font-medium text-white">${it.nombre_producto}</td>
+          <td class="p-4 text-gray-400">${it.categoria||'—'}</td>
+          <td class="p-4 font-bold text-brand">${fmt(it.precio_venta)}</td>
+          <td class="p-4 text-center"><span class="${sc}">${it.stock}</span></td>
+          <td class="p-4 text-center">
+            <button onclick="abrirModalStockTec(${it.id_producto}, '${nomEsc}')" class="px-3 py-1.5 bg-brand/10 text-brand hover:bg-brand/20 border border-brand/30 rounded-lg text-xs font-bold transition">+ Stock</button>
+          </td>
+        </tr>`;
+      });
+      document.getElementById('inv-tec-tbody').innerHTML = h || '<tr><td colspan="5" class="p-4 text-center text-gray-500">Sin productos encontrados</td></tr>';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const b = document.getElementById('inv-tec-buscador');
+      if (b) b.addEventListener('input', () => renderInvTec());
+    });
+
+    function abrirModalStockTec(id, nombre) {
+      stockModalTecId = id;
+      document.getElementById('modal-stock-tec-nombre').textContent = nombre;
+      document.getElementById('modal-stock-tec-cantidad').value = '';
+      document.getElementById('modal-stock-tec').classList.remove('hidden');
+    }
+
+    function cerrarModalStockTec() {
+      stockModalTecId = null;
+      document.getElementById('modal-stock-tec').classList.add('hidden');
+    }
+
+    async function confirmarAgregarStockTec() {
+      const cantidad = parseInt(document.getElementById('modal-stock-tec-cantidad').value);
+      if (!cantidad || cantidad <= 0) return alert('Ingresa una cantidad válida mayor a cero.');
+      try {
+        const res = await fetch(`/api/inventario/${stockModalTecId}/stock`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cantidad })
+        });
+        const d = await res.json();
+        if (res.ok) {
+          cerrarModalStockTec();
+          alert(`✅ Stock actualizado. Nuevo stock: ${d.nuevo_stock}`);
+          loadInvTec();
+        } else {
+          alert('Error: ' + (d.message || 'No se pudo actualizar el stock.'));
+        }
+      } catch(e) {
+        console.error(e);
+        alert('Error de conexión al actualizar stock.');
+      }
     }
 
     let refaccionesDB = [];

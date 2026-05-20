@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const router = express.Router();
 const supabase = require('../config/supabase');
 
@@ -45,6 +45,34 @@ router.put('/:id', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error al actualizar producto' });
+    }
+});
+
+// Agregar stock a un producto (incremento)
+router.patch('/:id/stock', async (req, res) => {
+    const { cantidad } = req.body;
+    if (!cantidad || isNaN(cantidad) || parseInt(cantidad) <= 0) {
+        return res.status(400).json({ message: 'La cantidad debe ser un número positivo' });
+    }
+    try {
+        // Obtener stock actual
+        const { data: prod, error: getErr } = await supabase
+            .from('producto')
+            .select('stock')
+            .eq('id_producto', req.params.id)
+            .single();
+        if (getErr || !prod) return res.status(404).json({ message: 'Producto no encontrado' });
+
+        const nuevoStock = prod.stock + parseInt(cantidad);
+        const { error: updErr } = await supabase
+            .from('producto')
+            .update({ stock: nuevoStock })
+            .eq('id_producto', req.params.id);
+        if (updErr) throw updErr;
+        res.json({ message: 'Stock actualizado', nuevo_stock: nuevoStock });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al actualizar stock' });
     }
 });
 
