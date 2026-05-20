@@ -168,9 +168,14 @@
 
     <!-- SECCIÓN: INVENTARIO TÉCNICO -->
     <section id="sec-inventario-tec" class="fade-in hidden">
-      <header class="mb-8">
-        <h1 class="text-3xl font-bold mb-1">Inventario de <span class="text-brand">Refacciones</span></h1>
-        <p class="text-gray-400">Consulta de existencias y registro de ingreso de piezas.</p>
+      <header class="mb-6 flex justify-between items-end">
+        <div>
+          <h1 class="text-3xl font-bold mb-1">Inventario de <span class="text-brand">Refacciones</span></h1>
+          <p class="text-gray-400">Consulta de existencias y registro de ingreso de piezas.</p>
+        </div>
+        <button onclick="abrirModalNuevoProdTec()" class="bg-brand text-gray-950 px-5 py-2.5 rounded-xl font-bold hover:bg-brand-light transition shadow-[0_0_15px_rgba(7,183,107,0.2)] flex items-center gap-2 whitespace-nowrap">
+          ➕ Nuevo Producto
+        </button>
       </header>
 
       <div class="flex gap-4 mb-6 overflow-x-auto pb-2" id="inv-tec-categorias">
@@ -224,6 +229,68 @@
 
   </main>
 
+  <!-- Modal de Nuevo Producto (Técnico) -->
+  <div id="modal-nuevo-prod-tec" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-gray-900 border border-gray-800 text-gray-100 w-[520px] p-6 rounded-2xl shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <h2 class="text-xl font-bold text-white mb-6 border-b border-gray-800 pb-3 flex justify-between items-center">
+        <span>➕ Nuevo Producto</span>
+        <button onclick="cerrarModalNuevoProdTec()" class="text-gray-400 hover:text-white">❌</button>
+      </h2>
+      <form id="form-nuevo-prod-tec" onsubmit="guardarNuevoProdTec(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Nombre del Producto *</label>
+          <input type="text" id="npt-nombre" required placeholder="Ej. Pantalla OLED iPhone 14 Pro" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Categoría *</label>
+          <select id="npt-categoria" required class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm appearance-none cursor-pointer">
+            <option value="">-- Selecciona una categoría --</option>
+            <option>Pantalla</option>
+            <option>Batería</option>
+            <option>Centro de carga</option>
+            <option>Flex de carga</option>
+            <option>Flex de encendido</option>
+            <option>Tablilla de carga</option>
+            <option>Cámaras</option>
+            <option>Altavoz</option>
+            <option>Auricular</option>
+            <option>Micrófono</option>
+            <option>Tapa trasera</option>
+            <option>Chasis</option>
+            <option>Botones</option>
+            <option>Face ID</option>
+            <option>Accesorio</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Precio de Compra ($)</label>
+            <input type="number" id="npt-compra" min="0" step="0.01" placeholder="0.00" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Precio de Venta ($) *</label>
+            <input type="number" id="npt-venta" required min="0" step="0.01" placeholder="0.00" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Stock Inicial *</label>
+          <input type="number" id="npt-stock" required min="0" placeholder="0" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Marcas Compatibles</label>
+          <input type="text" id="npt-marcas" placeholder="Ej. Apple, Samsung, Xiaomi" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Modelos Compatibles</label>
+          <input type="text" id="npt-modelos" placeholder="Ej. iPhone 13, 14, 15 Pro" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+        </div>
+        <button type="submit" class="w-full bg-brand text-gray-950 py-3 rounded-xl font-bold hover:bg-brand-light transition mt-2 shadow-[0_0_15px_rgba(7,183,107,0.3)]">
+          Guardar Producto
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal de Agregar Stock (Técnico) -->
   <div id="modal-stock-tec" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden">
     <div class="bg-gray-900 border border-gray-800 text-gray-100 w-96 p-6 rounded-2xl shadow-2xl relative">
@@ -247,6 +314,44 @@
     if(r !== 'tecnico' && r !== 'admin') { window.location.href = '../login.html'; }
     function logout() { localStorage.clear(); window.location.href = '../login.html'; }
     const fmt = (v) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(v || 0);
+
+    function abrirModalNuevoProdTec() {
+      document.getElementById('form-nuevo-prod-tec').reset();
+      document.getElementById('modal-nuevo-prod-tec').classList.remove('hidden');
+    }
+    function cerrarModalNuevoProdTec() {
+      document.getElementById('modal-nuevo-prod-tec').classList.add('hidden');
+    }
+    async function guardarNuevoProdTec(e) {
+      e.preventDefault();
+      const payload = {
+        nombre_producto: document.getElementById('npt-nombre').value.trim(),
+        categoria: document.getElementById('npt-categoria').value,
+        precio_compra: parseFloat(document.getElementById('npt-compra').value) || 0,
+        precio_venta: parseFloat(document.getElementById('npt-venta').value) || 0,
+        stock: parseInt(document.getElementById('npt-stock').value) || 0,
+        marcas_compatibles: document.getElementById('npt-marcas').value.trim(),
+        modelos_compatibles: document.getElementById('npt-modelos').value.trim()
+      };
+      try {
+        const res = await fetch('/api/inventario', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const d = await res.json();
+        if (res.ok) {
+          cerrarModalNuevoProdTec();
+          alert('✅ Producto registrado exitosamente.');
+          loadInvTec();
+        } else {
+          alert('Error: ' + (d.message || 'No se pudo guardar el producto.'));
+        }
+      } catch(err) {
+        console.error(err);
+        alert('Error de conexión al guardar el producto.');
+      }
+    }
 
     function showSection(id) {
       document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
