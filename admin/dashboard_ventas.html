@@ -83,11 +83,7 @@
         <p class="text-gray-400">Atención en mostrador y venta de accesorios.</p>
       </header>
 
-      <div class="flex-1 flex gap-6 min-h-0">
-        <!-- Lista de Productos -->
-        <div class="flex-1 bg-gray-900 border border-gray-800 rounded-2xl p-6 flex flex-col min-h-0">
-          <input type="text" id="pos-buscador" placeholder="Buscar accesorio o refacción..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition mb-4">
-          <div class="flex gap-4 mb-6 overflow-x-auto pb-2" id="inv-categorias">
+      <div class="flex gap-4 mb-6 overflow-x-auto pb-2" id="inv-categorias">
         <button onclick="renderInv(null)" class="whitespace-nowrap px-4 py-2 rounded-lg text-sm font-bold transition bg-brand text-gray-950">Todas</button>
         <button onclick="renderInv('Pantalla')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Pantalla</button>
         <button onclick="renderInv('Batería')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Batería</button>
@@ -105,6 +101,11 @@
         <button onclick="renderInv('Face ID')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Face ID</button>
         <button onclick="renderInv('Accesorio')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Accesorio</button>
       </div>
+
+      <div class="flex-1 flex gap-6 min-h-0">
+        <!-- Lista de Productos -->
+        <div class="flex-1 bg-gray-900 border border-gray-800 rounded-2xl p-6 flex flex-col min-h-0">
+          <input type="text" id="pos-buscador" placeholder="Buscar accesorio o refacción..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition mb-4">
 
           <div id="pos-lista-productos" class="flex-1 overflow-y-auto overflow-x-hidden pr-2 space-y-3">
              <p class="text-gray-500 text-center mt-10">Cargando catálogo...</p>
