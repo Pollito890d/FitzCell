@@ -17,14 +17,38 @@
     ::-webkit-scrollbar-thumb:hover { background: #374151; }
     .fade-in { animation: fadeIn 0.3s ease-in-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #modal-ticket, #modal-ticket * {
+        visibility: visible !important;
+      }
+      #modal-ticket {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white !important;
+        display: flex !important;
+        justify-content: center;
+        align-items: start;
+        margin: 0;
+        padding: 0;
+        z-index: 9999;
+      }
+      .print-hide {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body class="bg-base text-gray-100 min-h-screen flex overflow-hidden">
   
   <!-- Sidebar -->
-  <aside class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col z-20 h-screen">
-    <div class="mb-6 flex items-center">
-      <img src="../media/images/fitzcell_logo.svg" alt="FitzCell Logo" class="h-12 w-auto object-contain">
+  <aside class="w-80 bg-gray-900 border-r border-gray-800 p-6 flex flex-col z-20 h-screen">
+    <div class="mb-8 flex items-center justify-center w-full">
+      <img src="../media/images/fitzcell_logo.svg" alt="FitzCell Logo" class="h-20 w-auto object-contain mx-auto transition-transform hover:scale-105 duration-300">
     </div>
     <div class="mb-6 text-xs font-bold text-pink-400 bg-pink-900/20 p-2 rounded text-center tracking-widest border border-pink-900/50">
       ROL: VENTAS
@@ -60,6 +84,10 @@
         <div class="flex-1 bg-gray-900 border border-gray-800 rounded-2xl p-6 flex flex-col min-h-0">
           <input type="text" id="pos-buscador" placeholder="Buscar accesorio o refacción..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition mb-4">
           
+          <div class="flex gap-2 mb-4 overflow-x-auto pb-2" id="pos-categorias">
+             <!-- Categorías dinámicas -->
+          </div>
+
           <div id="pos-lista-productos" class="flex-1 overflow-y-auto pr-2 space-y-3">
              <p class="text-gray-500 text-center mt-10">Cargando catálogo...</p>
           </div>
@@ -77,6 +105,14 @@
           </div>
 
           <div class="bg-gray-950 p-6 border-t border-gray-800">
+            <div class="mb-4">
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Método de Pago</label>
+              <select id="ticket-metodo-pago" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:border-brand outline-none transition appearance-none cursor-pointer">
+                <option value="Efectivo">💵 Efectivo</option>
+                <option value="Tarjeta">💳 Tarjeta de Crédito/Débito</option>
+                <option value="Transferencia">🏦 Transferencia Bancaria</option>
+              </select>
+            </div>
             <div class="flex justify-between text-gray-400 mb-2"><span>Subtotal</span><span id="ticket-subtotal">.00</span></div>
             <div class="flex justify-between text-white font-bold text-xl mb-6"><span>Total</span><span id="ticket-total" class="text-brand">.00</span></div>
             
@@ -151,13 +187,72 @@
           <svg class="w-16 h-16 text-gray-700 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
           <h2 class="text-xl font-bold mb-2">Ingresa el Folio de Reparación</h2>
           <div class="flex gap-2 max-w-sm mx-auto mb-6">
-            <input type="text" placeholder="FITZ-XXXX" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-center text-xl text-white focus:border-brand outline-none uppercase tracking-widest font-mono">
+            <input type="text" id="garantia-input" placeholder="FITZ-XXXX" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-center text-xl text-white focus:border-brand outline-none uppercase tracking-widest font-mono">
           </div>
-          <button class="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-xl font-bold transition">Consultar Cobertura</button>
+          <button onclick="consultarGarantia()" class="bg-brand text-gray-950 px-8 py-3 rounded-xl font-bold hover:bg-brand-light transition shadow-[0_0_10px_rgba(7,183,107,0.2)]">Consultar Cobertura</button>
+          <div id="garantia-resultado" class="mt-8 text-left hidden">
+            <!-- Tarjeta dinámica de garantía -->
+          </div>
         </div>
       </div>
     </section>
 
+  </main>
+
+  <!-- Modal de Ticket Térmico -->
+  <div id="modal-ticket" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden print:bg-white print:backdrop-blur-none print:absolute print:inset-0">
+    <div class="bg-white text-gray-900 w-80 p-6 rounded-2xl shadow-2xl relative flex flex-col print:shadow-none print:p-0 print:w-full font-mono text-xs max-h-[90vh] overflow-y-auto print:max-h-none print:overflow-visible">
+      <!-- Botones superiores -->
+      <div class="flex justify-between mb-4 border-b pb-2 print-hide">
+        <button onclick="window.print()" class="bg-brand text-gray-950 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-brand-dark transition">
+          🖨️ Imprimir
+        </button>
+        <button onclick="cerrarTicket()" class="bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-bold hover:bg-gray-300 transition">
+          ❌ Cerrar
+        </button>
+      </div>
+
+      <!-- Contenido del Ticket Físico -->
+      <div class="text-center mb-4">
+        <h2 class="text-base font-bold uppercase tracking-wider text-gray-950">⚡ FITZCELL ⚡</h2>
+        <p class="text-[10px] text-gray-500">Servicio Técnico & Accesorios</p>
+        <p class="text-[10px] text-gray-500">Av. Principal #456, Col. Centro</p>
+        <p class="text-[10px] text-gray-500">RFC: FITZ950319-C23</p>
+        <p class="text-[10px] text-gray-500">Tel: 55-4321-9876</p>
+      </div>
+
+      <div class="border-t border-b border-dashed py-2 mb-4 text-gray-800">
+        <div class="flex justify-between"><span>Ticket:</span><span id="t-folio" class="font-bold">V-1</span></div>
+        <div class="flex justify-between"><span>Fecha:</span><span id="t-fecha">20/05/2026</span></div>
+        <div class="flex justify-between"><span>Cajero:</span><span>Vendedor Mostrador</span></div>
+      </div>
+
+      <table class="w-full mb-4 text-[11px] text-gray-800">
+        <thead>
+          <tr class="border-b border-dashed">
+            <th class="text-left pb-1">Desc</th>
+            <th class="text-center pb-1">Cant</th>
+            <th class="text-right pb-1">Total</th>
+          </tr>
+        </thead>
+        <tbody id="t-items-body" class="divide-y divide-dashed">
+          <!-- Items del ticket -->
+        </tbody>
+      </table>
+
+      <div class="border-t border-dashed pt-2 space-y-1 mb-6 text-[11px] text-gray-800">
+        <div class="flex justify-between"><span>Subtotal:</span><span id="t-subtotal" class="font-bold">$0.00</span></div>
+        <div class="flex justify-between text-xs font-bold uppercase"><span>Total:</span><span id="t-total" class="text-base font-black">$0.00</span></div>
+        <div class="flex justify-between text-[10px] text-gray-500"><span>Método Pago:</span><span id="t-metodo" class="font-bold">Efectivo</span></div>
+      </div>
+
+      <div class="text-center text-[10px] text-gray-500 space-y-1 border-t border-dashed pt-4">
+        <p class="font-bold text-gray-700">¡Gracias por su preferencia!</p>
+        <p>Garantía de 30 días en accesorios contra defectos de fábrica.</p>
+        <p class="mt-2 text-[9px] font-mono text-gray-400">fitzcell.vercel.app</p>
+      </div>
+    </div>
+  </div>
   </main>
 
   <script>
@@ -169,10 +264,12 @@
       window.location.href = '../login.html'; 
     }
 
-    const formatCurrency = (val) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val);
+    const formatCurrency = (val) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val || 0);
 
     let inventarioDB = [];
     let ticketItems = [];
+    let activeCategory = null;
+    let activeSearch = '';
 
     function showSection(sectionId) {
       document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden'));
@@ -198,31 +295,70 @@
         const res = await fetch('/api/inventario');
         if(res.ok) {
           inventarioDB = await res.json();
+          renderCats();
           renderPOS();
           renderCatalogo();
         }
-      } catch(e) {}
+      } catch(e) {
+        console.error('Error al cargar inventario:', e);
+      }
     }
 
-    function renderPOS(filter = '') {
+    function renderCats() {
+      const cats = [...new Set(inventarioDB.map(i => i.categoria))].filter(Boolean);
+      let h = `<button onclick="selectCategory(null)" id="btn-cat-all" class="whitespace-nowrap px-4 py-2 bg-brand text-gray-950 rounded-lg text-sm font-bold transition shadow-sm">Todas</button>`;
+      cats.forEach(c => {
+        const escaped = c.replace(/'/g, "\\'");
+        h += `<button onclick="selectCategory('${escaped}')" id="btn-cat-${c.replace(/\s+/g, '-')}" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">${c}</button>`;
+      });
+      document.getElementById('pos-categorias').innerHTML = h;
+    }
+
+    function selectCategory(cat) {
+      activeCategory = cat;
+      document.querySelectorAll('#pos-categorias button').forEach(b => {
+        b.classList.remove('bg-brand', 'text-gray-950');
+        b.classList.add('bg-gray-800', 'text-white', 'hover:bg-gray-700');
+      });
+      
+      const targetId = cat ? 'btn-cat-' + cat.replace(/\s+/g, '-') : 'btn-cat-all';
+      const selectedBtn = document.getElementById(targetId);
+      if (selectedBtn) {
+        selectedBtn.classList.remove('bg-gray-800', 'text-white', 'hover:bg-gray-700');
+        selectedBtn.classList.add('bg-brand', 'text-gray-950');
+      }
+      renderPOS();
+    }
+
+    function renderPOS() {
       let data = inventarioDB.filter(p => p.stock > 0);
-      if(filter) data = data.filter(p => p.nombre_producto.toLowerCase().includes(filter));
+      if(activeCategory) {
+        data = data.filter(p => p.categoria === activeCategory);
+      }
+      if(activeSearch) {
+        data = data.filter(p => p.nombre_producto.toLowerCase().includes(activeSearch));
+      }
       
       let html = '';
       data.forEach(p => {
+         const escName = p.nombre_producto.replace(/'/g, "\\'");
          html += `<div class="bg-gray-950 border border-gray-800 rounded-xl p-4 flex justify-between items-center hover:border-gray-700 transition cursor-pointer">
-           <div><p class="font-bold">${p.nombre_producto}</p><p class="text-sm text-gray-500">Stock: ${p.stock}</p></div>
+           <div>
+             <p class="font-bold text-white">${p.nombre_producto}</p>
+             <p class="text-xs text-gray-500 mt-1">Categoría: <span class="text-gray-400">${p.categoria || '—'}</span> | Stock: <span class="text-brand font-semibold">${p.stock}</span></p>
+           </div>
            <div class="flex items-center gap-4">
-             <span class="font-bold text-brand">${formatCurrency(p.precio_venta)}</span>
-             <button onclick="addTicket(${p.id_producto}, '+p.nombre_producto.replace(/'/g, "\\'")+', ${p.precio_venta})" class="bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-lg text-white font-bold transition">Añadir</button>
+             <span class="font-bold text-brand text-lg">${formatCurrency(p.precio_venta)}</span>
+             <button onclick="addTicket(${p.id_producto}, '${escName}', ${p.precio_venta})" class="bg-brand text-gray-950 hover:bg-brand-light px-4 py-2 rounded-lg font-bold transition shadow-sm">Añadir</button>
            </div>
          </div>`;
       });
-      document.getElementById('pos-lista-productos').innerHTML = html || '<p class="text-gray-500 text-center">No se encontraron productos en stock</p>';
+      document.getElementById('pos-lista-productos').innerHTML = html || '<p class="text-gray-500 text-center mt-10">No se encontraron productos en stock</p>';
     }
 
     document.getElementById('pos-buscador').addEventListener('input', (e) => {
-       renderPOS(e.target.value.toLowerCase());
+       activeSearch = e.target.value.toLowerCase();
+       renderPOS();
     });
 
     function addTicket(id, nombre, precio) {
@@ -250,13 +386,13 @@
       ticketItems.forEach((i, idx) => {
         let lineTotal = i.qty * i.precio;
         total += lineTotal;
-        html += `<div class="flex justify-between items-center text-sm">
-          <div class="flex items-center gap-2 flex-1">
-            <span class="bg-gray-800 px-2 rounded font-bold text-xs cursor-pointer text-red-400" onclick="removeTicket(${idx})">x</span>
-            <span class="bg-gray-800 px-2 rounded font-bold text-xs">x${i.qty}</span>
-            <span class="truncate">${i.nombre}</span>
+        html += `<div class="flex justify-between items-center text-sm bg-gray-950/60 p-3 rounded-lg border border-gray-800">
+          <div class="flex items-center gap-2 flex-1 min-w-0">
+            <span class="bg-red-950/40 text-red-400 px-2 py-0.5 rounded font-bold text-xs cursor-pointer hover:bg-red-900/50" onclick="removeTicket(${idx})">x</span>
+            <span class="bg-gray-800 text-brand px-2 py-0.5 rounded font-bold text-xs">x${i.qty}</span>
+            <span class="truncate text-gray-200 font-medium">${i.nombre}</span>
           </div>
-          <span class="font-bold pl-2">${formatCurrency(lineTotal)}</span>
+          <span class="font-bold pl-2 text-white">${formatCurrency(lineTotal)}</span>
         </div>`;
       });
       container.innerHTML = html;
@@ -269,11 +405,42 @@
       renderTicket();
     }
 
-    function cobrar() {
-       if(ticketItems.length === 0) return alert('El ticket está vacío');
-       alert('Venta procesada exitosamente (Simulación).');
-       ticketItems = [];
-       renderTicket();
+    async function cobrar() {
+      if(ticketItems.length === 0) return alert('El ticket está vacío');
+      
+      const subtotal = ticketItems.reduce((acc, curr) => acc + (curr.qty * curr.precio), 0);
+      const total = subtotal;
+      const metodo_pago = document.getElementById('ticket-metodo-pago').value;
+      const items = ticketItems.map(i => ({
+        id_producto: i.id,
+        cantidad: i.qty,
+        precio_unitario: i.precio
+      }));
+
+      try {
+        const response = await fetch('/api/ventas', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ total, subtotal, metodo_pago, items })
+        });
+        
+        if (response.ok) {
+          const resData = await response.json();
+          alert('¡Venta procesada con éxito!');
+          verTicket(resData.id_venta);
+          ticketItems = [];
+          renderTicket();
+          loadInventario();
+        } else {
+          const errData = await response.json();
+          alert('Error al procesar la venta: ' + (errData.error || errData.message));
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Ocurrió un error al conectar con el servidor.');
+      }
     }
 
     function renderCatalogo() {
@@ -281,29 +448,192 @@
       inventarioDB.forEach(p => {
         let stockCls = p.stock <= 5 ? "bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-900/50" : "";
         html += `<tr class="hover:bg-gray-800/50 transition">
-          <td class="p-4 font-medium">${p.nombre_producto}</td>
+          <td class="p-4 font-medium text-white">${p.nombre_producto}</td>
           <td class="p-4 text-gray-400">${p.categoria || '-'}</td>
           <td class="p-4 font-bold text-brand">${formatCurrency(p.precio_venta)}</td>
           <td class="p-4 text-center"><span class="${stockCls}">${p.stock}</span></td>
         </tr>`;
       });
-      document.getElementById('cat-tbody').innerHTML = html;
+      document.getElementById('cat-tbody').innerHTML = html || '<tr><td colspan="4" class="p-4 text-center text-gray-500">Sin productos</td></tr>';
     }
+
+    // Buscador interactivo en el catálogo
+    document.getElementById('cat-buscador').addEventListener('input', (e) => {
+      const filter = e.target.value.toLowerCase();
+      let html = '';
+      const filtered = inventarioDB.filter(p => p.nombre_producto.toLowerCase().includes(filter) || (p.categoria && p.categoria.toLowerCase().includes(filter)));
+      filtered.forEach(p => {
+        let stockCls = p.stock <= 5 ? "bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-900/50" : "";
+        html += `<tr class="hover:bg-gray-800/50 transition">
+          <td class="p-4 font-medium text-white">${p.nombre_producto}</td>
+          <td class="p-4 text-gray-400">${p.categoria || '-'}</td>
+          <td class="p-4 font-bold text-brand">${formatCurrency(p.precio_venta)}</td>
+          <td class="p-4 text-center"><span class="${stockCls}">${p.stock}</span></td>
+        </tr>`;
+      });
+      document.getElementById('cat-tbody').innerHTML = html || '<tr><td colspan="4" class="p-4 text-center text-gray-500">Sin resultados</td></tr>';
+    });
 
     async function loadVentas() {
       try {
-        const res = await fetch('/api/crm/ingresos');
+        const res = await fetch('/api/ventas');
         if(res.ok) {
-          // Si tuvieramos una api de GET /ventas iterariamos. Haremos mock por ahora para el ejemplo usando los ingresos.
-          let html = `<tr class="hover:bg-gray-800/50 transition">
-            <td class="p-4 font-bold text-white">V-1</td>
-            <td class="p-4 font-bold text-brand">${formatCurrency(300)}</td>
-            <td class="p-4">Efectivo</td>
-            <td class="p-4 text-center"><button class="text-brand hover:text-white underline" onclick="alert('Mostrando Modal del Ticket...')">Ver Ticket</button></td>
-          </tr>`;
-          document.getElementById('com-tbody').innerHTML = html;
+          const ventas = await res.json();
+          let html = '';
+          ventas.forEach(v => {
+            html += `<tr class="hover:bg-gray-800/50 transition">
+              <td class="p-4 font-bold text-white">V-${v.id_venta}</td>
+              <td class="p-4 font-bold text-brand">${formatCurrency(v.total)}</td>
+              <td class="p-4 text-gray-300">${v.metodo_pago || 'Efectivo'}</td>
+              <td class="p-4 text-center">
+                <button class="text-brand hover:text-white underline font-semibold transition" onclick="verTicket(${v.id_venta})">Ver Ticket</button>
+              </td>
+            </tr>`;
+          });
+          document.getElementById('com-tbody').innerHTML = html || '<tr><td colspan="4" class="p-4 text-center text-gray-500">Sin historial de ventas</td></tr>';
         }
-      } catch(e){}
+      } catch(e){
+        console.error(e);
+      }
+    }
+
+    function verTicket(id_venta) {
+      fetch('/api/ventas')
+        .then(res => res.json())
+        .then(ventas => {
+          const venta = ventas.find(v => v.id_venta === id_venta);
+          if (!venta) return alert('No se encontró la venta');
+          
+          document.getElementById('t-folio').innerText = 'V-' + venta.id_venta;
+          document.getElementById('t-fecha').innerText = new Date(venta.fecha).toLocaleString('es-MX');
+          document.getElementById('t-metodo').innerText = venta.metodo_pago;
+          
+          let h = '';
+          const items = venta.detalle_venta || [];
+          items.forEach(it => {
+            const nom = it.producto ? it.producto.nombre_producto : 'Accesorio/Refacción';
+            h += `<tr class="border-b border-dashed text-gray-800">
+              <td class="py-1 max-w-[150px] truncate">${nom}</td>
+              <td class="text-center py-1">x${it.cantidad}</td>
+              <td class="text-right py-1 font-bold">${formatCurrency(it.cantidad * it.precio_unitario)}</td>
+            </tr>`;
+          });
+          document.getElementById('t-items-body').innerHTML = h;
+          document.getElementById('t-subtotal').innerText = formatCurrency(venta.subtotal);
+          document.getElementById('t-total').innerText = formatCurrency(venta.total);
+          
+          document.getElementById('modal-ticket').classList.remove('hidden');
+        })
+        .catch(e => {
+          console.error(e);
+          alert('Error al cargar detalles del ticket.');
+        });
+    }
+
+    function cerrarTicket() {
+      document.getElementById('modal-ticket').classList.add('hidden');
+    }
+
+    async function consultarGarantia() {
+      const folio = document.getElementById('garantia-input').value.trim();
+      if (!folio) return alert('Por favor ingresa un folio');
+      
+      const resContainer = document.getElementById('garantia-resultado');
+      resContainer.innerHTML = '<p class="text-gray-400 text-center">Buscando información...</p>';
+      resContainer.classList.remove('hidden');
+
+      try {
+        const response = await fetch('/api/reparaciones/' + encodeURIComponent(folio));
+        if (response.status === 404) {
+          resContainer.innerHTML = `
+            <div class="bg-red-900/20 border border-red-900/50 p-6 rounded-xl text-center">
+              <span class="text-red-400 text-4xl block mb-2">⚠️</span>
+              <h3 class="text-lg font-bold text-red-400">Folio No Encontrado</h3>
+              <p class="text-gray-400 text-sm mt-1">El folio "${folio}" no corresponde a ninguna orden registrada en el sistema.</p>
+            </div>`;
+          return;
+        }
+
+        if (!response.ok) throw new Error();
+
+        const data = await response.json();
+        const detalles = data.detalle_reparacion || [];
+        const detalleConGarantia = detalles.find(d => d.garantia);
+        
+        if (!detalleConGarantia || !data.fecha_entrega) {
+          resContainer.innerHTML = `
+            <div class="bg-yellow-900/20 border border-yellow-900/50 p-6 rounded-xl text-center">
+              <span class="text-yellow-400 text-4xl block mb-2">🛡️</span>
+              <h3 class="text-lg font-bold text-yellow-400">Sin Garantía Registrada</h3>
+              <p class="text-gray-400 text-sm mt-1">Este equipo no tiene una póliza de garantía asociada o aún no ha sido entregado.</p>
+              <div class="mt-4 border-t border-gray-800 pt-4 text-xs text-gray-500 text-left">
+                <p><strong>Dispositivo:</strong> ${data.dispositivo?.marca || ''} ${data.dispositivo?.modelo || ''}</p>
+                <p><strong>Cliente:</strong> ${data.dispositivo?.cliente?.nombre_completo || 'General'}</p>
+                <p><strong>Estado Orden:</strong> ${data.estado}</p>
+              </div>
+            </div>`;
+          return;
+        }
+
+        const fechaEntrega = new Date(data.fecha_entrega);
+        const diasDuracion = detalleConGarantia.garantia.dias_duracion || 30;
+        const fechaLimite = new Date(fechaEntrega.getTime() + (diasDuracion * 24 * 60 * 60 * 1000));
+        const hoy = new Date();
+        const estaActiva = hoy <= fechaLimite;
+        const msRestantes = fechaLimite - hoy;
+        const diasRestantes = Math.ceil(msRestantes / (1000 * 60 * 60 * 24));
+
+        let badgeHtml = '';
+        if (estaActiva) {
+          badgeHtml = `
+            <div class="bg-brand/10 border border-brand/30 p-6 rounded-2xl relative overflow-hidden">
+              <div class="absolute top-0 right-0 w-20 h-20 bg-brand/10 rounded-bl-full blur-lg"></div>
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <span class="px-3 py-1 bg-brand/20 text-brand text-xs font-bold rounded-full border border-brand/30">🟢 GARANTÍA ACTIVA</span>
+                  <h3 class="text-xl font-bold text-white mt-2">${data.dispositivo?.marca || ''} ${data.dispositivo?.modelo || ''}</h3>
+                </div>
+                <div class="text-right">
+                  <p class="text-3xl font-black text-brand">${diasRestantes}</p>
+                  <p class="text-[10px] text-gray-400">días restantes</p>
+                </div>
+              </div>
+              <div class="space-y-2 text-sm text-gray-300 border-t border-gray-800 pt-4">
+                <p><strong>Cliente:</strong> ${data.dispositivo?.cliente?.nombre_completo || 'General'}</p>
+                <p><strong>Fecha Entrega:</strong> ${fechaEntrega.toLocaleDateString('es-MX')}</p>
+                <p><strong>Vence el:</strong> ${fechaLimite.toLocaleDateString('es-MX')}</p>
+                <p class="text-xs text-gray-400 mt-2 italic"><strong>Cobertura:</strong> ${detalleConGarantia.garantia.descripcion || 'Servicio técnico estándar.'}</p>
+              </div>
+            </div>`;
+        } else {
+          badgeHtml = `
+            <div class="bg-red-950/20 border border-red-900/30 p-6 rounded-2xl relative overflow-hidden">
+              <div class="absolute top-0 right-0 w-20 h-20 bg-red-500/10 rounded-bl-full blur-lg"></div>
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <span class="px-3 py-1 bg-red-900/30 text-red-400 text-xs font-bold rounded-full border border-red-900/50">🔴 GARANTÍA EXPIRADA</span>
+                  <h3 class="text-xl font-bold text-white mt-2">${data.dispositivo?.marca || ''} ${data.dispositivo?.modelo || ''}</h3>
+                </div>
+              </div>
+              <div class="space-y-2 text-sm text-gray-300 border-t border-gray-800 pt-4">
+                <p><strong>Cliente:</strong> ${data.dispositivo?.cliente?.nombre_completo || 'General'}</p>
+                <p><strong>Fecha Entrega:</strong> ${fechaEntrega.toLocaleDateString('es-MX')}</p>
+                <p class="text-red-400 font-bold">Expiró el: ${fechaLimite.toLocaleDateString('es-MX')}</p>
+                <p class="text-xs text-gray-500 mt-2 italic">La cobertura de garantía finalizó hace ${Math.abs(diasRestantes)} días.</p>
+              </div>
+            </div>`;
+        }
+
+        resContainer.innerHTML = badgeHtml;
+
+      } catch (error) {
+        console.error(error);
+        resContainer.innerHTML = `
+          <div class="bg-red-900/20 border border-red-900/50 p-6 rounded-xl text-center">
+            <h3 class="text-lg font-bold text-red-400">Error de Conexión</h3>
+            <p class="text-gray-400 text-sm mt-1">Ocurrió un error al intentar verificar el folio.</p>
+          </div>`;
+      }
     }
 
     showSection('sec-pos');

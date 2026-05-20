@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const supabase = require('../config/supabase');
@@ -55,6 +55,22 @@ router.post('/login', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error del servidor durante el login' });
+    }
+});
+
+// Obtener todos los empleados (sin retornar contraseña por seguridad)
+router.get('/users', async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('usuario')
+            .select('id_usuario, nombre, email, rol')
+            .order('nombre', { ascending: true });
+        
+        if (error) throw error;
+        res.json(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al obtener los empleados' });
     }
 });
 

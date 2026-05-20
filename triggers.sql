@@ -1,4 +1,4 @@
-﻿-- ==========================================
+-- ==========================================
 -- SCRIPT DE TRIGGERS CORREGIDOS PARA SUPABASE
 -- ==========================================
 
@@ -92,3 +92,28 @@ DROP TRIGGER IF EXISTS tr_generar_garantia_auto ON Detalle_Reparacion;
 CREATE TRIGGER tr_generar_garantia_auto
 BEFORE INSERT ON Detalle_Reparacion
 FOR EACH ROW EXECUTE FUNCTION calcular_periodo_garantia();
+
+-- ==========================================
+-- 5. Actualización Automática de Inventario por Ventas
+-- ==========================================
+CREATE OR REPLACE FUNCTION descontar_stock_venta()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE Producto
+    SET stock = stock - NEW.cantidad
+    WHERE id_producto = NEW.id_producto;
+    
+    -- Verificación de stock bajo cero
+    IF (SELECT stock FROM Producto WHERE id_producto = NEW.id_producto) < 0 THEN
+        RAISE EXCEPTION 'Error: Stock insuficiente para el producto vendido.';
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS tr_actualizar_inventario_venta ON Detalle_Venta;
+CREATE TRIGGER tr_actualizar_inventario_venta
+AFTER INSERT ON Detalle_Venta
+FOR EACH ROW EXECUTE FUNCTION descontar_stock_venta();
+

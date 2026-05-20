@@ -17,14 +17,38 @@
     ::-webkit-scrollbar-thumb:hover { background: #374151; }
     .fade-in { animation: fadeIn 0.3s ease-in-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #modal-ticket, #modal-ticket * {
+        visibility: visible !important;
+      }
+      #modal-ticket {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white !important;
+        display: flex !important;
+        justify-content: center;
+        align-items: start;
+        margin: 0;
+        padding: 0;
+        z-index: 9999;
+      }
+      .print-hide {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body class="bg-base text-gray-100 min-h-screen flex overflow-hidden">
   
   <!-- Sidebar -->
-  <aside class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col z-20 h-screen">
-    <div class="mb-6 flex items-center">
-      <img src="../media/images/fitzcell_logo.svg" alt="FitzCell Logo" class="h-12 w-auto object-contain">
+  <aside class="w-80 bg-gray-900 border-r border-gray-800 p-6 flex flex-col z-20 h-screen">
+    <div class="mb-8 flex items-center justify-center w-full">
+      <img src="../media/images/fitzcell_logo.svg" alt="FitzCell Logo" class="h-20 w-auto object-contain mx-auto transition-transform hover:scale-105 duration-300">
     </div>
     <div class="mb-6 text-xs font-bold text-brand bg-brand/10 p-2 rounded text-center tracking-widest border border-brand/20">
       ROL: ENCARGADO
@@ -126,6 +150,9 @@
           <h1 class="text-3xl font-bold mb-1">Gestión de <span class="text-brand">Personal</span></h1>
           <p class="text-gray-400">Alta y control de técnicos y vendedores.</p>
         </div>
+        <button onclick="abrirModalEmpleado()" class="bg-brand text-gray-950 px-5 py-2.5 rounded-xl font-bold hover:bg-brand-light transition shadow-[0_0_15px_rgba(7,183,107,0.2)]">
+          ➕ Agregar Empleado
+        </button>
       </header>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="emp-lista">
@@ -145,9 +172,10 @@
           <thead>
             <tr class="bg-gray-950 border-b border-gray-800 text-gray-400 text-sm">
               <th class="p-4 font-semibold">Folio</th>
+              <th class="p-4 font-semibold">Cliente</th>
               <th class="p-4 font-semibold">Dispositivo</th>
               <th class="p-4 font-semibold">Falla Reportada</th>
-              <th class="p-4 font-semibold">Costo Aprox</th>
+              <th class="p-4 font-semibold text-center">Costo Aprox</th>
               <th class="p-4 font-semibold text-center">Estado</th>
             </tr>
           </thead>
@@ -172,13 +200,112 @@
               <th class="p-4 font-semibold">Fecha</th>
               <th class="p-4 font-semibold">Método Pago</th>
               <th class="p-4 font-semibold text-right">Total</th>
+              <th class="p-4 font-semibold text-center">Acción</th>
             </tr>
           </thead>
           <tbody id="ven-tbody" class="divide-y divide-gray-800 text-sm">
             <tr><td colspan="4" class="p-4 text-center text-gray-500">Cargando...</td></tr>
           </tbody>
         </table>
-      <  <script>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal de Agregar Empleado -->
+  <div id="modal-empleado" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-gray-900 border border-gray-800 text-gray-100 w-96 p-6 rounded-2xl shadow-2xl relative flex flex-col">
+      <h2 class="text-xl font-bold text-white mb-6 border-b border-gray-800 pb-3 flex justify-between items-center">
+        <span>Agregar Nuevo Empleado</span>
+        <button onclick="cerrarModalEmpleado()" class="text-gray-400 hover:text-white">❌</button>
+      </h2>
+      
+      <form id="form-empleado" onsubmit="registrarEmpleado(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Nombre Completo</label>
+          <input type="text" id="emp-nombre" required placeholder="Ej. Juan Pérez" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Correo Electrónico</label>
+          <input type="email" id="emp-email" required placeholder="ejemplo@fitzcell.com" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Contraseña</label>
+          <input type="password" id="emp-pass" required placeholder="••••••••" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Rol de Usuario</label>
+          <select id="emp-rol" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm appearance-none cursor-pointer">
+            <option value="tecnico">🔧 Técnico de Reparaciones</option>
+            <option value="ventas">💼 Ventas / Mostrador</option>
+            <option value="encargado">📊 Encargado de Sucursal</option>
+          </select>
+        </div>
+        
+        <button type="submit" class="w-full bg-brand text-gray-950 py-3 rounded-xl font-bold hover:bg-brand-light transition mt-6 shadow-[0_0_15px_rgba(7,183,107,0.3)]">
+          Guardar Empleado
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Ticket Térmico -->
+  <div id="modal-ticket" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden print:bg-white print:backdrop-blur-none print:absolute print:inset-0">
+    <div class="bg-white text-gray-900 w-80 p-6 rounded-2xl shadow-2xl relative flex flex-col print:shadow-none print:p-0 print:w-full font-mono text-xs max-h-[90vh] overflow-y-auto print:max-h-none print:overflow-visible">
+      <!-- Botones superiores -->
+      <div class="flex justify-between mb-4 border-b pb-2 print-hide">
+        <button onclick="window.print()" class="bg-brand text-gray-950 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-brand-dark transition">
+          🖨️ Imprimir
+        </button>
+        <button onclick="cerrarTicket()" class="bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-bold hover:bg-gray-300 transition">
+          ❌ Cerrar
+        </button>
+      </div>
+
+      <!-- Contenido del Ticket Físico -->
+      <div class="text-center mb-4">
+        <h2 class="text-base font-bold uppercase tracking-wider text-gray-950">⚡ FITZCELL ⚡</h2>
+        <p class="text-[10px] text-gray-500">Servicio Técnico & Accesorios</p>
+        <p class="text-[10px] text-gray-500">Av. Principal #456, Col. Centro</p>
+        <p class="text-[10px] text-gray-500">RFC: FITZ950319-C23</p>
+        <p class="text-[10px] text-gray-500">Tel: 55-4321-9876</p>
+      </div>
+
+      <div class="border-t border-b border-dashed py-2 mb-4 text-gray-800">
+        <div class="flex justify-between"><span>Ticket:</span><span id="t-folio" class="font-bold">V-1</span></div>
+        <div class="flex justify-between"><span>Fecha:</span><span id="t-fecha">20/05/2026</span></div>
+        <div class="flex justify-between"><span>Cajero:</span><span>Vendedor Mostrador</span></div>
+      </div>
+
+      <table class="w-full mb-4 text-[11px] text-gray-800">
+        <thead>
+          <tr class="border-b border-dashed">
+            <th class="text-left pb-1">Desc</th>
+            <th class="text-center pb-1">Cant</th>
+            <th class="text-right pb-1">Total</th>
+          </tr>
+        </thead>
+        <tbody id="t-items-body" class="divide-y divide-dashed">
+          <!-- Items del ticket -->
+        </tbody>
+      </table>
+
+      <div class="border-t border-dashed pt-2 space-y-1 mb-6 text-[11px] text-gray-800">
+        <div class="flex justify-between"><span>Subtotal:</span><span id="t-subtotal" class="font-bold">$0.00</span></div>
+        <div class="flex justify-between text-xs font-bold uppercase"><span>Total:</span><span id="t-total" class="text-base font-black">$0.00</span></div>
+        <div class="flex justify-between text-[10px] text-gray-500"><span>Método Pago:</span><span id="t-metodo" class="font-bold">Efectivo</span></div>
+      </div>
+
+      <div class="text-center text-[10px] text-gray-500 space-y-1 border-t border-dashed pt-4">
+        <p class="font-bold text-gray-700">¡Gracias por su preferencia!</p>
+        <p>Garantía de 30 días en accesorios contra defectos de fábrica.</p>
+        <p class="mt-2 text-[9px] font-mono text-gray-400">fitzcell.vercel.app</p>
+      </div>
+    </div>
+  </div>
+  </main>
+
+  <script>
     const r = localStorage.getItem('fitzcell_rol');
     if(r !== 'encargado' && r !== 'admin') { window.location.href = '../login.html'; }
     function logout() { localStorage.clear(); window.location.href = '../login.html'; }
@@ -230,10 +357,10 @@
     }
 
     function renderCats(){
-      const cats = [...new Set(allInv.map(i => i.categoria))];
-      let h = '<button onclick="renderInv(null)" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">Todas</button>';
+      const cats = [...new Set(allInv.map(i => i.categoria))].filter(Boolean);
+      let h = '<button onclick="renderInv(null)" class="whitespace-nowrap px-4 py-2 bg-brand text-gray-950 rounded-lg text-sm font-bold transition">Todas</button>';
       cats.forEach(c => {
-        if(c) h += '<button onclick="renderInv(\'' + c + '\')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-brand text-white rounded-lg text-sm font-bold transition">' + c + '</button>';
+        h += '<button onclick="renderInv(\'' + c + '\')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">' + c + '</button>';
       });
       document.getElementById('inv-categorias').innerHTML = h;
     }
@@ -243,13 +370,82 @@
       let h = '';
       data.forEach(it => {
         const sc = it.stock <= 5 ? 'bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-900/50' : '';
-        h += '<tr class="hover:bg-gray-800/50 transition"><td class="p-4 font-medium">' + it.nombre_producto + '</td><td class="p-4 text-gray-400">' + (it.categoria||'—') + '</td><td class="p-4">' + fmt(it.precio_compra) + '</td><td class="p-4 font-bold text-brand">' + fmt(it.precio_venta) + '</td><td class="p-4 text-center"><span class="' + sc + '">' + it.stock + '</span></td></tr>';
+        h += '<tr class="hover:bg-gray-800/50 transition"><td class="p-4 font-medium text-white">' + it.nombre_producto + '</td><td class="p-4 text-gray-400">' + (it.categoria||'—') + '</td><td class="p-4 text-gray-300">' + fmt(it.precio_compra) + '</td><td class="p-4 font-bold text-brand">' + fmt(it.precio_venta) + '</td><td class="p-4 text-center"><span class="' + sc + '">' + it.stock + '</span></td></tr>';
       });
       document.getElementById('inv-tbody').innerHTML = h || '<tr><td colspan="5" class="p-4 text-center text-gray-500">Sin productos</td></tr>';
     }
 
-    function loadEmpleados(){
-      document.getElementById('emp-lista').innerHTML = '<div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 flex items-center gap-4"><div class="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-xl">C</div><div class="flex-1"><h3 class="font-bold text-lg">Carlos</h3><p class="text-gray-400 text-sm">carlos@fitzcell.com</p></div><span class="px-3 py-1 bg-blue-900/30 text-blue-400 text-xs font-bold rounded-full border border-blue-900/50">Técnico</span></div><div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 flex items-center gap-4"><div class="w-12 h-12 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-500 font-bold text-xl">A</div><div class="flex-1"><h3 class="font-bold text-lg">Ana</h3><p class="text-gray-400 text-sm">ana@fitzcell.com</p></div><span class="px-3 py-1 bg-pink-900/30 text-pink-400 text-xs font-bold rounded-full border border-pink-900/50">Ventas</span></div>';
+    async function loadEmpleados(){
+      try {
+        const res = await fetch('/api/auth/users');
+        if (res.ok) {
+          const users = await res.json();
+          let h = '';
+          users.forEach(u => {
+            const char = u.nombre ? u.nombre.charAt(0).toUpperCase() : 'E';
+            let roleBadge = '';
+            let bgChar = 'bg-brand/20 text-brand';
+            if (u.rol === 'tecnico') {
+              roleBadge = '<span class="px-3 py-1 bg-blue-900/30 text-blue-400 text-xs font-bold rounded-full border border-blue-900/50">🔧 Técnico</span>';
+              bgChar = 'bg-blue-500/20 text-blue-400';
+            } else if (u.rol === 'ventas') {
+              roleBadge = '<span class="px-3 py-1 bg-pink-900/30 text-pink-400 text-xs font-bold rounded-full border border-pink-900/50">💼 Ventas</span>';
+              bgChar = 'bg-pink-500/20 text-pink-400';
+            } else {
+              roleBadge = '<span class="px-3 py-1 bg-brand/20 text-brand text-xs font-bold rounded-full border border-brand/20">📊 Encargado</span>';
+            }
+            
+            h += `<div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 flex items-center gap-4 hover:border-gray-700 transition">
+              <div class="w-12 h-12 rounded-full ${bgChar} flex items-center justify-center font-bold text-xl">${char}</div>
+              <div class="flex-1">
+                <h3 class="font-bold text-lg text-white">${u.nombre}</h3>
+                <p class="text-gray-400 text-sm">${u.email}</p>
+              </div>
+              ${roleBadge}
+            </div>`;
+          });
+          document.getElementById('emp-lista').innerHTML = h || '<p class="text-gray-500 col-span-2 text-center py-10">No hay empleados registrados.</p>';
+        }
+      } catch(e) {
+        console.error(e);
+        document.getElementById('emp-lista').innerHTML = '<p class="text-red-400 col-span-2 text-center">Error al cargar empleados.</p>';
+      }
+    }
+
+    function abrirModalEmpleado() {
+      document.getElementById('modal-empleado').classList.remove('hidden');
+    }
+
+    function cerrarModalEmpleado() {
+      document.getElementById('modal-empleado').classList.add('hidden');
+      document.getElementById('form-empleado').reset();
+    }
+
+    async function registrarEmpleado(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('emp-nombre').value;
+      const email = document.getElementById('emp-email').value;
+      const password = document.getElementById('emp-pass').value;
+      const rol = document.getElementById('emp-rol').value;
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, email, password, rol })
+        });
+        if (res.ok) {
+          alert('¡Empleado registrado exitosamente!');
+          cerrarModalEmpleado();
+          loadEmpleados();
+        } else {
+          const d = await res.json();
+          alert('Error al registrar: ' + (d.message || d.error));
+        }
+      } catch(err) {
+        console.error(err);
+        alert('Error de conexión al registrar empleado.');
+      }
     }
 
     async function loadReparaciones(){
@@ -259,15 +455,84 @@
           const d = await res.json();
           let h = '';
           d.forEach(rep => {
-            h += '<tr class="hover:bg-gray-800/50 transition"><td class="p-4 font-bold text-white">' + (rep.codigo_seguimiento||'—') + '</td><td class="p-4 text-gray-400">ID: ' + (rep.id_dispositivo||'—') + '</td><td class="p-4 text-gray-400 truncate max-w-xs">' + (rep.falla_reportada||'—') + '</td><td class="p-4 font-bold text-brand">' + fmt(rep.costo) + '</td><td class="p-4 text-center"><span class="px-2 py-1 bg-gray-800 rounded text-xs border border-gray-700">' + rep.estado + '</span></td></tr>';
+            const clientName = rep.dispositivo?.cliente ? rep.dispositivo.cliente.nombre_completo : 'General / Mostrador';
+            const devText = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color ? `(${rep.dispositivo.color})` : ''}`.trim() : 'Dispositivo Desconocido';
+            h += `<tr class="hover:bg-gray-800/50 transition">
+              <td class="p-4 font-bold text-white">${rep.codigo_seguimiento || '—'}</td>
+              <td class="p-4 text-gray-300 font-medium">${clientName}</td>
+              <td class="p-4 text-gray-400">${devText}</td>
+              <td class="p-4 text-gray-400 truncate max-w-xs" title="${rep.falla_reportada || ''}">${rep.falla_reportada || '—'}</td>
+              <td class="p-4 font-bold text-brand">${fmt(rep.costo)}</td>
+              <td class="p-4 text-center">
+                <span class="px-2.5 py-1 bg-gray-800 text-gray-300 rounded text-xs border border-gray-700 font-medium">${rep.estado}</span>
+              </td>
+            </tr>`;
           });
-          document.getElementById('rep-tbody').innerHTML = h || '<tr><td colspan="5" class="p-4 text-center text-gray-500">Sin órdenes</td></tr>';
+          document.getElementById('rep-tbody').innerHTML = h || '<tr><td colspan="6" class="p-4 text-center text-gray-500">Sin órdenes activas</td></tr>';
         }
       }catch(e){ console.error(e); }
     }
 
-    function loadVentas(){
-      document.getElementById('ven-tbody').innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">Sin historial disponible.</td></tr>';
+    async function loadVentas(){
+      try {
+        const res = await fetch('/api/ventas');
+        if (res.ok) {
+          const sales = await res.json();
+          let h = '';
+          sales.forEach(v => {
+            h += `<tr class="hover:bg-gray-800/50 transition">
+              <td class="p-4 font-bold text-white">V-${v.id_venta}</td>
+              <td class="p-4 text-gray-400">${new Date(v.fecha).toLocaleString('es-MX')}</td>
+              <td class="p-4 text-gray-300">${v.metodo_pago || 'Efectivo'}</td>
+              <td class="p-4 font-bold text-brand text-right">${fmt(v.total)}</td>
+              <td class="p-4 text-center">
+                <button class="text-brand hover:text-white underline font-semibold transition" onclick="verTicket(${v.id_venta})">Ver Ticket</button>
+              </td>
+            </tr>`;
+          });
+          document.getElementById('ven-tbody').innerHTML = h || '<tr><td colspan="5" class="p-4 text-center text-gray-500">Sin historial de ventas</td></tr>';
+        }
+      } catch(err) {
+        console.error(err);
+        document.getElementById('ven-tbody').innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-400">Error al cargar historial.</td></tr>';
+      }
+    }
+
+    function verTicket(id_venta) {
+      fetch('/api/ventas')
+        .then(res => res.json())
+        .then(ventas => {
+          const venta = ventas.find(v => v.id_venta === id_venta);
+          if (!venta) return alert('No se encontró la venta');
+          
+          document.getElementById('t-folio').innerText = 'V-' + venta.id_venta;
+          document.getElementById('t-fecha').innerText = new Date(venta.fecha).toLocaleString('es-MX');
+          document.getElementById('t-metodo').innerText = venta.metodo_pago;
+          
+          let h = '';
+          const items = venta.detalle_venta || [];
+          items.forEach(it => {
+            const nom = it.producto ? it.producto.nombre_producto : 'Accesorio/Refacción';
+            h += `<tr class="border-b border-dashed text-gray-800">
+              <td class="py-1 max-w-[150px] truncate">${nom}</td>
+              <td class="text-center py-1">x${it.cantidad}</td>
+              <td class="text-right py-1 font-bold">${fmt(it.cantidad * it.precio_unitario)}</td>
+            </tr>`;
+          });
+          document.getElementById('t-items-body').innerHTML = h;
+          document.getElementById('t-subtotal').innerText = fmt(venta.subtotal);
+          document.getElementById('t-total').innerText = fmt(venta.total);
+          
+          document.getElementById('modal-ticket').classList.remove('hidden');
+        })
+        .catch(e => {
+          console.error(e);
+          alert('Error al cargar detalles del ticket.');
+        });
+    }
+
+    function cerrarTicket() {
+      document.getElementById('modal-ticket').classList.add('hidden');
     }
 
     showSection('sec-resumen');

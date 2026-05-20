@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -10,6 +10,7 @@ const crmRoutes = require('./routes/crm');
 const authRoutes = require('./routes/auth');
 const productosRoutes = require('./routes/productos');
 const pedidosRoutes = require('./routes/pedidos');
+const ventasRoutes = require('./routes/ventas');
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/api/crm', crmRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api/pedidos', pedidosRoutes);
+app.use('/api/ventas', ventasRoutes);
 
 // Exportar en lugar de escuchar en un puerto (Requerido por Vercel)
 module.exports = app;

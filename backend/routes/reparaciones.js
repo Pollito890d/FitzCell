@@ -7,27 +7,38 @@ router.get('/', async (req, res) => {
     try {
         const { data, error } = await supabase
             .from('orden_reparacion')
-            .select('*, dispositivo(cliente(nombre_completo))')
-            .order('fecha_ingreso', { ascending: false });
+            .select('*, dispositivo(*, cliente(*))')
+            .order('fecha_entrada', { ascending: false });
         if (error) throw error;
-        res.json(data);
+        
+        // Mapear fecha_ingreso para retrocompatibilidad
+        const mappedData = data.map(item => ({
+            ...item,
+            fecha_ingreso: item.fecha_entrada
+        }));
+        res.json(mappedData);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error al obtener las reparaciones' });
     }
 });
 
-// Obtener una reparación por folio (Para rastreo y detalles)
+// Obtener una reparación por folio (Para rastreo y detalles con refacciones y garantías)
 router.get('/:folio', async (req, res) => {
     try {
         const { data, error } = await supabase
             .from('orden_reparacion')
-            .select('*, dispositivo(cliente(nombre_completo))')
+            .select('*, dispositivo(*, cliente(*)), detalle_reparacion(*, producto(*), garantia(*))')
             .eq('codigo_seguimiento', req.params.folio)
             .single();
         if (error) {
             if(error.code === 'PGRST116') return res.status(404).json({ message: 'Reparación no encontrada' });
             throw error;
+        }
+        
+        // Retrocompatibilidad
+        if (data) {
+            data.fecha_ingreso = data.fecha_entrada;
         }
         res.json(data);
     } catch (error) {
@@ -86,6 +97,44 @@ router.post('/solicitud', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error al procesar la solicitud' });
+    }
+});
+
+// Guardar diagnóstico del técnico, cambiar estado y añadir piezas utilizadas
+router.put('/:id_orden/diagnostico', async (req, res) => {
+    const { id_orden } = req.params;
+    const { diagnostico, estado, costo, piezas } = req.body;
+    
+    try {
+        // 1. Actualizar orden_reparacion
+        const { data: updatedOrder, error: errUpdate } = await supabase
+            .from('orden_reparacion')
+            .update({ diagnostico, estado, costo })
+            .eq('id_orden', id_orden)
+            .select();
+        
+        if (errUpdate) throw errUpdate;
+        
+        // 2. Si se proporcionaron piezas, insertarlas en Detalle_Reparacion
+        if (piezas && piezas.length > 0) {
+            const insertData = piezas.map(p => ({
+                id_orden: parseInt(id_orden),
+                id_producto: p.id_producto,
+                tipo_refaccion: p.tipo_refaccion || 'Original',
+                cantidad_usada: 1
+            }));
+            
+            const { error: errPiezas } = await supabase
+                .from('detalle_reparacion')
+                .insert(insertData);
+            
+            if (errPiezas) throw errPiezas;
+        }
+        
+        res.json({ message: 'Diagnóstico guardado con éxito' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al guardar el diagnóstico', error: error.message });
     }
 });
 

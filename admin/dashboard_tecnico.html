@@ -22,9 +22,9 @@
 <body class="bg-base text-gray-100 min-h-screen flex overflow-hidden">
   
   <!-- Sidebar -->
-  <aside class="w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col z-20 h-screen">
-    <div class="mb-6 flex items-center">
-      <img src="../media/images/fitzcell_logo.svg" alt="FitzCell Logo" class="h-12 w-auto object-contain">
+  <aside class="w-80 bg-gray-900 border-r border-gray-800 p-6 flex flex-col z-20 h-screen">
+    <div class="mb-8 flex items-center justify-center w-full">
+      <img src="../media/images/fitzcell_logo.svg" alt="FitzCell Logo" class="h-20 w-auto object-contain mx-auto transition-transform hover:scale-105 duration-300">
     </div>
     <div class="mb-6 text-xs font-bold text-blue-400 bg-blue-900/20 p-2 rounded text-center tracking-widest border border-blue-900/50">
       ROL: TÉCNICO
@@ -52,7 +52,7 @@
       <header class="mb-10 flex justify-between items-end">
         <div>
           <h1 class="text-3xl font-bold mb-1">Órdenes <span class="text-brand">Asignadas</span></h1>
-          <p class="text-gray-400">Equipos pendientes de revisión y reparación.</p>
+          <p class="text-gray-400">Equipos pendientes de revisión y reparación en el taller.</p>
         </div>
       </header>
 
@@ -63,71 +63,103 @@
 
     <!-- SECCIÓN: DIAGNÓSTICO -->
     <section id="sec-diagnostico" class="fade-in hidden">
-      <header class="mb-6 flex justify-between items-end">
+      <header class="mb-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
           <h1 class="text-3xl font-bold mb-1">Panel de <span class="text-brand">Diagnóstico</span></h1>
-          <p class="text-gray-400 mb-2">Captura el diagnóstico y descuenta piezas del inventario.</p>
-          <div class="inline-flex items-center gap-2 px-3 py-1 bg-gray-900 border border-gray-700 rounded-lg text-sm text-gray-300">
-            <span>Dispositivo en mesa:</span>
-            <span id="dispositivo-activo" class="font-bold text-white">Ninguno seleccionado</span>
-            <button onclick="showSection('sec-ordenes')" class="text-brand ml-2 hover:underline text-xs">Cambiar</button>
+          <p class="text-gray-400">Captura el diagnóstico y descuenta piezas del inventario en tiempo real.</p>
+        </div>
+        
+        <button onclick="liberarMesa()" class="px-5 py-2.5 bg-gray-800 hover:bg-gray-700 text-white rounded-xl text-sm font-bold border border-gray-700 hover:border-gray-600 transition flex items-center gap-2 self-start md:self-auto">
+          ⬅️ Volver a Órdenes
+        </button>
+      </header>
+
+      <!-- Panel Superior de Estado en Mesa (Neon Premium Highlight Card) -->
+      <div class="bg-gradient-to-r from-gray-900 via-gray-900/90 to-brand/10 border border-brand/30 rounded-2xl p-6 mb-8 shadow-[0_0_20px_rgba(7,183,107,0.05)] flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="flex items-center gap-5">
+          <div class="w-14 h-14 bg-brand/20 rounded-2xl flex items-center justify-center text-brand border border-brand/30 animate-pulse">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+            </svg>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-brand uppercase tracking-widest">Dispositivo en Mesa de Trabajo</span>
+            <h2 id="dispositivo-activo" class="text-2xl font-black text-white mt-0.5">Ninguno seleccionado</h2>
           </div>
         </div>
-        <div class="bg-gray-900 px-4 py-2 rounded-xl border border-gray-800 flex items-center gap-3">
-          <span class="text-gray-400 text-sm">Folio Activo:</span>
-          <span id="folio-activo" class="font-bold text-brand text-lg">Ninguno</span>
+        
+        <div class="flex items-center gap-4 bg-gray-950/80 px-6 py-4 rounded-xl border border-gray-800 self-start md:self-auto min-w-[200px]">
+          <div>
+            <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">Folio Activo</span>
+            <span id="folio-activo" class="text-2xl font-black text-brand tracking-wider font-mono">Ninguno</span>
+          </div>
         </div>
-      </header>
+      </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Formulario Diagnostico -->
-        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 flex flex-col">
-          <h3 class="text-xl font-bold mb-6 border-b border-gray-800 pb-4">Detalles del Equipo</h3>
-          
-          <div class="space-y-5 flex-1">
-            <div>
-              <label class="block text-sm font-medium text-gray-400 mb-1">Diagnóstico del Técnico</label>
-              <textarea id="diag-texto" rows="4" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition" placeholder="Describe qué le falla al equipo y qué se necesita hacer..."></textarea>
-            </div>
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 flex flex-col justify-between">
+          <div>
+            <h3 class="text-xl font-bold mb-6 border-b border-gray-800 pb-4">Detalles del Diagnóstico</h3>
             
-            <div>
-              <label class="block text-sm font-medium text-gray-400 mb-1">Cambiar Estado</label>
-              <select id="diag-estado" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition appearance-none">
-                <option value="Diagnosticando">Diagnosticando</option>
-                <option value="Esperando Refacción">Esperando Refacción</option>
-                <option value="Reparando">Reparando</option>
-                <option value="Listo para Entrega">Listo para Entrega</option>
-                <option value="Sin Reparación">Sin Reparación / Entregar</option>
-              </select>
+            <div class="space-y-5">
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Diagnóstico del Técnico</label>
+                <textarea id="diag-texto" rows="4" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition" placeholder="Describe qué le falla al equipo y qué se necesita hacer..."></textarea>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Costo Final de la Reparación ($)</label>
+                <input type="number" id="diag-costo" min="0" step="0.01" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition" placeholder="0.00">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Cambiar Estado</label>
+                <select id="diag-estado" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition appearance-none cursor-pointer">
+                  <option value="Diagnosticando">Diagnosticando</option>
+                  <option value="Esperando Refacción">Esperando Refacción</option>
+                  <option value="Reparando">Reparando</option>
+                  <option value="Listo">Listo para Entrega</option>
+                  <option value="Entregado">Entregado / Cerrar</option>
+                </select>
+              </div>
             </div>
           </div>
           
-          <button class="mt-6 w-full bg-brand text-gray-950 py-3 rounded-xl font-bold hover:bg-brand-light transition shadow-[0_0_15px_rgba(7,183,107,0.3)]">
+          <button onclick="guardarDiagnostico()" class="mt-8 w-full bg-brand text-gray-950 py-3 rounded-xl font-bold hover:bg-brand-light transition shadow-[0_0_15px_rgba(7,183,107,0.3)]">
             Guardar Diagnóstico
           </button>
         </div>
 
         <!-- Inventario a utilizar -->
-        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 flex flex-col">
-          <h3 class="text-xl font-bold mb-6 border-b border-gray-800 pb-4">Refacciones a Utilizar</h3>
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 flex flex-col min-h-[500px]">
+          <h3 class="text-xl font-bold mb-4 border-b border-gray-800 pb-4">Refacciones en Inventario</h3>
           
           <div class="mb-4">
-            <div class="flex gap-2">
-              <input type="text" id="buscador-refaccion" placeholder="Escribe para buscar refacción en DB..." class="flex-1 bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
-            </div>
-            <!-- Lista desplegable de busqueda -->
-            <div id="resultados-refaccion" class="mt-2 bg-gray-950 border border-gray-700 rounded-xl overflow-hidden hidden max-h-40 overflow-y-auto">
-              <!-- Resultados DB dinámicos -->
+            <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Buscar Pieza</label>
+            <div class="relative">
+              <input type="text" id="buscador-refaccion" placeholder="Escribe marca, modelo o nombre..." class="w-full bg-gray-950 border border-gray-700 rounded-xl pl-10 pr-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+              <span class="absolute left-3.5 top-3.5 text-gray-500">🔍</span>
             </div>
           </div>
 
-          <div id="lista-piezas-usadas" class="flex-1 space-y-3 mb-6 overflow-y-auto">
+          <!-- Refacciones disponibles en stock (con scroll) -->
+          <div class="overflow-y-auto mb-6 pr-1 space-y-2 border border-gray-800 bg-gray-950/40 p-3 rounded-xl max-h-48" id="refacciones-disponibles">
+             <p class="text-gray-500 text-xs text-center py-6">Cargando refacciones disponibles...</p>
+          </div>
+
+          <h4 class="text-sm font-bold mb-2 text-white flex justify-between items-center">
+            <span>Refacciones Utilizadas</span>
+            <span class="text-xs text-gray-400 font-normal">Añadidas a la orden</span>
+          </h4>
+          
+          <div id="lista-piezas-usadas" class="overflow-y-auto max-h-40 border border-dashed border-gray-800 p-3 rounded-xl bg-gray-950/20 space-y-2">
              <p class="text-gray-500 text-sm text-center mt-10">No has seleccionado ninguna refacción.</p>
           </div>
 
-          <div class="bg-blue-900/20 border border-blue-900/50 rounded-xl p-4 flex gap-3 text-blue-300 text-sm mt-auto">
+          <div class="bg-blue-900/20 border border-blue-900/50 rounded-xl p-4 flex gap-3 text-blue-300 text-xs mt-auto">
             <svg class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <p>Al guardar el diagnóstico, las piezas listadas aquí se descontarán automáticamente del inventario general.</p>
+            <p>Al guardar el diagnóstico, las piezas listadas aquí se descontarán del inventario y se registrará su póliza de garantía automáticamente.</p>
           </div>
         </div>
       </div>
@@ -145,10 +177,13 @@
           <svg class="w-16 h-16 text-gray-700 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
           <h2 class="text-xl font-bold mb-2">Ingresa el Folio de Reparación</h2>
           <div class="flex gap-2 max-w-sm mx-auto mb-6">
-            <input type="text" placeholder="FITZ-XXXX" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-center text-xl text-white focus:border-brand outline-none uppercase tracking-widest font-mono">
+            <input type="text" id="garantia-input" placeholder="FITZ-XXXX" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-center text-xl text-white focus:border-brand outline-none uppercase tracking-widest font-mono">
           </div>
-          <button class="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-xl font-bold transition">Consultar Cobertura</button>
+          <button onclick="consultarGarantia()" class="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-xl font-bold transition">Consultar Cobertura</button>
         </div>
+        
+        <!-- Wrapper para Resultados de Garantía -->
+        <div id="garantia-resultado" class="mt-8 max-w-lg mx-auto hidden"></div>
       </div>
     </section>
 
@@ -168,16 +203,39 @@
       });
       const a = document.getElementById('nav-'+id);
       if(a){ a.classList.remove('text-gray-400','hover:bg-gray-800'); a.classList.add('bg-brand/10','text-brand','font-bold','border','border-brand/20'); }
+      
       if(id === 'sec-ordenes') loadOrdenes();
+      if(id === 'sec-diagnostico') {
+        loadRefacciones();
+      }
     }
 
-    function irADiagnostico(folio, equipoId, falla, estado) {
+    function irADiagnostico(folio, equipoId, idOrden, falla, estado, dispositivoText) {
+      localStorage.setItem('fitzcell_active_folio', folio);
+      localStorage.setItem('fitzcell_active_equipo_id', equipoId);
+      localStorage.setItem('fitzcell_active_id_orden', idOrden);
+      localStorage.setItem('fitzcell_active_falla', falla);
+      localStorage.setItem('fitzcell_active_estado', estado);
+      localStorage.setItem('fitzcell_active_dispositivo_text', dispositivoText);
+      
       document.getElementById('folio-activo').innerText = folio;
-      document.getElementById('dispositivo-activo').innerText = 'Equipo ID: ' + equipoId;
+      document.getElementById('dispositivo-activo').innerText = dispositivoText;
       document.getElementById('diag-texto').value = falla || '';
+      document.getElementById('diag-costo').value = '';
+      
       const sel = document.getElementById('diag-estado');
       for(let i=0;i<sel.options.length;i++){ if(sel.options[i].value === estado){ sel.selectedIndex=i; break; } }
+      
+      // Limpiar refacciones usadas locales para esta nueva mesa
+      document.getElementById('lista-piezas-usadas').innerHTML = '<p class="text-gray-500 text-sm text-center mt-10">No has seleccionado ninguna refacción.</p>';
+      localStorage.removeItem('fitzcell_active_piezas');
+      
       showSection('sec-diagnostico');
+    }
+
+    function liberarMesa() {
+      // Simplemente cambia de sección, mantiene el localStorage para reanudación.
+      showSection('sec-ordenes');
     }
 
     async function loadOrdenes(){
@@ -187,59 +245,325 @@
           const data = await res.json();
           let h = '';
           data.forEach(rep => {
-            const bc = rep.estado === 'Reparando' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20';
+            // Filtrar solo las que no estén entregadas para no saturar al técnico
+            if(rep.estado === 'Entregado') return;
+
+            let bc = 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20';
+            if (rep.estado === 'Reparando') {
+              bc = 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
+            } else if (rep.estado === 'Listo') {
+              bc = 'bg-brand/10 text-brand border border-brand/20';
+            } else if (rep.estado === 'Diagnosticando') {
+              bc = 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
+            }
+
             const folio = (rep.codigo_seguimiento||'').replace(/'/g,"");
             const falla = (rep.falla_reportada||'Sin detalles').replace(/'/g,"").replace(/"/g,"");
+            const devText = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color ? `(${rep.dispositivo.color})` : ''}`.trim() : 'Dispositivo Desconocido';
+            const clientName = rep.dispositivo?.cliente ? rep.dispositivo.cliente.nombre_completo : 'General / Mostrador';
+            
             h += '<div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-brand/50 transition flex flex-col">' +
               '<div class="flex justify-between items-start mb-4"><div><span class="text-xs font-bold text-gray-400 tracking-wider">FOLIO</span><h3 class="text-xl font-bold text-white">' + folio + '</h3></div>' +
               '<span class="px-3 py-1 text-xs font-bold rounded-full ' + bc + '">' + rep.estado + '</span></div>' +
-              '<div class="mb-6 flex-1"><p class="text-sm text-gray-300 font-bold mb-1">Dispositivo ID: ' + (rep.id_dispositivo||'—') + '</p><p class="text-sm text-gray-500 italic">"' + falla + '"</p></div>' +
-              '<button onclick="irADiagnostico(\'' + folio + '\',\'' + rep.id_dispositivo + '\',\'' + falla + '\',\'' + rep.estado + '\')" class="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg text-sm font-bold transition">Atender Equipo</button>' +
+              '<div class="mb-5 flex-1">' +
+                '<p class="text-sm font-bold text-white mb-0.5">' + devText + '</p>' +
+                '<p class="text-xs text-gray-400 mb-3">Cliente: ' + clientName + '</p>' +
+                '<p class="text-sm text-gray-500 italic">"' + falla + '"</p>' +
+              '</div>' +
+              '<button onclick="irADiagnostico(\'' + folio + '\',\'' + rep.id_dispositivo + '\',\'' + rep.id_orden + '\',\'' + falla + '\',\'' + rep.estado + '\',\'' + devText.replace(/'/g, "\\'") + '\')" class="w-full bg-brand text-gray-950 hover:bg-brand-light py-2 rounded-lg text-sm font-bold transition shadow-[0_0_10px_rgba(7,183,107,0.1)]">Atender Equipo</button>' +
               '</div>';
           });
-          document.getElementById('lista-ordenes').innerHTML = h || '<p class="text-gray-500">No hay órdenes asignadas.</p>';
+          document.getElementById('lista-ordenes').innerHTML = h || '<p class="text-gray-500 col-span-3 text-center py-10">No hay órdenes asignadas pendientes.</p>';
         }
       }catch(e){ console.error(e); }
     }
 
-    const buscador = document.getElementById('buscador-refaccion');
-    const resultadosBox = document.getElementById('resultados-refaccion');
+    let refaccionesDB = [];
 
-    buscador.addEventListener('input', async function(e){
-      const txt = e.target.value.toLowerCase();
-      if(txt.length < 2){ resultadosBox.classList.add('hidden'); return; }
-      try{
+    async function loadRefacciones() {
+      try {
         const res = await fetch('/api/inventario');
-        if(res.ok){
-          const inv = await res.json();
-          const matches = inv.filter(p => p.nombre_producto.toLowerCase().includes(txt) && p.stock > 0);
-          if(matches.length > 0){
-            let h = '';
-            matches.forEach(m => {
-              const nom = m.nombre_producto.replace(/'/g,"");
-              h += '<div class="p-3 border-b border-gray-800 hover:bg-gray-800 cursor-pointer flex justify-between" onclick="agregarPieza(\'' + nom + '\',' + m.id_producto + ')"><span class="text-sm font-medium">' + m.nombre_producto + '</span><span class="text-xs text-brand bg-brand/10 px-2 rounded">Stock: ' + m.stock + '</span></div>';
-            });
-            resultadosBox.innerHTML = h;
-          } else {
-            resultadosBox.innerHTML = '<div class="p-3 text-xs text-gray-500">Sin resultados en stock</div>';
-          }
-          resultadosBox.classList.remove('hidden');
+        if(res.ok) {
+          refaccionesDB = await res.json();
+          renderRefaccionesDisponibles();
         }
-      }catch(err){}
+      } catch(e) { console.error(e); }
+    }
+
+    function renderRefaccionesDisponibles(filterText = '') {
+      const container = document.getElementById('refacciones-disponibles');
+      const txt = filterText.toLowerCase().trim();
+      
+      const filtered = refaccionesDB.filter(p => {
+        const matchText = (p.nombre_producto || '').toLowerCase().includes(txt) || 
+                          (p.categoria || '').toLowerCase().includes(txt) ||
+                          (p.marcas_compatibles || '').toLowerCase().includes(txt) ||
+                          (p.modelos_compatibles || '').toLowerCase().includes(txt);
+        return matchText && p.stock > 0;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-xs text-center py-6">Sin refacciones en stock con ese criterio</p>';
+        return;
+      }
+
+      let html = '';
+      filtered.forEach(p => {
+        const nom = p.nombre_producto.replace(/'/g, "\\'");
+        html += `
+          <div onclick="agregarPieza('${nom}', ${p.id_producto})" class="p-3 bg-gray-950 hover:bg-gray-800/80 border border-gray-800 hover:border-brand/40 rounded-xl cursor-pointer flex justify-between items-center transition">
+            <div>
+              <p class="text-xs font-semibold text-white">${p.nombre_producto}</p>
+              <p class="text-[9px] text-gray-400 mt-0.5">${p.categoria || 'Sin categoría'} ${p.marcas_compatibles ? `• ${p.marcas_compatibles}` : ''}</p>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] font-bold text-brand bg-brand/10 px-2 py-0.5 rounded border border-brand/20">Stock: ${p.stock}</span>
+              <p class="text-[9px] text-gray-500 mt-1">$${p.precio_venta}</p>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    // Buscador reactivo
+    document.getElementById('buscador-refaccion').addEventListener('input', (e) => {
+      renderRefaccionesDisponibles(e.target.value);
     });
 
     function agregarPieza(nombre, id){
-      resultadosBox.classList.add('hidden');
-      buscador.value = '';
       const lista = document.getElementById('lista-piezas-usadas');
       if(lista.innerHTML.includes('No has seleccionado')) lista.innerHTML = '';
+      
+      // Evitar duplicados
+      if (document.querySelector(`#lista-piezas-usadas div[data-id="${id}"]`)) {
+        alert('Esta pieza ya ha sido añadida.');
+        return;
+      }
+
       const div = document.createElement('div');
-      div.className = 'flex justify-between items-center bg-gray-950 p-4 rounded-xl border border-gray-800';
-      div.innerHTML = '<div><p class="font-bold text-sm">' + nombre + '</p><p class="text-xs text-gray-500">ID Producto: ' + id + '</p></div><div class="flex items-center gap-3"><span class="text-gray-400 text-sm">x1</span><button class="text-red-400 hover:text-red-300" onclick="this.parentElement.parentElement.remove()"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div>';
+      div.className = 'flex justify-between items-center bg-gray-950 p-3 rounded-xl border border-gray-800';
+      div.setAttribute('data-id', id);
+      div.setAttribute('data-nombre', nombre);
+      div.innerHTML = '<div><p class="font-bold text-xs">' + nombre + '</p><p class="text-[10px] text-gray-500">ID Producto: ' + id + '</p></div><div class="flex items-center gap-3"><span class="text-gray-400 text-xs">x1</span><button class="text-red-400 hover:text-red-300" onclick="this.parentElement.parentElement.remove(); guardarPiezasEnLocalStorage(); checkEmptyPiezas();"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div>';
       lista.appendChild(div);
+      guardarPiezasEnLocalStorage();
     }
 
-    showSection('sec-ordenes');
+    function checkEmptyPiezas() {
+      const lista = document.getElementById('lista-piezas-usadas');
+      if (lista.children.length === 0) {
+        lista.innerHTML = '<p class="text-gray-500 text-sm text-center mt-10">No has seleccionado ninguna refacción.</p>';
+      }
+    }
+
+    function guardarPiezasEnLocalStorage() {
+      const piezas = [];
+      document.querySelectorAll('#lista-piezas-usadas > div').forEach(div => {
+        const id = parseInt(div.getAttribute('data-id'));
+        const nombre = div.getAttribute('data-nombre');
+        if (id) piezas.push({ id, nombre });
+      });
+      localStorage.setItem('fitzcell_active_piezas', JSON.stringify(piezas));
+    }
+
+    function cargarPiezasDeLocalStorage() {
+      const pStr = localStorage.getItem('fitzcell_active_piezas');
+      if (pStr) {
+        try {
+          const piezas = JSON.parse(pStr);
+          const lista = document.getElementById('lista-piezas-usadas');
+          if (piezas.length > 0) {
+            lista.innerHTML = '';
+            piezas.forEach(p => {
+              const div = document.createElement('div');
+              div.className = 'flex justify-between items-center bg-gray-950 p-3 rounded-xl border border-gray-800';
+              div.setAttribute('data-id', p.id);
+              div.setAttribute('data-nombre', p.nombre);
+              div.innerHTML = '<div><p class="font-bold text-xs">' + p.nombre + '</p><p class="text-[10px] text-gray-500">ID: ' + p.id + '</p></div><div class="flex items-center gap-3"><span class="text-gray-400 text-xs">x1</span><button class="text-red-400 hover:text-red-300" onclick="this.parentElement.parentElement.remove(); guardarPiezasEnLocalStorage(); checkEmptyPiezas();"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button></div>';
+              lista.appendChild(div);
+            });
+          }
+        } catch(e) { console.error(e); }
+      }
+    }
+
+    async function guardarDiagnostico() {
+      const idOrden = localStorage.getItem('fitzcell_active_id_orden');
+      if (!idOrden) {
+        alert('Por favor selecciona una orden de reparación activa en mesa primero.');
+        return;
+      }
+      
+      const diagnostico = document.getElementById('diag-texto').value.trim();
+      const estado = document.getElementById('diag-estado').value;
+      const costo = parseFloat(document.getElementById('diag-costo').value) || 0;
+      
+      // Obtener las piezas agregadas
+      const piezas = [];
+      document.querySelectorAll('#lista-piezas-usadas > div').forEach(div => {
+        const id_producto = parseInt(div.getAttribute('data-id'));
+        if (id_producto) {
+          piezas.push({ id_producto });
+        }
+      });
+      
+      try {
+        const response = await fetch(`/api/reparaciones/${idOrden}/diagnostico`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ diagnostico, estado, costo, piezas })
+        });
+        
+        if (response.ok) {
+          alert('¡Diagnóstico guardado y stock actualizado correctamente!');
+          
+          // Limpiar localstorage y mesa
+          localStorage.removeItem('fitzcell_active_folio');
+          localStorage.removeItem('fitzcell_active_equipo_id');
+          localStorage.removeItem('fitzcell_active_id_orden');
+          localStorage.removeItem('fitzcell_active_falla');
+          localStorage.removeItem('fitzcell_active_estado');
+          localStorage.removeItem('fitzcell_active_dispositivo_text');
+          localStorage.removeItem('fitzcell_active_piezas');
+          
+          document.getElementById('folio-activo').innerText = 'Ninguno';
+          document.getElementById('dispositivo-activo').innerText = 'Ninguno seleccionado';
+          document.getElementById('diag-texto').value = '';
+          document.getElementById('diag-costo').value = '';
+          document.getElementById('lista-piezas-usadas').innerHTML = '<p class="text-gray-500 text-sm text-center mt-10">No has seleccionado ninguna refacción.</p>';
+          
+          showSection('sec-ordenes');
+        } else {
+          const errData = await response.json();
+          alert('Error al guardar: ' + (errData.message || errData.error || 'Intente de nuevo.'));
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Error de red al intentar conectar con el servidor.');
+      }
+    }
+
+    async function consultarGarantia() {
+      const folio = document.getElementById('garantia-input').value.trim();
+      if (!folio) return alert('Por favor ingresa un folio de reparación');
+      
+      const resContainer = document.getElementById('garantia-resultado');
+      resContainer.innerHTML = '<p class="text-gray-400 text-center">Buscando póliza de garantía...</p>';
+      resContainer.classList.remove('hidden');
+
+      try {
+        const response = await fetch('/api/reparaciones/' + encodeURIComponent(folio));
+        if (response.status === 404) {
+          resContainer.innerHTML = `
+            <div class="bg-red-900/20 border border-red-900/50 p-6 rounded-xl text-center fade-in">
+              <span class="text-red-400 text-4xl block mb-2">⚠️</span>
+              <h3 class="text-lg font-bold text-red-400 font-sans">Folio No Encontrado</h3>
+              <p class="text-gray-400 text-sm mt-1">El folio "${folio}" no corresponde a ninguna orden registrada.</p>
+            </div>`;
+          return;
+        }
+
+        if (!response.ok) throw new Error();
+
+        const data = await response.json();
+        const detalles = data.detalle_reparacion || [];
+        const detalleConGarantia = detalles.find(d => d.garantia);
+        
+        if (!detalleConGarantia || !data.fecha_entrega) {
+          resContainer.innerHTML = `
+            <div class="bg-yellow-900/20 border border-yellow-900/50 p-6 rounded-xl text-center fade-in">
+              <span class="text-yellow-400 text-4xl block mb-2">🛡️</span>
+              <h3 class="text-lg font-bold text-yellow-400">Sin Garantía Registrada</h3>
+              <p class="text-gray-400 text-sm mt-1">Este equipo no tiene una póliza de garantía asociada o aún no ha sido entregado.</p>
+              <div class="mt-4 border-t border-gray-800 pt-4 text-xs text-gray-500 text-left space-y-1">
+                <p><strong>Dispositivo:</strong> ${data.dispositivo?.marca || ''} ${data.dispositivo?.modelo || ''}</p>
+                <p><strong>Cliente:</strong> ${data.dispositivo?.cliente?.nombre_completo || 'General'}</p>
+                <p><strong>Estado:</strong> ${data.estado}</p>
+              </div>
+            </div>`;
+          return;
+        }
+
+        const fechaEntrega = new Date(data.fecha_entrega);
+        const diasDuracion = detalleConGarantia.garantia.dias_duracion || 30;
+        const fechaLimite = new Date(fechaEntrega.getTime() + (diasDuracion * 24 * 60 * 60 * 1000));
+        const hoy = new Date();
+        const estaActiva = hoy <= fechaLimite;
+        const msRestantes = fechaLimite - hoy;
+        const diasRestantes = Math.ceil(msRestantes / (1000 * 60 * 60 * 24));
+
+        let badgeHtml = '';
+        if (estaActiva) {
+          badgeHtml = `
+            <div class="bg-brand/10 border border-brand/30 p-6 rounded-2xl relative overflow-hidden fade-in">
+              <div class="absolute top-0 right-0 w-20 h-20 bg-brand/10 rounded-bl-full blur-lg"></div>
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <span class="px-3 py-1 bg-brand/20 text-brand text-xs font-bold rounded-full border border-brand/30">🟢 GARANTÍA ACTIVA</span>
+                  <h3 class="text-xl font-bold text-white mt-2">${data.dispositivo?.marca || ''} ${data.dispositivo?.modelo || ''}</h3>
+                </div>
+                <div class="text-right">
+                  <p class="text-3xl font-black text-brand">${diasRestantes}</p>
+                  <p class="text-[10px] text-gray-400">días restantes</p>
+                </div>
+              </div>
+              <div class="space-y-2 text-sm text-gray-300 border-t border-gray-800 pt-4">
+                <p><strong>Cliente:</strong> ${data.dispositivo?.cliente?.nombre_completo || 'General'}</p>
+                <p><strong>Fecha Entrega:</strong> ${fechaEntrega.toLocaleDateString('es-MX')}</p>
+                <p><strong>Vence el:</strong> ${fechaLimite.toLocaleDateString('es-MX')}</p>
+                <p class="text-xs text-gray-400 mt-2 italic"><strong>Cobertura:</strong> ${detalleConGarantia.garantia.descripcion || 'Servicio técnico estándar.'}</p>
+              </div>
+            </div>`;
+        } else {
+          badgeHtml = `
+            <div class="bg-red-950/20 border border-red-900/30 p-6 rounded-2xl relative overflow-hidden fade-in">
+              <div class="absolute top-0 right-0 w-20 h-20 bg-red-500/10 rounded-bl-full blur-lg"></div>
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <span class="px-3 py-1 bg-red-900/30 text-red-400 text-xs font-bold rounded-full border border-red-900/50">🔴 GARANTÍA EXPIRADA</span>
+                  <h3 class="text-xl font-bold text-white mt-2">${data.dispositivo?.marca || ''} ${data.dispositivo?.modelo || ''}</h3>
+                </div>
+              </div>
+              <div class="space-y-2 text-sm text-gray-300 border-t border-gray-800 pt-4">
+                <p><strong>Cliente:</strong> ${data.dispositivo?.cliente?.nombre_completo || 'General'}</p>
+                <p><strong>Fecha Entrega:</strong> ${fechaEntrega.toLocaleDateString('es-MX')}</p>
+                <p class="text-red-400 font-bold">Expiró el: ${fechaLimite.toLocaleDateString('es-MX')}</p>
+                <p class="text-xs text-gray-500 mt-2 italic">La cobertura de garantía finalizó hace ${Math.abs(diasRestantes)} días.</p>
+              </div>
+            </div>`;
+        }
+
+        resContainer.innerHTML = badgeHtml;
+
+      } catch (error) {
+        console.error(error);
+        resContainer.innerHTML = `
+          <div class="bg-red-900/20 border border-red-900/50 p-6 rounded-xl text-center fade-in">
+            <h3 class="text-lg font-bold text-red-400">Error de Conexión</h3>
+            <p class="text-gray-400 text-sm mt-1">Ocurrió un error de red al intentar verificar el folio.</p>
+          </div>`;
+      }
+    }
+
+    // Auto-cargar mesa de trabajo al iniciar
+    window.addEventListener('DOMContentLoaded', () => {
+      const activeFolio = localStorage.getItem('fitzcell_active_folio');
+      if (activeFolio) {
+        document.getElementById('folio-activo').innerText = activeFolio;
+        document.getElementById('dispositivo-activo').innerText = localStorage.getItem('fitzcell_active_dispositivo_text') || 'Dispositivo';
+        document.getElementById('diag-texto').value = localStorage.getItem('fitzcell_active_falla') || '';
+        
+        const est = localStorage.getItem('fitzcell_active_estado');
+        const sel = document.getElementById('diag-estado');
+        for(let i=0;i<sel.options.length;i++){ if(sel.options[i].value === est){ sel.selectedIndex=i; break; } }
+        
+        cargarPiezasDeLocalStorage();
+      }
+      
+      // Mostrar órdenes por defecto
+      showSection('sec-ordenes');
+    });
   </script>
 </body>
 </html>
