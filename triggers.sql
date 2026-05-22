@@ -10,7 +10,7 @@ RETURNS TRIGGER AS $*$*
 BEGIN
     IF NEW.codigo_seguimiento IS NULL OR NEW.codigo_seguimiento = '' THEN
         UPDATE Orden_Reparacion
-        SET codigo_seguimiento = 'FITZ-' || LPAD(NEW.id_orden::text, 4, '0')
+        SET codigo_seguimiento = 'R-' || (999 + NEW.id_orden)::text
         WHERE id_orden = NEW.id_orden;
     END IF;
     RETURN NEW;

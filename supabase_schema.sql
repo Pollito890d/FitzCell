@@ -49,7 +49,7 @@ CREATE TABLE Orden_Reparacion (
     diagnostico TEXT,
     anticipo DECIMAL(10,2) DEFAULT 0,
     costo DECIMAL(10,2) DEFAULT 0,
-    estado VARCHAR(30) CHECK (estado IN ('Pendiente', 'Diagnosticando', 'Reparando', 'Listo', 'Entregado')) DEFAULT 'Pendiente'
+    estado VARCHAR(30) CHECK (estado IN ('Pendiente', 'Esperando Refacción', 'Reparando', 'Listo para entrega', 'Entregado')) DEFAULT 'Pendiente'
 );
 
 -- 5. Tabla de Garantías
