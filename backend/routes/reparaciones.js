@@ -79,13 +79,13 @@ router.post('/solicitud', async (req, res) => {
         if(errDev) throw errDev;
         const deviceId = newDevice[0].id_dispositivo;
 
-        // 3. Generar folio o usar manual
+        // 3. Obtener folio si viene manual, si no null para que actúe el trigger
         const folioFinal = folio_manual && folio_manual.trim() !== '' 
             ? folio_manual.trim() 
-            : 'FITZ-' + Math.floor(Date.now() / 1000).toString().substring(4);
+            : null;
         
         // 4. Crear reparación
-        const { error: errRep } = await supabase
+        const { data: newRep, error: errRep } = await supabase
             .from('orden_reparacion')
             .insert([{
                 codigo_seguimiento: folioFinal,
@@ -93,10 +93,13 @@ router.post('/solicitud', async (req, res) => {
                 falla_reportada: falla,
                 anticipo: anticipo ? parseFloat(anticipo) : 0,
                 estado: 'Pendiente'
-            }]);
+            }])
+            .select();
         if(errRep) throw errRep;
 
-        res.status(201).json({ message: 'Solicitud enviada correctamente', folio: folioFinal });
+        const folioRetorno = newRep && newRep[0] ? newRep[0].codigo_seguimiento : folioFinal;
+
+        res.status(201).json({ message: 'Solicitud enviada correctamente', folio: folioRetorno });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error al procesar la solicitud' });

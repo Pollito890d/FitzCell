@@ -256,7 +256,6 @@
         <h2 class="text-base font-bold uppercase tracking-wider text-gray-950">FITZCELL</h2>
         <p class="text-[10px] text-gray-500">Servicio Técnico & Accesorios</p>
         <p class="text-[10px] text-gray-500">C. Zaragoza 151-133, Barrio de San Antonio, 71266 San Pablo Huixtepec, Oax.</p>
-        <p class="text-[10px] text-gray-500">RFC: FITZ950319-C23</p>
         <p class="text-[10px] text-gray-500">Tel: +52 951 581 2992</p>
       </div>
 
@@ -297,6 +296,13 @@
     const r = localStorage.getItem('fitzcell_rol'); 
     if(r !== 'ventas' && r !== 'admin') { window.location.href = '../login.html'; }
     
+    window.addEventListener('pageshow', function (event) {
+      if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        localStorage.clear();
+        window.location.href = '../login.html';
+      }
+    });
+
     function logout() { 
       localStorage.clear(); 
       window.location.href = '../login.html'; 
@@ -570,6 +576,24 @@
               <td class="text-right py-1 font-bold">${formatCurrency(it.cantidad * it.precio_unitario)}</td>
             </tr>`;
           });
+
+          if (venta.orden_reparacion) {
+            const op = venta.orden_reparacion;
+            h += `<tr class="border-b border-dashed text-gray-800 font-bold">
+              <td class="py-2" colspan="2">🛠️ Servicio de Reparación (${op.codigo_seguimiento})</td>
+              <td class="text-right py-2 font-bold">${formatCurrency(op.costo)}</td>
+            </tr>`;
+            
+            const repPieces = op.detalle_reparacion || [];
+            repPieces.forEach(p => {
+              const pNom = p.producto ? p.producto.nombre_producto : 'Refacción';
+              const gDesc = p.garantia ? p.garantia.descripcion : 'Sin garantía';
+              h += `<tr class="text-gray-500 text-[9px]">
+                <td class="py-0.5 pl-4" colspan="3">↳ Ref: ${pNom}<br><span class="text-brand font-semibold">  Garantía: ${gDesc}</span></td>
+              </tr>`;
+            });
+          }
+
           document.getElementById('t-items-body').innerHTML = h;
           document.getElementById('t-subtotal').innerText = formatCurrency(venta.subtotal);
           document.getElementById('t-total').innerText = formatCurrency(venta.total);

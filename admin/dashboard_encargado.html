@@ -10,6 +10,7 @@
       theme: { extend: { colors: { brand: { DEFAULT: '#07B76B', dark: '#069D5B', light: '#23C181' }, base: '#0a0a0b' } } } 
     }
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: #0a0a0b; }
@@ -21,10 +22,10 @@
       body * {
         visibility: hidden !important;
       }
-      #modal-ticket, #modal-ticket * {
+      #modal-ticket, #modal-ticket *, #modal-ticket-recepcion, #modal-ticket-recepcion * {
         visibility: visible !important;
       }
-      #modal-ticket {
+      #modal-ticket, #modal-ticket-recepcion {
         position: absolute;
         left: 0;
         top: 0;
@@ -61,6 +62,7 @@
       <a href="#" onclick="showSection('sec-reparaciones')" id="nav-sec-reparaciones" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📱 Reparaciones globales</a>
       <a href="#" onclick="showSection('sec-nueva-reparacion')" id="nav-sec-nueva-reparacion" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">➕ Nueva Reparación</a>
       <a href="#" onclick="showSection('sec-ventas')" id="nav-sec-ventas" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">💰 Historial de Ventas</a>
+      <a href="#" onclick="showSection('sec-estadisticas')" id="nav-sec-estadisticas" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📈 Estadísticas Gerente</a>
     </nav>
     
     <button onclick="logout()" class="mt-auto p-3 bg-red-900/20 text-red-400 rounded-lg font-bold hover:bg-red-900/40 border border-red-900/50 transition-all flex justify-center items-center gap-2">
@@ -178,6 +180,7 @@
             <tr class="bg-gray-950 border-b border-gray-800 text-gray-400 text-sm">
               <th class="p-4 font-semibold">Folio</th>
               <th class="p-4 font-semibold">Cliente</th>
+              <th class="p-4 font-semibold">Contacto</th>
               <th class="p-4 font-semibold">Dispositivo</th>
               <th class="p-4 font-semibold">Falla Reportada</th>
               <th class="p-4 font-semibold text-center">Costo Aprox</th>
@@ -185,7 +188,7 @@
             </tr>
           </thead>
           <tbody id="rep-tbody" class="divide-y divide-gray-800 text-base">
-            <tr><td colspan="5" class="p-4 text-center text-gray-500">Cargando...</td></tr>
+            <tr><td colspan="7" class="p-4 text-center text-gray-500">Cargando...</td></tr>
           </tbody>
         </table>
       </div>
@@ -227,11 +230,11 @@
             <textarea id="nr-falla" required rows="3" placeholder="Descripción detallada de la falla..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base"></textarea>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
+            <div class="hidden">
               <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Folio (Opcional)</label>
-              <input type="text" id="nr-folio" placeholder="Ej. FITZ-1005" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base uppercase font-mono">
+              <input type="text" id="nr-folio" value="" placeholder="Ej. R-1005" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base uppercase font-mono">
             </div>
-            <div>
+            <div class="md:col-span-2">
               <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Anticipo ($)</label>
               <input type="number" id="nr-anticipo" min="0" step="0.01" placeholder="0.00" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
             </div>
@@ -264,6 +267,47 @@
             <tr><td colspan="4" class="p-4 text-center text-gray-500">Cargando...</td></tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: ESTADÍSTICAS GERENTE -->
+    <section id="sec-estadisticas" class="fade-in hidden">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold mb-1">Estadísticas <span class="text-brand">Gerente</span></h1>
+        <p class="text-gray-400">Reportes visuales y análisis de rendimiento en tiempo real.</p>
+      </header>
+
+      <!-- Panel de Gráficos -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+        <!-- Gráfico 1: Productos Más Vendidos -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-brand/5 rounded-bl-full blur-xl"></div>
+          <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">📦 Productos Más Vendidos</h3>
+          <p class="text-xs text-gray-500 mb-4">Top refacciones y accesorios por volumen de ventas.</p>
+          <div class="flex-1 min-h-[300px] flex items-center justify-center">
+            <canvas id="chart-productos" class="w-full h-full"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 2: Fallas Comunes -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-cyan-500/5 rounded-bl-full blur-xl"></div>
+          <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">⚠️ Fallas Comunes</h3>
+          <p class="text-xs text-gray-500 mb-4">Tipos de diagnóstico y fallas reportadas con mayor frecuencia.</p>
+          <div class="flex-1 min-h-[300px] flex items-center justify-center max-w-[320px] mx-auto">
+            <canvas id="chart-fallas" class="w-full h-full"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 3: Marcas y Modelos Más Reparados -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col lg:col-span-2">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-bl-full blur-2xl"></div>
+          <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">📱 Equipos Más Reparados</h3>
+          <p class="text-xs text-gray-500 mb-4">Marcas y modelos de dispositivos atendidos en el taller.</p>
+          <div class="flex-1 min-h-[350px] flex items-center justify-center">
+            <canvas id="chart-marcas" class="w-full h-full"></canvas>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -404,7 +448,6 @@
         <h2 class="text-base font-bold uppercase tracking-wider text-gray-950">FITZCELL</h2>
         <p class="text-[10px] text-gray-500">Servicio Técnico & Accesorios</p>
         <p class="text-[10px] text-gray-500">C. Zaragoza 151-133, Barrio de San Antonio, 71266 San Pablo Huixtepec, Oax.</p>
-        <p class="text-[10px] text-gray-500">RFC: FITZ950319-C23</p>
         <p class="text-[10px] text-gray-500">Tel: +52 951 581 2992</p>
       </div>
 
@@ -440,13 +483,85 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal de Ticket de Recepción -->
+  <div id="modal-ticket-recepcion" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden print:bg-white print:backdrop-blur-none print:absolute print:inset-0">
+    <div class="bg-white text-gray-900 w-80 p-6 rounded-2xl shadow-2xl relative flex flex-col print:shadow-none print:p-0 print:w-full font-mono text-xs max-h-[90vh] overflow-y-auto print:max-h-none print:overflow-visible">
+      <!-- Botones superiores -->
+      <div class="flex justify-between mb-4 border-b pb-2 print-hide">
+        <button onclick="window.print()" class="bg-brand text-gray-950 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-brand-dark transition">
+          🖨️ Imprimir
+        </button>
+        <button onclick="cerrarTicketRecepcion()" class="bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-bold hover:bg-gray-300 transition">
+          ❌ Cerrar
+        </button>
+      </div>
+
+      <!-- Contenido del Ticket Físico -->
+      <div class="text-center mb-4">
+        <h2 class="text-base font-bold uppercase tracking-wider text-gray-950">FITZCELL</h2>
+        <p class="text-[10px] text-gray-500">Servicio Técnico & Accesorios</p>
+        <p class="text-[10px] text-gray-500">C. Zaragoza 151-133, Barrio de San Antonio, 71266 San Pablo Huixtepec, Oax.</p>
+        <p class="text-[10px] text-gray-500">Tel: +52 951 581 2992</p>
+      </div>
+
+      <div class="border-t border-b border-dashed py-2 mb-4 text-gray-800 space-y-1">
+        <div class="text-center my-2">
+          <p class="text-[10px] uppercase text-gray-500 font-bold">COMPROBANTE DE RECEPCIÓN</p>
+          <p id="tr-folio" class="text-2xl font-black text-gray-950 tracking-wider my-1">R-1000</p>
+        </div>
+        <div class="flex justify-between"><span>Fecha:</span><span id="tr-fecha">20/05/2026</span></div>
+      </div>
+
+      <div class="mb-4 text-gray-800 space-y-2 border-b border-dashed pb-2">
+        <p class="font-bold text-[10px] uppercase border-b pb-0.5 text-gray-600">Datos del Servicio</p>
+        <div><span class="text-gray-500">Cliente:</span> <span id="tr-cliente" class="font-bold">Juan Pérez</span></div>
+        <div><span class="text-gray-500">Teléfono:</span> <span id="tr-telefono">951 123 4567</span></div>
+        <div><span class="text-gray-500">Equipo:</span> <span id="tr-equipo" class="font-bold">iPhone 13 Pro</span></div>
+        <div class="mt-1"><span class="text-gray-500">Falla Reportada:</span><br><p id="tr-falla" class="text-[10px] bg-gray-100 p-1.5 rounded mt-0.5 italic text-gray-700 whitespace-pre-wrap">Pantalla estrellada</p></div>
+      </div>
+
+      <div class="pt-1 mb-6 text-[11px] text-gray-800 space-y-1">
+        <div class="flex justify-between text-xs font-bold uppercase"><span>Anticipo:</span><span id="tr-anticipo" class="text-base font-black text-brand">$0.00</span></div>
+      </div>
+
+      <div class="text-center text-[10px] text-gray-500 space-y-1 border-t border-dashed pt-4">
+        <p class="font-bold text-gray-700">Conserve este comprobante</p>
+        <p>Garantía aplicable únicamente a las piezas sustituidas y mano de obra bajo condiciones normales de uso.</p>
+        <p class="mt-2 text-[9px] font-mono text-gray-400">fitzcell.vercel.app</p>
+      </div>
+    </div>
+  </div>
   </main>
 
   <script>
     const r = localStorage.getItem('fitzcell_rol');
     if(r !== 'encargado' && r !== 'admin') { window.location.href = '../login.html'; }
+    
+    window.addEventListener('pageshow', function (event) {
+      if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        localStorage.clear();
+        window.location.href = '../login.html';
+      }
+    });
+
     function logout() { localStorage.clear(); window.location.href = '../login.html'; }
     const fmt = (v) => new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(v||0);
+
+    function abrirTicketRecepcion(folio, cliente, telefono, dispositivo, falla, anticipo) {
+      document.getElementById('tr-folio').innerText = folio;
+      document.getElementById('tr-fecha').innerText = new Date().toLocaleString('es-MX');
+      document.getElementById('tr-cliente').innerText = cliente;
+      document.getElementById('tr-telefono').innerText = telefono;
+      document.getElementById('tr-equipo').innerText = dispositivo;
+      document.getElementById('tr-falla').innerText = falla;
+      document.getElementById('tr-anticipo').innerText = fmt(anticipo);
+      document.getElementById('modal-ticket-recepcion').classList.remove('hidden');
+    }
+
+    function cerrarTicketRecepcion() {
+      document.getElementById('modal-ticket-recepcion').classList.add('hidden');
+    }
 
     function abrirModalNuevoProducto() {
       document.getElementById('form-nuevo-prod').reset();
@@ -497,7 +612,7 @@
       });
       const a = document.getElementById('nav-'+id);
       if(a){ a.classList.remove('text-gray-400','hover:bg-gray-800'); a.classList.add('bg-brand/10','text-brand','font-bold','border','border-brand/20'); }
-      const loaders = { 'sec-resumen':loadResumen,'sec-inventario':loadInventario,'sec-empleados':loadEmpleados,'sec-reparaciones':loadReparaciones,'sec-ventas':loadVentas };
+      const loaders = { 'sec-resumen':loadResumen,'sec-inventario':loadInventario,'sec-empleados':loadEmpleados,'sec-reparaciones':loadReparaciones,'sec-ventas':loadVentas, 'sec-estadisticas':loadEstadisticas };
       if(loaders[id]) loaders[id]();
     }
 
@@ -582,7 +697,9 @@
       const data = cat ? allInv.filter(i => i.categoria === cat) : allInv;
       let h = '';
       data.forEach(it => {
-        const sc = it.stock <= 5 ? 'bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-900/50' : '';
+        const sc = it.stock <= 5 
+          ? 'bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-900/50' 
+          : 'text-white font-semibold';
         const nomEsc = it.nombre_producto.replace(/'/g, "\\'");
         h += `<tr class="hover:bg-gray-800/50 transition">
           <td class="p-4 font-medium text-white">${it.nombre_producto}</td>
@@ -674,9 +791,16 @@
         });
         const d = await res.json();
         if(res.ok) {
-          alert('✅ Reparación registrada exitosamente. Folio: ' + d.folio);
           document.getElementById('form-nueva-reparacion').reset();
           loadReparaciones();
+          abrirTicketRecepcion(
+            d.folio,
+            payload.cliente_nombre,
+            payload.cliente_telefono,
+            payload.modelo,
+            payload.falla,
+            payload.anticipo
+          );
         } else {
           alert('Error: ' + (d.message || 'No se pudo registrar la reparación.'));
         }
@@ -730,10 +854,12 @@
           let h = '';
           d.forEach(rep => {
             const clientName = rep.dispositivo?.cliente ? rep.dispositivo.cliente.nombre_completo : 'General / Mostrador';
+            const contact = rep.dispositivo?.cliente?.telefono || rep.dispositivo?.cliente?.correo_electronico || '—';
             const devText = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color ? `(${rep.dispositivo.color})` : ''}`.trim() : 'Dispositivo Desconocido';
             h += `<tr class="hover:bg-gray-800/50 transition">
               <td class="p-4 font-bold text-white">${rep.codigo_seguimiento || '—'}</td>
               <td class="p-4 text-gray-300 font-medium">${clientName}</td>
+              <td class="p-4 text-gray-400">${contact}</td>
               <td class="p-4 text-gray-400">${devText}</td>
               <td class="p-4 text-gray-400 truncate max-w-xs" title="${rep.falla_reportada || ''}">${rep.falla_reportada || '—'}</td>
               <td class="p-4 font-bold text-brand">${fmt(rep.costo)}</td>
@@ -742,7 +868,7 @@
               </td>
             </tr>`;
           });
-          document.getElementById('rep-tbody').innerHTML = h || '<tr><td colspan="6" class="p-4 text-center text-gray-500">Sin órdenes activas</td></tr>';
+          document.getElementById('rep-tbody').innerHTML = h || '<tr><td colspan="7" class="p-4 text-center text-gray-500">Sin órdenes activas</td></tr>';
         }
       }catch(e){ console.error(e); }
     }
@@ -793,6 +919,24 @@
               <td class="text-right py-1 font-bold">${fmt(it.cantidad * it.precio_unitario)}</td>
             </tr>`;
           });
+
+          if (venta.orden_reparacion) {
+            const op = venta.orden_reparacion;
+            h += `<tr class="border-b border-dashed text-gray-800 font-bold">
+              <td class="py-2" colspan="2">🛠️ Servicio de Reparación (${op.codigo_seguimiento})</td>
+              <td class="text-right py-2 font-bold">${fmt(op.costo)}</td>
+            </tr>`;
+            
+            const repPieces = op.detalle_reparacion || [];
+            repPieces.forEach(p => {
+              const pNom = p.producto ? p.producto.nombre_producto : 'Refacción';
+              const gDesc = p.garantia ? p.garantia.descripcion : 'Sin garantía';
+              h += `<tr class="text-gray-500 text-[9px]">
+                <td class="py-0.5 pl-4" colspan="3">↳ Ref: ${pNom}<br><span class="text-brand font-semibold">  Garantía: ${gDesc}</span></td>
+              </tr>`;
+            });
+          }
+
           document.getElementById('t-items-body').innerHTML = h;
           document.getElementById('t-subtotal').innerText = fmt(venta.subtotal);
           document.getElementById('t-total').innerText = fmt(venta.total);
@@ -807,6 +951,235 @@
 
     function cerrarTicket() {
       document.getElementById('modal-ticket').classList.add('hidden');
+    }
+
+    let chartProductos = null;
+    let chartFallas = null;
+    let chartMarcas = null;
+
+    async function loadEstadisticas() {
+      try {
+        const [resVentas, resReparaciones] = await Promise.all([
+          fetch('/api/ventas'),
+          fetch('/api/reparaciones')
+        ]);
+
+        if (!resVentas.ok || !resReparaciones.ok) {
+          throw new Error('Error al cargar datos de las APIs');
+        }
+
+        const ventas = await resVentas.json();
+        const reparaciones = await resReparaciones.json();
+
+        // 1. Agrupar Productos Más Vendidos
+        const productCounts = {};
+        ventas.forEach(v => {
+          (v.detalle_venta || []).forEach(dv => {
+            if (dv.producto) {
+              const name = dv.producto.nombre_producto;
+              productCounts[name] = (productCounts[name] || 0) + (dv.cantidad || 1);
+            }
+          });
+        });
+        const sortedProducts = Object.entries(productCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 7);
+
+        // 2. Agrupar Fallas Comunes
+        const fallasCounts = {};
+        reparaciones.forEach(rep => {
+          let falla = rep.falla_reportada || 'Otra';
+          falla = falla.trim();
+          let fallaKey = 'Otra';
+          if (/pantalla|display|touch/i.test(falla)) fallaKey = 'Pantalla';
+          else if (/bater[ií]a|pila/i.test(falla)) fallaKey = 'Batería';
+          else if (/centro|carga|pin|puerto/i.test(falla)) fallaKey = 'Centro de Carga';
+          else if (/mojado|agua|humedad/i.test(falla)) fallaKey = 'Equipo Mojado';
+          else if (/se apaga|no prende|encendido|bot[oó]n/i.test(falla)) fallaKey = 'Encendido / Botones';
+          else if (/c[aá]mara|lente/i.test(falla)) fallaKey = 'Cámaras';
+          else if (/bocina|altavoz|auricular|sonido/i.test(falla)) fallaKey = 'Audio / Altavoz';
+          else if (falla.length > 0) {
+            const words = falla.split(' ');
+            fallaKey = words[0].charAt(0).toUpperCase() + words[0].slice(1).toLowerCase();
+            if (words[1]) fallaKey += ' ' + words[1].toLowerCase();
+          }
+          fallasCounts[fallaKey] = (fallasCounts[fallaKey] || 0) + 1;
+        });
+        const sortedFallas = Object.entries(fallasCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5);
+
+        // 3. Agrupar Marcas y Modelos Más Reparados
+        const marcasCounts = {};
+        reparaciones.forEach(rep => {
+          if (rep.dispositivo) {
+            let marca = (rep.dispositivo.marca || '').trim();
+            let modelo = (rep.dispositivo.modelo || '').trim();
+            if (!marca && modelo) {
+              marca = modelo.split(' ')[0];
+            }
+            marca = marca.toUpperCase() || 'GENÉRICO';
+            marcasCounts[marca] = (marcasCounts[marca] || 0) + 1;
+          }
+        });
+        const sortedMarcas = Object.entries(marcasCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 6);
+
+        if (chartProductos) chartProductos.destroy();
+        if (chartFallas) chartFallas.destroy();
+        if (chartMarcas) chartMarcas.destroy();
+
+        // Estilos y Paletas Modernas
+        const colorsGreen = {
+          background: 'rgba(7, 183, 107, 0.45)',
+          border: '#07B76B',
+          hover: 'rgba(7, 183, 107, 0.75)'
+        };
+        const colorsIndigo = {
+          background: 'rgba(99, 102, 241, 0.45)',
+          border: '#6366f1',
+          hover: 'rgba(99, 102, 241, 0.75)'
+        };
+
+        const ctxProd = document.getElementById('chart-productos').getContext('2d');
+        chartProductos = new Chart(ctxProd, {
+          type: 'bar',
+          data: {
+            labels: sortedProducts.map(p => p[0]),
+            datasets: [{
+              label: 'Unidades Vendidas',
+              data: sortedProducts.map(p => p[1]),
+              backgroundColor: colorsGreen.background,
+              borderColor: colorsGreen.border,
+              borderWidth: 2,
+              borderRadius: 6,
+              hoverBackgroundColor: colorsGreen.hover,
+              barThickness: 16
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: '#1f2937',
+                titleColor: '#fff',
+                bodyColor: '#e5e7eb',
+                borderColor: '#374151',
+                borderWidth: 1
+              }
+            },
+            scales: {
+              x: {
+                grid: { color: 'rgba(75, 85, 99, 0.15)' },
+                ticks: { color: '#9ca3af', font: { family: 'monospace', size: 10 } }
+              },
+              y: {
+                grid: { display: false },
+                ticks: { color: '#e5e7eb', font: { weight: 'bold', size: 11 } }
+              }
+            }
+          }
+        });
+
+        const ctxFallas = document.getElementById('chart-fallas').getContext('2d');
+        chartFallas = new Chart(ctxFallas, {
+          type: 'doughnut',
+          data: {
+            labels: sortedFallas.map(f => f[0]),
+            datasets: [{
+              data: sortedFallas.map(f => f[1]),
+              backgroundColor: [
+                'rgba(7, 183, 107, 0.65)',
+                'rgba(6, 182, 212, 0.65)',
+                'rgba(99, 102, 241, 0.65)',
+                'rgba(236, 72, 153, 0.65)',
+                'rgba(245, 158, 11, 0.65)'
+              ],
+              borderColor: [
+                '#07B76B',
+                '#06b6d4',
+                '#6366f1',
+                '#ec4899',
+                '#f59e0b'
+              ],
+              borderWidth: 2,
+              hoverOffset: 10
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: '#e5e7eb',
+                  font: { size: 10, weight: 'bold' },
+                  padding: 15,
+                  usePointStyle: true
+                }
+              },
+              tooltip: {
+                backgroundColor: '#1f2937',
+                titleColor: '#fff',
+                bodyColor: '#e5e7eb',
+                borderColor: '#374151',
+                borderWidth: 1
+              }
+            },
+            cutout: '65%'
+          }
+        });
+
+        const ctxMarcas = document.getElementById('chart-marcas').getContext('2d');
+        chartMarcas = new Chart(ctxMarcas, {
+          type: 'bar',
+          data: {
+            labels: sortedMarcas.map(m => m[0]),
+            datasets: [{
+              label: 'Equipos Reparados',
+              data: sortedMarcas.map(m => m[1]),
+              backgroundColor: colorsIndigo.background,
+              borderColor: colorsIndigo.border,
+              borderWidth: 2,
+              borderRadius: 6,
+              hoverBackgroundColor: colorsIndigo.hover,
+              barThickness: 32
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: '#1f2937',
+                titleColor: '#fff',
+                bodyColor: '#e5e7eb',
+                borderColor: '#374151',
+                borderWidth: 1
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { color: '#e5e7eb', font: { weight: 'bold', size: 11 } }
+              },
+              y: {
+                grid: { color: 'rgba(75, 85, 99, 0.15)' },
+                ticks: { color: '#9ca3af', font: { family: 'monospace', size: 10 } }
+              }
+            }
+          }
+        });
+
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     showSection('sec-resumen');
