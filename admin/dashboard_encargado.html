@@ -96,10 +96,13 @@
           <p class="text-gray-400 text-sm font-medium mb-1">Equipos en Reparación</p>
           <h3 id="res-reparaciones" class="text-3xl font-bold text-white">0</h3>
         </div>
-        <div class="bg-gray-900/80 backdrop-blur-md border border-red-900/30 p-6 rounded-2xl shadow-lg relative overflow-hidden">
+        <div onclick="abrirAlertasStock()" class="bg-gray-900/80 backdrop-blur-md border border-red-900/30 p-6 rounded-2xl shadow-lg relative overflow-hidden cursor-pointer hover:scale-[1.02] hover:border-red-500/50 transition-all duration-300 group">
           <div class="absolute top-0 right-0 w-24 h-24 bg-red-500/10 rounded-bl-full blur-xl"></div>
           <p class="text-gray-400 text-sm font-medium mb-1">Alertas de Stock</p>
           <h3 id="res-alertas" class="text-3xl font-bold text-red-400">0 refacciones</h3>
+          <p class="text-xs text-red-400/70 mt-2 flex items-center gap-1 font-bold group-hover:text-red-400 transition-colors">
+            Ver detalles <span class="group-hover:translate-x-1 transition-transform">→</span>
+          </p>
         </div>
       </div>
 
@@ -393,6 +396,124 @@
     </div>
   </div>
 
+  <!-- Modal de Detalle de Alertas de Stock -->
+  <div id="modal-alertas-stock-detalle" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-gray-900 border border-gray-800 text-gray-100 w-[600px] p-6 rounded-2xl shadow-2xl relative max-h-[85vh] flex flex-col">
+      <h2 class="text-xl font-bold text-white mb-4 border-b border-gray-800 pb-3 flex justify-between items-center">
+        <span class="flex items-center gap-2 text-red-400">⚠️ Refacciones con Bajo Stock</span>
+        <button onclick="cerrarAlertasStock()" class="text-gray-400 hover:text-white">❌</button>
+      </h2>
+      <div class="overflow-y-auto flex-1 pr-1">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-gray-800 text-gray-400 text-xs uppercase tracking-wider">
+              <th class="py-3 px-2 font-semibold">Producto</th>
+              <th class="py-3 px-2 font-semibold">Categoría</th>
+              <th class="py-3 px-2 font-semibold text-center">Existencia</th>
+              <th class="py-3 px-2 font-semibold text-center">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="modal-alertas-tbody" class="divide-y divide-gray-800 text-sm">
+            <!-- Dinámico -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Detalle Completo de Reparación -->
+  <div id="modal-detalle-reparacion" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-gray-900 border border-gray-800 text-gray-100 w-[650px] p-6 rounded-2xl shadow-2xl relative max-h-[90vh] flex flex-col">
+      <h2 class="text-xl font-bold text-white mb-4 border-b border-gray-800 pb-3 flex justify-between items-center">
+        <span class="flex items-center gap-2">
+          <span>📱 Detalles de Reparación:</span>
+          <span id="det-rep-folio" class="text-brand font-black font-mono"></span>
+        </span>
+        <button onclick="cerrarDetalleReparacion()" class="text-gray-400 hover:text-white">❌</button>
+      </h2>
+      
+      <div class="overflow-y-auto flex-1 pr-1 space-y-6 text-sm">
+        
+        <!-- Header: Estado y Fechas -->
+        <div class="grid grid-cols-2 gap-4 bg-gray-950 p-4 rounded-xl border border-gray-800">
+          <div>
+            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Estado de la Orden</p>
+            <div class="mt-1" id="det-rep-estado-badge"></div>
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Fecha de Ingreso</p>
+            <p id="det-rep-fecha" class="text-white font-medium mt-1"></p>
+          </div>
+        </div>
+
+        <!-- Secciones de Datos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Datos del Cliente -->
+          <div class="bg-gray-950/50 p-4 rounded-xl border border-gray-800/80">
+            <h3 class="font-bold text-white mb-3 flex items-center gap-1.5 border-b border-gray-800 pb-1.5 border-brand/20">
+              <span>👤</span> Cliente
+            </h3>
+            <div class="space-y-2">
+              <p><span class="text-gray-400 font-medium">Nombre:</span> <span id="det-rep-cliente-nombre" class="text-white font-semibold"></span></p>
+              <p><span class="text-gray-400 font-medium">Teléfono:</span> <span id="det-rep-cliente-tel" class="text-white"></span></p>
+              <p><span class="text-gray-400 font-medium">Correo:</span> <span id="det-rep-cliente-email" class="text-white"></span></p>
+            </div>
+          </div>
+
+          <!-- Datos del Dispositivo -->
+          <div class="bg-gray-950/50 p-4 rounded-xl border border-gray-800/80">
+            <h3 class="font-bold text-white mb-3 flex items-center gap-1.5 border-b border-gray-800 pb-1.5 border-brand/20">
+              <span>📱</span> Dispositivo
+            </h3>
+            <div class="space-y-2">
+              <p><span class="text-gray-400 font-medium">Modelo:</span> <span id="det-rep-modelo" class="text-white font-semibold"></span></p>
+              <p><span class="text-gray-400 font-medium">Marca/Color:</span> <span id="det-rep-marca-color" class="text-white"></span></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Falla Reportada -->
+        <div class="bg-gray-950/30 p-4 rounded-xl border border-gray-800/60">
+          <h4 class="font-bold text-gray-400 mb-2 text-xs uppercase tracking-wider font-semibold">⚠️ Falla Reportada</h4>
+          <p id="det-rep-falla" class="text-gray-200 bg-gray-950 p-3 rounded-lg border border-gray-800 italic whitespace-pre-wrap font-sans"></p>
+        </div>
+
+        <!-- Diagnóstico Técnico -->
+        <div class="bg-gray-950/30 p-4 rounded-xl border border-gray-800/60">
+          <h4 class="font-bold text-gray-400 mb-2 text-xs uppercase tracking-wider font-semibold">🔧 Diagnóstico / Notas Técnicas</h4>
+          <p id="det-rep-diagnostico" class="text-gray-200 bg-gray-950 p-3 rounded-lg border border-gray-800 italic whitespace-pre-wrap font-sans"></p>
+        </div>
+
+        <!-- Refacciones Utilizadas -->
+        <div>
+          <h4 class="font-bold text-gray-400 mb-2 text-xs uppercase tracking-wider font-semibold">📦 Refacciones y Repuestos Utilizados</h4>
+          <div class="bg-gray-950 rounded-xl border border-gray-800 overflow-hidden">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-gray-950 border-b border-gray-800 text-gray-400 font-semibold uppercase tracking-wider">
+                  <th class="py-2.5 px-3">Refacción</th>
+                  <th class="py-2.5 px-3 text-center">Tipo</th>
+                  <th class="py-2.5 px-3">Garantía</th>
+                </tr>
+              </thead>
+              <tbody id="det-rep-piezas-tbody" class="divide-y divide-gray-800">
+                <!-- Dinámico -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Costos y Saldo -->
+        <div class="bg-brand/5 border border-brand/20 p-4 rounded-xl space-y-2">
+          <div class="flex justify-between text-gray-400"><span class="font-medium">Anticipo recibido:</span><span id="det-rep-anticipo" class="font-bold text-white"></span></div>
+          <div class="flex justify-between text-gray-400"><span class="font-medium">Costo Total Reparación:</span><span id="det-rep-costo" class="font-bold text-white"></span></div>
+          <div class="flex justify-between text-sm font-bold border-t border-brand/10 pt-2 text-brand"><span>Saldo Pendiente:</span><span id="det-rep-saldo"></span></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- Modal de Agregar Empleado -->
   <div id="modal-empleado" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden">
     <div class="bg-gray-900 border border-gray-800 text-gray-100 w-96 p-6 rounded-2xl shadow-2xl relative flex flex-col">
@@ -508,7 +629,7 @@
       <div class="border-t border-b border-dashed py-2 mb-4 text-gray-800 space-y-1">
         <div class="text-center my-2">
           <p class="text-[10px] uppercase text-gray-500 font-bold">COMPROBANTE DE RECEPCIÓN</p>
-          <p id="tr-folio" class="text-2xl font-black text-gray-950 tracking-wider my-1">R-1000</p>
+          <p id="tr-folio" class="text-4xl font-black text-gray-950 tracking-wider my-2 py-2 bg-gray-100 rounded border border-dashed border-gray-400 font-mono text-center">R-1000</p>
         </div>
         <div class="flex justify-between"><span>Fecha:</span><span id="tr-fecha">20/05/2026</span></div>
       </div>
@@ -621,12 +742,31 @@
       try{
         const r1 = await fetch('/api/reparaciones');
         const r2 = await fetch('/api/crm/ingresos');
+        const r3 = await fetch('/api/inventario');
+        
+        if(r3.ok){
+          allInv = await r3.json();
+          const al = allInv.filter(p => p.stock <= 5).length;
+          document.getElementById('res-alertas').innerText = al + ' refacciones';
+        }
+        
         if(r1.ok){
           const d = await r1.json();
           document.getElementById('res-reparaciones').innerText = d.length;
           let h = '';
           d.slice(0,3).forEach(rep => {
-            h += '<div class="flex justify-between items-center bg-gray-950 p-4 rounded-xl border border-gray-800"><p class="font-bold">' + (rep.codigo_seguimiento||'—') + '</p><span class="px-3 py-1 bg-brand/10 text-brand text-xs font-bold rounded-full border border-brand/20">' + rep.estado + '</span></div>';
+            const devText = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''}`.trim() : 'Dispositivo';
+            const clientName = rep.dispositivo?.cliente ? rep.dispositivo.cliente.nombre_completo : 'General / Mostrador';
+            h += `<div onclick="verDetalleReparacion('${rep.codigo_seguimiento}')" class="flex justify-between items-center bg-gray-950 hover:bg-gray-800/80 p-4 rounded-xl border border-gray-800 hover:border-gray-700 transition cursor-pointer group">
+              <div>
+                <p class="font-bold text-white">${rep.codigo_seguimiento||'—'}</p>
+                <p class="text-xs text-gray-400 mt-1">${clientName} • ${devText}</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="px-3 py-1 bg-brand/10 text-brand text-xs font-bold rounded-full border border-brand/20">${rep.estado}</span>
+                <span class="text-xs text-brand hover:underline font-bold transition opacity-0 group-hover:opacity-100">Ver Detalles →</span>
+              </div>
+            </div>`;
           });
           document.getElementById('res-ultimas-rep').innerHTML = h || '<p class="text-gray-500 text-sm">Sin reparaciones activas.</p>';
         }
@@ -856,7 +996,7 @@
             const clientName = rep.dispositivo?.cliente ? rep.dispositivo.cliente.nombre_completo : 'General / Mostrador';
             const contact = rep.dispositivo?.cliente?.telefono || rep.dispositivo?.cliente?.correo_electronico || '—';
             const devText = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color ? `(${rep.dispositivo.color})` : ''}`.trim() : 'Dispositivo Desconocido';
-            h += `<tr class="hover:bg-gray-800/50 transition">
+            h += `<tr onclick="verDetalleReparacion('${rep.codigo_seguimiento}')" class="hover:bg-gray-800/70 cursor-pointer transition">
               <td class="p-4 font-bold text-white">${rep.codigo_seguimiento || '—'}</td>
               <td class="p-4 text-gray-300 font-medium">${clientName}</td>
               <td class="p-4 text-gray-400">${contact}</td>
@@ -1180,6 +1320,102 @@
       } catch (err) {
         console.error(err);
       }
+    }
+
+    function abrirAlertasStock() {
+      const lowStockItems = allInv.filter(p => p.stock <= 5);
+      let h = '';
+      lowStockItems.forEach(it => {
+        const nomEsc = it.nombre_producto.replace(/'/g, "\\'");
+        h += `<tr class="hover:bg-gray-800/50 transition">
+          <td class="py-3 px-2 font-medium text-white">${it.nombre_producto}</td>
+          <td class="py-3 px-2 text-gray-400">${it.categoria||'—'}</td>
+          <td class="py-3 px-2 text-center"><span class="px-2 py-0.5 bg-red-950/50 text-red-400 rounded border border-red-900/50 font-bold">${it.stock}</span></td>
+          <td class="py-3 px-2 text-center">
+            <button onclick="cerrarAlertasStock(); abrirModalStock(${it.id_producto}, '${nomEsc}')" class="px-2.5 py-1 bg-brand/10 text-brand hover:bg-brand/20 border border-brand/30 rounded-lg text-xs font-bold transition">+ Stock</button>
+          </td>
+        </tr>`;
+      });
+      document.getElementById('modal-alertas-tbody').innerHTML = h || '<tr><td colspan="4" class="p-4 text-center text-gray-500">No hay alertas de stock bajo. ¡Buen trabajo!</td></tr>';
+      document.getElementById('modal-alertas-stock-detalle').classList.remove('hidden');
+    }
+
+    function cerrarAlertasStock() {
+      document.getElementById('modal-alertas-stock-detalle').classList.add('hidden');
+    }
+
+    async function verDetalleReparacion(folio) {
+      if (!folio || folio === '—') return alert('No hay un folio de seguimiento válido para esta reparación.');
+      try {
+        const res = await fetch(`/api/reparaciones/${folio}`);
+        if (!res.ok) {
+          throw new Error('No se pudo obtener el detalle de la reparación.');
+        }
+        const rep = await res.json();
+        
+        // Rellenar datos
+        document.getElementById('det-rep-folio').innerText = rep.codigo_seguimiento;
+        document.getElementById('det-rep-fecha').innerText = rep.fecha_entrada ? new Date(rep.fecha_entrada).toLocaleString('es-MX') : '—';
+        
+        // Estado Badge
+        let badgeColor = 'bg-gray-800 text-gray-300 border-gray-700';
+        if (rep.estado === 'Pendiente') badgeColor = 'bg-yellow-900/30 text-yellow-400 border-yellow-900/50';
+        else if (rep.estado === 'Diagnosticando') badgeColor = 'bg-purple-900/30 text-purple-400 border-purple-900/50';
+        else if (rep.estado === 'Reparando' || rep.estado === 'En proceso') badgeColor = 'bg-blue-900/30 text-blue-400 border-blue-900/50';
+        else if (rep.estado === 'Listo') badgeColor = 'bg-brand/20 text-brand border-brand/30';
+        else if (rep.estado === 'Entregado') badgeColor = 'bg-purple-900/30 text-purple-400 border-purple-900/50';
+        document.getElementById('det-rep-estado-badge').innerHTML = `<span class="px-2.5 py-1 rounded text-xs border font-bold ${badgeColor}">${rep.estado}</span>`;
+        
+        // Cliente
+        const cli = rep.dispositivo?.cliente || {};
+        document.getElementById('det-rep-cliente-nombre').innerText = cli.nombre_completo || 'General / Mostrador';
+        document.getElementById('det-rep-cliente-tel').innerText = cli.telefono || '—';
+        document.getElementById('det-rep-cliente-email').innerText = cli.correo_electronico || '—';
+        
+        // Dispositivo
+        const dev = rep.dispositivo || {};
+        document.getElementById('det-rep-modelo').innerText = dev.modelo || '—';
+        document.getElementById('det-rep-marca-color').innerText = `${dev.marca || ''} ${dev.color ? `(${dev.color})` : ''}`.trim() || '—';
+        
+        // Falla y Diagnóstico
+        document.getElementById('det-rep-falla').innerText = rep.falla_reportada || 'Sin descripción de falla.';
+        document.getElementById('det-rep-diagnostico').innerText = rep.diagnostico || 'Pendiente de diagnóstico por el técnico.';
+        
+        // Piezas
+        let pHtml = '';
+        const piezas = rep.detalle_reparacion || [];
+        piezas.forEach(p => {
+          const pName = p.producto ? p.producto.nombre_producto : 'Refacción';
+          const pType = p.tipo_refaccion || 'Original';
+          const gDesc = p.garantia ? p.garantia.descripcion : 'Sin garantía';
+          const typeBadge = pType === 'Original' 
+            ? '<span class="px-2 py-0.5 bg-blue-900/30 text-blue-400 rounded border border-blue-900/50">Original</span>'
+            : '<span class="px-2 py-0.5 bg-pink-900/30 text-pink-400 rounded border border-pink-900/50">Genérica</span>';
+          pHtml += `<tr>
+            <td class="py-2 px-3 text-white font-medium">${pName}</td>
+            <td class="py-2 px-3 text-center">${typeBadge}</td>
+            <td class="py-2 px-3 text-gray-400">${gDesc}</td>
+          </tr>`;
+        });
+        document.getElementById('det-rep-piezas-tbody').innerHTML = pHtml || '<tr><td colspan="3" class="py-3 px-3 text-center text-gray-500">Ninguna refacción utilizada en esta reparación.</td></tr>';
+        
+        // Costos
+        const cost = rep.costo || 0;
+        const ant = rep.anticipo || 0;
+        const bal = Math.max(0, cost - ant);
+        document.getElementById('det-rep-anticipo').innerText = fmt(ant);
+        document.getElementById('det-rep-costo').innerText = fmt(cost);
+        document.getElementById('det-rep-saldo').innerText = fmt(bal);
+        
+        document.getElementById('modal-detalle-reparacion').classList.remove('hidden');
+      } catch (err) {
+        console.error(err);
+        alert('Error: ' + err.message);
+      }
+    }
+
+    function cerrarDetalleReparacion() {
+      document.getElementById('modal-detalle-reparacion').classList.add('hidden');
     }
 
     showSection('sec-resumen');

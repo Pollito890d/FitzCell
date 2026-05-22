@@ -97,7 +97,20 @@ router.post('/solicitud', async (req, res) => {
             .select();
         if(errRep) throw errRep;
 
-        const folioRetorno = newRep && newRep[0] ? newRep[0].codigo_seguimiento : folioFinal;
+        let folioRetorno = newRep && newRep[0] ? newRep[0].codigo_seguimiento : folioFinal;
+
+        // Si el folio autogenerado por el trigger retorna null en la inserción (debido al trigger AFTER INSERT),
+        // consultamos nuevamente para obtener el folio oficial ya asignado.
+        if (!folioRetorno && newRep && newRep[0]) {
+            const { data: updatedRep } = await supabase
+                .from('orden_reparacion')
+                .select('codigo_seguimiento')
+                .eq('id_orden', newRep[0].id_orden)
+                .single();
+            if (updatedRep) {
+                folioRetorno = updatedRep.codigo_seguimiento;
+            }
+        }
 
         res.status(201).json({ message: 'Solicitud enviada correctamente', folio: folioRetorno });
     } catch (error) {
