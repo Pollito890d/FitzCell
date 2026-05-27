@@ -173,19 +173,26 @@
     <!-- SECCIÓN: REPARACIONES GLOBALES -->
     <section id="sec-reparaciones" class="fade-in hidden">
       <header class="mb-8">
-        <h1 class="text-3xl font-bold mb-1">Reparaciones <span class="text-brand">Activas</span></h1>
+        <h1 class="text-3xl font-bold mb-1">Reparaciones <span class="text-brand">Globales</span></h1>
         <p class="text-gray-400">Monitor en tiempo real del taller.</p>
       </header>
+
+      <!-- Buscador de Reparaciones -->
+      <div class="mb-6">
+        <input type="text" id="rep-buscador" oninput="filtrarReparaciones()" placeholder="Buscar por Folio, Cliente, Dispositivo, ID de Venta..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+      </div>
       
       <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-gray-950 border-b border-gray-800 text-gray-400 text-sm">
               <th class="p-4 font-semibold">Folio</th>
+              <th class="p-4 font-semibold">Fecha Ingreso</th>
               <th class="p-4 font-semibold">Cliente</th>
               <th class="p-4 font-semibold">Contacto</th>
               <th class="p-4 font-semibold">Dispositivo</th>
               <th class="p-4 font-semibold">Falla Reportada</th>
+              <th class="p-4 font-semibold text-center">ID Venta</th>
               <th class="p-4 font-semibold text-center">Costo Aprox</th>
               <th class="p-4 font-semibold text-center">Estado</th>
             </tr>
@@ -224,8 +231,28 @@
               <input type="email" id="nr-email" placeholder="ejemplo@correo.com" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
             </div>
             <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Marca del Dispositivo *</label>
+              <input type="text" id="nr-marca" required placeholder="Ej. Apple" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
               <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Modelo del Dispositivo *</label>
               <input type="text" id="nr-modelo" required placeholder="Ej. iPhone 13 Pro" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Color *</label>
+              <input type="text" id="nr-color" required placeholder="Ej. Azul Sierra" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Contraseña/Pin de Bloqueo</label>
+              <input type="text" id="nr-contrasenia" placeholder="Ej. 1234 o Patrón" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Descripción Física / Estado del Equipo</label>
+              <input type="text" id="nr-descripcion" placeholder="Ej. Rayones en tapa, pantalla rota" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
             </div>
           </div>
           <div>
@@ -468,6 +495,7 @@
             <div class="space-y-2">
               <p><span class="text-gray-400 font-medium">Modelo:</span> <span id="det-rep-modelo" class="text-white font-semibold"></span></p>
               <p><span class="text-gray-400 font-medium">Marca/Color:</span> <span id="det-rep-marca-color" class="text-white"></span></p>
+              <p><span class="text-gray-400 font-medium">Detalles/Estado:</span> <span id="det-rep-descripcion" class="text-white"></span></p>
             </div>
           </div>
         </div>
@@ -639,6 +667,7 @@
         <div><span class="text-gray-500">Cliente:</span> <span id="tr-cliente" class="font-bold">Juan Pérez</span></div>
         <div><span class="text-gray-500">Teléfono:</span> <span id="tr-telefono">951 123 4567</span></div>
         <div><span class="text-gray-500">Equipo:</span> <span id="tr-equipo" class="font-bold">iPhone 13 Pro</span></div>
+        <div><span class="text-gray-500">Detalles/Estado:</span> <span id="tr-descripcion-ticket">—</span></div>
         <div class="mt-1"><span class="text-gray-500">Falla Reportada:</span><br><p id="tr-falla" class="text-[10px] bg-gray-100 p-1.5 rounded mt-0.5 italic text-gray-700 whitespace-pre-wrap">Pantalla estrellada</p></div>
       </div>
 
@@ -669,7 +698,7 @@
     function logout() { localStorage.clear(); window.location.href = '../login.html'; }
     const fmt = (v) => new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(v||0);
 
-    function abrirTicketRecepcion(folio, cliente, telefono, dispositivo, falla, anticipo) {
+    function abrirTicketRecepcion(folio, cliente, telefono, dispositivo, falla, anticipo, descripcion) {
       document.getElementById('tr-folio').innerText = folio;
       document.getElementById('tr-fecha').innerText = new Date().toLocaleString('es-MX');
       document.getElementById('tr-cliente').innerText = cliente;
@@ -677,6 +706,7 @@
       document.getElementById('tr-equipo').innerText = dispositivo;
       document.getElementById('tr-falla').innerText = falla;
       document.getElementById('tr-anticipo').innerText = fmt(anticipo);
+      document.getElementById('tr-descripcion-ticket').innerText = descripcion || '—';
       document.getElementById('modal-ticket-recepcion').classList.remove('hidden');
     }
 
@@ -917,7 +947,11 @@
         cliente_nombre: document.getElementById('nr-cliente').value.trim(),
         cliente_telefono: document.getElementById('nr-telefono').value.trim(),
         cliente_email: document.getElementById('nr-email').value.trim(),
+        marca: document.getElementById('nr-marca').value.trim(),
         modelo: document.getElementById('nr-modelo').value.trim(),
+        color: document.getElementById('nr-color').value.trim(),
+        contrasenia: document.getElementById('nr-contrasenia').value.trim(),
+        descripcion: document.getElementById('nr-descripcion').value.trim(),
         falla: document.getElementById('nr-falla').value.trim(),
         folio_manual: document.getElementById('nr-folio') ? document.getElementById('nr-folio').value.trim() : '',
         anticipo: document.getElementById('nr-anticipo') ? parseFloat(document.getElementById('nr-anticipo').value) || 0 : 0
@@ -933,13 +967,15 @@
         if(res.ok) {
           document.getElementById('form-nueva-reparacion').reset();
           loadReparaciones();
+          const dispText = `${payload.marca} ${payload.modelo} (${payload.color})`;
           abrirTicketRecepcion(
             d.folio,
             payload.cliente_nombre,
             payload.cliente_telefono,
-            payload.modelo,
+            dispText,
             payload.falla,
-            payload.anticipo
+            payload.anticipo,
+            payload.descripcion
           );
         } else {
           alert('Error: ' + (d.message || 'No se pudo registrar la reparación.'));
@@ -986,31 +1022,72 @@
       }
     }
 
+    let allReparaciones = [];
+
     async function loadReparaciones(){
       try{
         const res = await fetch('/api/reparaciones');
         if(res.ok){
-          const d = await res.json();
-          let h = '';
-          d.forEach(rep => {
-            const clientName = rep.dispositivo?.cliente ? rep.dispositivo.cliente.nombre_completo : 'General / Mostrador';
-            const contact = rep.dispositivo?.cliente?.telefono || rep.dispositivo?.cliente?.correo_electronico || '—';
-            const devText = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color ? `(${rep.dispositivo.color})` : ''}`.trim() : 'Dispositivo Desconocido';
-            h += `<tr onclick="verDetalleReparacion('${rep.codigo_seguimiento}')" class="hover:bg-gray-800/70 cursor-pointer transition">
-              <td class="p-4 font-bold text-white">${rep.codigo_seguimiento || '—'}</td>
-              <td class="p-4 text-gray-300 font-medium">${clientName}</td>
-              <td class="p-4 text-gray-400">${contact}</td>
-              <td class="p-4 text-gray-400">${devText}</td>
-              <td class="p-4 text-gray-400 truncate max-w-xs" title="${rep.falla_reportada || ''}">${rep.falla_reportada || '—'}</td>
-              <td class="p-4 font-bold text-brand">${fmt(rep.costo)}</td>
-              <td class="p-4 text-center">
-                <span class="px-2.5 py-1 bg-gray-800 text-gray-300 rounded text-xs border border-gray-700 font-medium">${rep.estado}</span>
-              </td>
-            </tr>`;
-          });
-          document.getElementById('rep-tbody').innerHTML = h || '<tr><td colspan="7" class="p-4 text-center text-gray-500">Sin órdenes activas</td></tr>';
+          allReparaciones = await res.json();
+          filtrarReparaciones();
         }
       }catch(e){ console.error(e); }
+    }
+
+    function filtrarReparaciones() {
+      const query = (document.getElementById('rep-buscador')?.value || '').toLowerCase().trim();
+      let d = allReparaciones;
+      
+      if (query) {
+        d = d.filter(rep => {
+          const clientName = (rep.dispositivo?.cliente ? rep.dispositivo.cliente.nombre_completo : '').toLowerCase();
+          const contact = (rep.dispositivo?.cliente?.telefono || rep.dispositivo?.cliente?.correo_electronico || '').toLowerCase();
+          const devText = (rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color || ''}` : '').toLowerCase();
+          const folio = (rep.codigo_seguimiento || '').toLowerCase();
+          const falla = (rep.falla_reportada || '').toLowerCase();
+          const estado = (rep.estado || '').toLowerCase();
+          const idVenta = rep.venta && rep.venta[0] ? `v-${rep.venta[0].id_venta}` : '';
+          
+          return clientName.includes(query) ||
+                 contact.includes(query) ||
+                 devText.includes(query) ||
+                 folio.includes(query) ||
+                 falla.includes(query) ||
+                 estado.includes(query) ||
+                 idVenta.includes(query);
+        });
+      }
+      
+      let h = '';
+      d.forEach(rep => {
+        const clientName = rep.dispositivo?.cliente ? rep.dispositivo.cliente.nombre_completo : 'General / Mostrador';
+        const contact = rep.dispositivo?.cliente?.telefono || rep.dispositivo?.cliente?.correo_electronico || '—';
+        const devText = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color ? `(${rep.dispositivo.color})` : ''}`.trim() : 'Dispositivo Desconocido';
+        const fecha = rep.fecha_entrada ? new Date(rep.fecha_entrada).toLocaleDateString('es-MX') : '—';
+        const idVenta = rep.venta && rep.venta[0] ? `V-${rep.venta[0].id_venta}` : '—';
+        
+        let badgeColor = 'bg-gray-800 text-gray-300 border-gray-700';
+        if (rep.estado === 'Pendiente') badgeColor = 'bg-yellow-900/30 text-yellow-400 border-yellow-900/50';
+        else if (rep.estado === 'Diagnosticando') badgeColor = 'bg-purple-900/30 text-purple-400 border-purple-900/50';
+        else if (rep.estado === 'Reparando' || rep.estado === 'En proceso') badgeColor = 'bg-blue-900/30 text-blue-400 border-blue-900/50';
+        else if (rep.estado === 'Listo' || rep.estado === 'Listo para entrega') badgeColor = 'bg-brand/20 text-brand border-brand/30';
+        else if (rep.estado === 'Entregado') badgeColor = 'bg-purple-900/30 text-purple-400 border-purple-900/50';
+
+        h += `<tr onclick="verDetalleReparacion('${rep.codigo_seguimiento}')" class="hover:bg-gray-800/70 cursor-pointer transition">
+          <td class="p-4 font-bold text-white">${rep.codigo_seguimiento || '—'}</td>
+          <td class="p-4 text-gray-300">${fecha}</td>
+          <td class="p-4 text-gray-300 font-medium">${clientName}</td>
+          <td class="p-4 text-gray-400">${contact}</td>
+          <td class="p-4 text-gray-400">${devText}</td>
+          <td class="p-4 text-gray-400 truncate max-w-xs" title="${rep.falla_reportada || ''}">${rep.falla_reportada || '—'}</td>
+          <td class="p-4 font-mono font-bold text-blue-400 text-center">${idVenta}</td>
+          <td class="p-4 font-bold text-brand text-right">${fmt(rep.costo)}</td>
+          <td class="p-4 text-center">
+            <span class="px-2.5 py-1 rounded text-xs border font-bold ${badgeColor}">${rep.estado}</span>
+          </td>
+        </tr>`;
+      });
+      document.getElementById('rep-tbody').innerHTML = h || '<tr><td colspan="9" class="p-4 text-center text-gray-500">Sin órdenes globales que coincidan</td></tr>';
     }
 
     async function loadVentas(){
@@ -1362,7 +1439,7 @@
         if (rep.estado === 'Pendiente') badgeColor = 'bg-yellow-900/30 text-yellow-400 border-yellow-900/50';
         else if (rep.estado === 'Diagnosticando') badgeColor = 'bg-purple-900/30 text-purple-400 border-purple-900/50';
         else if (rep.estado === 'Reparando' || rep.estado === 'En proceso') badgeColor = 'bg-blue-900/30 text-blue-400 border-blue-900/50';
-        else if (rep.estado === 'Listo') badgeColor = 'bg-brand/20 text-brand border-brand/30';
+        else if (rep.estado === 'Listo' || rep.estado === 'Listo para entrega') badgeColor = 'bg-brand/20 text-brand border-brand/30';
         else if (rep.estado === 'Entregado') badgeColor = 'bg-purple-900/30 text-purple-400 border-purple-900/50';
         document.getElementById('det-rep-estado-badge').innerHTML = `<span class="px-2.5 py-1 rounded text-xs border font-bold ${badgeColor}">${rep.estado}</span>`;
         
@@ -1376,6 +1453,7 @@
         const dev = rep.dispositivo || {};
         document.getElementById('det-rep-modelo').innerText = dev.modelo || '—';
         document.getElementById('det-rep-marca-color').innerText = `${dev.marca || ''} ${dev.color ? `(${dev.color})` : ''}`.trim() || '—';
+        document.getElementById('det-rep-descripcion').innerText = dev.descripcion || 'Sin observaciones.';
         
         // Falla y Diagnóstico
         document.getElementById('det-rep-falla').innerText = rep.falla_reportada || 'Sin descripción de falla.';

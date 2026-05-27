@@ -35,7 +35,8 @@ CREATE TABLE Dispositivo (
     marca VARCHAR(50),
     modelo VARCHAR(50),
     color VARCHAR(30),
-    contrasenia VARCHAR(50)
+    contrasenia VARCHAR(50),
+    descripcion TEXT
 );
 
 -- 4. Tabla de Órdenes de Reparación

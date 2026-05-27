@@ -117,3 +117,21 @@ CREATE TRIGGER tr_actualizar_inventario_venta
 AFTER INSERT ON Detalle_Venta
 FOR EACH ROW EXECUTE FUNCTION descontar_stock_venta();
 
+-- ==========================================
+-- 6. Registro Automático de Fecha de Entrega
+-- ==========================================
+CREATE OR REPLACE FUNCTION registrar_fecha_entrega()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.estado = 'Entregado' AND (OLD.estado IS NULL OR OLD.estado <> 'Entregado') THEN
+        NEW.fecha_entrega := NOW();
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS tr_registrar_fecha_entrega ON Orden_Reparacion;
+CREATE TRIGGER tr_registrar_fecha_entrega
+BEFORE UPDATE OF estado ON Orden_Reparacion
+FOR EACH ROW EXECUTE FUNCTION registrar_fecha_entrega();
+

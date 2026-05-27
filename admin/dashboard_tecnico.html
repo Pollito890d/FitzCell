@@ -129,6 +129,11 @@
             <h3 class="text-xl font-bold mb-6 border-b border-gray-800 pb-4">Detalles del Diagnóstico</h3>
             
             <div class="space-y-5">
+              <div class="bg-gray-950 p-4 rounded-xl border border-gray-800 text-xs">
+                <span class="text-gray-500 font-bold block uppercase tracking-wider">Falla Reportada por Cliente:</span>
+                <p id="diag-falla-reportada" class="text-gray-300 mt-1 italic whitespace-pre-wrap">—</p>
+              </div>
+
               <div>
                 <label class="block text-sm font-medium text-gray-400 mb-1">Diagnóstico del Técnico</label>
                 <textarea id="diag-texto" rows="4" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition" placeholder="Describe qué le falla al equipo y qué se necesita hacer..."></textarea>
@@ -145,7 +150,7 @@
                   <option value="Diagnosticando">Diagnosticando</option>
                   <option value="Esperando Refacción">Esperando Refacción</option>
                   <option value="Reparando">Reparando</option>
-                  <option value="Listo">Listo para Entrega</option>
+                  <option value="Listo para entrega">Listo para Entrega</option>
                   <option value="Entregado">Entregado / Cerrar</option>
                 </select>
               </div>
@@ -280,8 +285,28 @@
               <input type="email" id="nr-email" placeholder="ejemplo@correo.com" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
             </div>
             <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Marca del Dispositivo *</label>
+              <input type="text" id="nr-marca" required placeholder="Ej. Apple" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
               <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Modelo del Dispositivo *</label>
               <input type="text" id="nr-modelo" required placeholder="Ej. iPhone 13 Pro" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Color *</label>
+              <input type="text" id="nr-color" required placeholder="Ej. Azul Sierra" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Contraseña/Pin de Bloqueo</label>
+              <input type="text" id="nr-contrasenia" placeholder="Ej. 1234 o Patrón" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Descripción Física / Estado del Equipo</label>
+              <input type="text" id="nr-descripcion" placeholder="Ej. Rayones en tapa, pantalla rota" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
             </div>
           </div>
           <div>
@@ -421,6 +446,7 @@
         <div><span class="text-gray-500">Cliente:</span> <span id="tr-cliente" class="font-bold">Juan Pérez</span></div>
         <div><span class="text-gray-500">Teléfono:</span> <span id="tr-telefono">951 123 4567</span></div>
         <div><span class="text-gray-500">Equipo:</span> <span id="tr-equipo" class="font-bold">iPhone 13 Pro</span></div>
+        <div><span class="text-gray-500">Detalles/Estado:</span> <span id="tr-descripcion-ticket">—</span></div>
         <div class="mt-1"><span class="text-gray-500">Falla Reportada:</span><br><p id="tr-falla" class="text-[10px] bg-gray-100 p-1.5 rounded mt-0.5 italic text-gray-700 whitespace-pre-wrap">Pantalla estrellada</p></div>
       </div>
 
@@ -450,7 +476,7 @@
     function logout() { localStorage.clear(); window.location.href = '../login.html'; }
     const fmt = (v) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(v || 0);
 
-    function abrirTicketRecepcion(folio, cliente, telefono, dispositivo, falla, anticipo) {
+    function abrirTicketRecepcion(folio, cliente, telefono, dispositivo, falla, anticipo, descripcion) {
       document.getElementById('tr-folio').innerText = folio;
       document.getElementById('tr-fecha').innerText = new Date().toLocaleString('es-MX');
       document.getElementById('tr-cliente').innerText = cliente;
@@ -458,6 +484,7 @@
       document.getElementById('tr-equipo').innerText = dispositivo;
       document.getElementById('tr-falla').innerText = falla;
       document.getElementById('tr-anticipo').innerText = fmt(anticipo);
+      document.getElementById('tr-descripcion-ticket').innerText = descripcion || '—';
       document.getElementById('modal-ticket-recepcion').classList.remove('hidden');
     }
 
@@ -520,18 +547,21 @@
       if(id === 'sec-inventario-tec') loadInvTec();
     }
 
-    function irADiagnostico(folio, equipoId, idOrden, falla, estado, dispositivoText) {
+    function irADiagnostico(folio, equipoId, idOrden, falla, estado, dispositivoText, diagnostico, costo) {
       localStorage.setItem('fitzcell_active_folio', folio);
       localStorage.setItem('fitzcell_active_equipo_id', equipoId);
       localStorage.setItem('fitzcell_active_id_orden', idOrden);
       localStorage.setItem('fitzcell_active_falla', falla);
       localStorage.setItem('fitzcell_active_estado', estado);
       localStorage.setItem('fitzcell_active_dispositivo_text', dispositivoText);
+      localStorage.setItem('fitzcell_active_diagnostico', diagnostico || '');
+      localStorage.setItem('fitzcell_active_costo', costo || '');
       
       document.getElementById('folio-activo').innerText = folio;
       document.getElementById('dispositivo-activo').innerText = dispositivoText;
-      document.getElementById('diag-texto').value = falla || '';
-      document.getElementById('diag-costo').value = '';
+      document.getElementById('diag-falla-reportada').innerText = falla || '—';
+      document.getElementById('diag-texto').value = diagnostico || '';
+      document.getElementById('diag-costo').value = costo || '';
       
       const sel = document.getElementById('diag-estado');
       for(let i=0;i<sel.options.length;i++){ if(sel.options[i].value === estado){ sel.selectedIndex=i; break; } }
@@ -561,7 +591,7 @@
             let bc = 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20';
             if (rep.estado === 'Reparando') {
               bc = 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
-            } else if (rep.estado === 'Listo') {
+            } else if (rep.estado === 'Listo para entrega' || rep.estado === 'Listo') {
               bc = 'bg-brand/10 text-brand border border-brand/20';
             } else if (rep.estado === 'Diagnosticando') {
               bc = 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
@@ -571,6 +601,8 @@
             const falla = (rep.falla_reportada||'Sin detalles').replace(/'/g,"").replace(/"/g,"");
             const devText = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color ? `(${rep.dispositivo.color})` : ''}`.trim() : 'Dispositivo Desconocido';
             const clientName = rep.dispositivo?.cliente ? rep.dispositivo.cliente.nombre_completo : 'General / Mostrador';
+            const diagClean = (rep.diagnostico||'').replace(/'/g,"\\'").replace(/"/g,"\\\"");
+            const costoClean = rep.costo || '';
             
             h += '<div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-brand/50 transition flex flex-col">' +
               '<div class="flex justify-between items-start mb-4"><div><span class="text-xs font-bold text-gray-400 tracking-wider">FOLIO</span><h3 class="text-xl font-bold text-white">' + folio + '</h3></div>' +
@@ -580,7 +612,7 @@
                 '<p class="text-xs text-gray-400 mb-3">Cliente: ' + clientName + '</p>' +
                 '<p class="text-sm text-gray-500 italic">"' + falla + '"</p>' +
               '</div>' +
-              '<button onclick="irADiagnostico(\'' + folio + '\',\'' + rep.id_dispositivo + '\',\'' + rep.id_orden + '\',\'' + falla + '\',\'' + rep.estado + '\',\'' + devText.replace(/'/g, "\\'") + '\')" class="w-full bg-brand text-gray-950 hover:bg-brand-light py-2 rounded-lg text-sm font-bold transition shadow-[0_0_10px_rgba(7,183,107,0.1)]">Atender Equipo</button>' +
+              '<button onclick="irADiagnostico(\'' + folio + '\',\'' + rep.id_dispositivo + '\',\'' + rep.id_orden + '\',\'' + falla + '\',\'' + rep.estado + '\',\'' + devText.replace(/'/g, "\\'") + '\',\'' + diagClean + '\',\'' + costoClean + '\')" class="w-full bg-brand text-gray-950 hover:bg-brand-light py-2 rounded-lg text-sm font-bold transition shadow-[0_0_10px_rgba(7,183,107,0.1)]">Atender Equipo</button>' +
               '</div>';
           });
           document.getElementById('lista-ordenes').innerHTML = h || '<p class="text-gray-500 col-span-3 text-center py-10">No hay órdenes asignadas pendientes.</p>';
@@ -594,7 +626,11 @@
         cliente_nombre: document.getElementById('nr-cliente').value.trim(),
         cliente_telefono: document.getElementById('nr-telefono').value.trim(),
         cliente_email: document.getElementById('nr-email').value.trim(),
+        marca: document.getElementById('nr-marca').value.trim(),
         modelo: document.getElementById('nr-modelo').value.trim(),
+        color: document.getElementById('nr-color').value.trim(),
+        contrasenia: document.getElementById('nr-contrasenia').value.trim(),
+        descripcion: document.getElementById('nr-descripcion').value.trim(),
         falla: document.getElementById('nr-falla').value.trim(),
         folio_manual: document.getElementById('nr-folio') ? document.getElementById('nr-folio').value.trim() : '',
         anticipo: document.getElementById('nr-anticipo') ? parseFloat(document.getElementById('nr-anticipo').value) || 0 : 0
@@ -610,13 +646,15 @@
         if(res.ok) {
           document.getElementById('form-nueva-reparacion').reset();
           loadOrdenes();
+          const dispText = `${payload.marca} ${payload.modelo} (${payload.color})`;
           abrirTicketRecepcion(
             d.folio,
             payload.cliente_nombre,
             payload.cliente_telefono,
-            payload.modelo,
+            dispText,
             payload.falla,
-            payload.anticipo
+            payload.anticipo,
+            payload.descripcion
           );
         } else {
           alert('Error: ' + (d.message || 'No se pudo registrar la reparación.'));
@@ -896,9 +934,12 @@
           localStorage.removeItem('fitzcell_active_estado');
           localStorage.removeItem('fitzcell_active_dispositivo_text');
           localStorage.removeItem('fitzcell_active_piezas');
+          localStorage.removeItem('fitzcell_active_diagnostico');
+          localStorage.removeItem('fitzcell_active_costo');
           
           document.getElementById('folio-activo').innerText = 'Ninguno';
           document.getElementById('dispositivo-activo').innerText = 'Ninguno seleccionado';
+          document.getElementById('diag-falla-reportada').innerText = '—';
           document.getElementById('diag-texto').value = '';
           document.getElementById('diag-costo').value = '';
           document.getElementById('lista-piezas-usadas').innerHTML = '<p class="text-gray-500 text-sm text-center mt-10">No has seleccionado ninguna refacción.</p>';
@@ -937,74 +978,85 @@
         if (!response.ok) throw new Error();
 
         const data = await response.json();
-        const detalles = data.detalle_reparacion || [];
-        const detalleConGarantia = detalles.find(d => d.garantia);
+        const detalles = (data.detalle_reparacion || []).filter(d => d.garantia);
         
-        if (!detalleConGarantia || !data.fecha_entrega) {
+        if (!data.fecha_entrega) {
           resContainer.innerHTML = `
             <div class="bg-yellow-900/20 border border-yellow-900/50 p-6 rounded-xl text-center fade-in">
               <span class="text-yellow-400 text-4xl block mb-2">🛡️</span>
-              <h3 class="text-lg font-bold text-yellow-400">Sin Garantía Registrada</h3>
-              <p class="text-gray-400 text-sm mt-1">Este equipo no tiene una póliza de garantía asociada o aún no ha sido entregado.</p>
+              <h3 class="text-lg font-bold text-yellow-400">Equipo No Entregado</h3>
+              <p class="text-gray-400 text-sm mt-1">Este equipo tiene el estado "${data.estado}". La garantía comenzará a correr a partir de que sea entregado al cliente.</p>
               <div class="mt-4 border-t border-gray-800 pt-4 text-xs text-gray-500 text-left space-y-1">
                 <p><strong>Dispositivo:</strong> ${data.dispositivo?.marca || ''} ${data.dispositivo?.modelo || ''}</p>
                 <p><strong>Cliente:</strong> ${data.dispositivo?.cliente?.nombre_completo || 'General'}</p>
-                <p><strong>Estado:</strong> ${data.estado}</p>
+              </div>
+            </div>`;
+          return;
+        }
+
+        if (detalles.length === 0) {
+          resContainer.innerHTML = `
+            <div class="bg-yellow-900/20 border border-yellow-900/50 p-6 rounded-xl text-center fade-in">
+              <span class="text-yellow-400 text-4xl block mb-2">🛡️</span>
+              <h3 class="text-lg font-bold text-yellow-400">Sin Refacciones con Garantía</h3>
+              <p class="text-gray-400 text-sm mt-1">Esta reparación se completó pero no incluye refacciones con póliza de garantía registrada.</p>
+              <div class="mt-4 border-t border-gray-800 pt-4 text-xs text-gray-500 text-left space-y-1">
+                <p><strong>Dispositivo:</strong> ${data.dispositivo?.marca || ''} ${data.dispositivo?.modelo || ''}</p>
+                <p><strong>Cliente:</strong> ${data.dispositivo?.cliente?.nombre_completo || 'General'}</p>
+                <p><strong>Fecha Entrega:</strong> ${new Date(data.fecha_entrega).toLocaleDateString('es-MX')}</p>
               </div>
             </div>`;
           return;
         }
 
         const fechaEntrega = new Date(data.fecha_entrega);
-        const diasDuracion = detalleConGarantia.garantia.dias_duracion || 30;
-        const fechaLimite = new Date(fechaEntrega.getTime() + (diasDuracion * 24 * 60 * 60 * 1000));
         const hoy = new Date();
-        const estaActiva = hoy <= fechaLimite;
-        const msRestantes = fechaLimite - hoy;
-        const diasRestantes = Math.ceil(msRestantes / (1000 * 60 * 60 * 24));
+        
+        let detailsHtml = '';
+        detalles.forEach(d => {
+          const diasDuracion = d.garantia.dias_duracion || 30;
+          const fechaLimite = new Date(fechaEntrega.getTime() + (diasDuracion * 24 * 60 * 60 * 1000));
+          const estaActiva = hoy <= fechaLimite;
+          const msRestantes = fechaLimite - hoy;
+          const diasRestantes = Math.ceil(msRestantes / (1000 * 60 * 60 * 24));
+          const pName = d.producto ? d.producto.nombre_producto : 'Refacción';
+          
+          let stateBadge = '';
+          if (estaActiva) {
+            stateBadge = `<span class="px-2 py-0.5 bg-brand/20 text-brand border border-brand/30 rounded text-[10px] font-bold">🟢 ACTIVA (${diasRestantes} días)</span>`;
+          } else {
+            stateBadge = `<span class="px-2 py-0.5 bg-red-950/40 text-red-400 border border-red-900/30 rounded text-[10px] font-bold">🔴 EXPIRADA</span>`;
+          }
 
-        let badgeHtml = '';
-        if (estaActiva) {
-          badgeHtml = `
-            <div class="bg-brand/10 border border-brand/30 p-6 rounded-2xl relative overflow-hidden fade-in">
-              <div class="absolute top-0 right-0 w-20 h-20 bg-brand/10 rounded-bl-full blur-lg"></div>
-              <div class="flex justify-between items-start mb-4">
-                <div>
-                  <span class="px-3 py-1 bg-brand/20 text-brand text-xs font-bold rounded-full border border-brand/30">🟢 GARANTÍA ACTIVA</span>
-                  <h3 class="text-xl font-bold text-white mt-2">${data.dispositivo?.marca || ''} ${data.dispositivo?.modelo || ''}</h3>
-                </div>
-                <div class="text-right">
-                  <p class="text-3xl font-black text-brand">${diasRestantes}</p>
-                  <p class="text-[10px] text-gray-400">días restantes</p>
-                </div>
+          detailsHtml += `
+            <div class="bg-gray-950 p-3 rounded-xl border border-gray-800 flex flex-col gap-1 text-xs mt-2">
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-white text-sm">${pName}</span>
+                ${stateBadge}
               </div>
-              <div class="space-y-2 text-sm text-gray-300 border-t border-gray-800 pt-4">
-                <p><strong>Cliente:</strong> ${data.dispositivo?.cliente?.nombre_completo || 'General'}</p>
-                <p><strong>Fecha Entrega:</strong> ${fechaEntrega.toLocaleDateString('es-MX')}</p>
-                <p><strong>Vence el:</strong> ${fechaLimite.toLocaleDateString('es-MX')}</p>
-                <p class="text-xs text-gray-400 mt-2 italic"><strong>Cobertura:</strong> ${detalleConGarantia.garantia.descripcion || 'Servicio técnico estándar.'}</p>
+              <p class="text-gray-400 mt-1"><strong>Póliza:</strong> ${d.garantia.descripcion || 'Estándar'}</p>
+              <div class="flex justify-between text-gray-500 text-[10px] mt-1 border-t border-gray-900 pt-1">
+                <span>Vence: ${fechaLimite.toLocaleDateString('es-MX')}</span>
+                <span>Duración: ${diasDuracion} días</span>
               </div>
-            </div>`;
-        } else {
-          badgeHtml = `
-            <div class="bg-red-950/20 border border-red-900/30 p-6 rounded-2xl relative overflow-hidden fade-in">
-              <div class="absolute top-0 right-0 w-20 h-20 bg-red-500/10 rounded-bl-full blur-lg"></div>
-              <div class="flex justify-between items-start mb-4">
-                <div>
-                  <span class="px-3 py-1 bg-red-900/30 text-red-400 text-xs font-bold rounded-full border border-red-900/50">🔴 GARANTÍA EXPIRADA</span>
-                  <h3 class="text-xl font-bold text-white mt-2">${data.dispositivo?.marca || ''} ${data.dispositivo?.modelo || ''}</h3>
-                </div>
-              </div>
-              <div class="space-y-2 text-sm text-gray-300 border-t border-gray-800 pt-4">
-                <p><strong>Cliente:</strong> ${data.dispositivo?.cliente?.nombre_completo || 'General'}</p>
-                <p><strong>Fecha Entrega:</strong> ${fechaEntrega.toLocaleDateString('es-MX')}</p>
-                <p class="text-red-400 font-bold">Expiró el: ${fechaLimite.toLocaleDateString('es-MX')}</p>
-                <p class="text-xs text-gray-500 mt-2 italic">La cobertura de garantía finalizó hace ${Math.abs(diasRestantes)} días.</p>
-              </div>
-            </div>`;
-        }
+            </div>
+          `;
+        });
 
-        resContainer.innerHTML = badgeHtml;
+        resContainer.innerHTML = `
+          <div class="bg-gray-900 border border-gray-800 p-6 rounded-2xl relative overflow-hidden fade-in max-w-md mx-auto text-left space-y-4">
+            <div class="border-b border-gray-800 pb-3">
+              <span class="px-2.5 py-1 bg-brand/10 text-brand text-xs font-bold rounded-full border border-brand/20">🛡️ PÓLIZA DE GARANTÍA</span>
+              <h3 class="text-xl font-bold text-white mt-2">${data.dispositivo?.marca || ''} ${data.dispositivo?.modelo || ''}</h3>
+              <p class="text-xs text-gray-400 mt-1">Cliente: ${data.dispositivo?.cliente?.nombre_completo || 'General'} | Tel: ${data.dispositivo?.cliente?.telefono || '—'}</p>
+              <p class="text-[10px] text-gray-500 mt-1">Entregado el: ${fechaEntrega.toLocaleString('es-MX')}</p>
+            </div>
+            
+            <div class="space-y-3">
+              <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Cobertura de Refacciones:</p>
+              ${detailsHtml}
+            </div>
+          </div>`;
 
       } catch (error) {
         console.error(error);
@@ -1022,7 +1074,9 @@
       if (activeFolio) {
         document.getElementById('folio-activo').innerText = activeFolio;
         document.getElementById('dispositivo-activo').innerText = localStorage.getItem('fitzcell_active_dispositivo_text') || 'Dispositivo';
-        document.getElementById('diag-texto').value = localStorage.getItem('fitzcell_active_falla') || '';
+        document.getElementById('diag-falla-reportada').innerText = localStorage.getItem('fitzcell_active_falla') || '—';
+        document.getElementById('diag-texto').value = localStorage.getItem('fitzcell_active_diagnostico') || '';
+        document.getElementById('diag-costo').value = localStorage.getItem('fitzcell_active_costo') || '';
         
         const est = localStorage.getItem('fitzcell_active_estado');
         const sel = document.getElementById('diag-estado');

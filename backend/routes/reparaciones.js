@@ -7,7 +7,7 @@ router.get('/', async (req, res) => {
     try {
         const { data, error } = await supabase
             .from('orden_reparacion')
-            .select('*, dispositivo(*, cliente(*))')
+            .select('*, dispositivo(*, cliente(*)), venta(id_venta)')
             .order('fecha_entrada', { ascending: false });
         if (error) throw error;
         
@@ -49,7 +49,7 @@ router.get('/:folio', async (req, res) => {
 
 // Crear una solicitud de reparación (Pública)
 router.post('/solicitud', async (req, res) => {
-    const { cliente_nombre, cliente_telefono, cliente_email, modelo, falla, folio_manual, anticipo } = req.body;
+    const { cliente_nombre, cliente_telefono, cliente_email, marca, modelo, color, contrasenia, descripcion, falla, folio_manual, anticipo } = req.body;
     
     try {
         // 1. Buscar o crear cliente
@@ -74,7 +74,14 @@ router.post('/solicitud', async (req, res) => {
         // 2. Insert device
         const { data: newDevice, error: errDev } = await supabase
             .from('dispositivo')
-            .insert([{ id_cliente: clienteId, modelo: modelo }])
+            .insert([{ 
+                id_cliente: clienteId, 
+                marca: marca, 
+                modelo: modelo, 
+                color: color, 
+                contrasenia: contrasenia,
+                descripcion: descripcion
+            }])
             .select();
         if(errDev) throw errDev;
         const deviceId = newDevice[0].id_dispositivo;
@@ -126,9 +133,14 @@ router.put('/:id_orden/diagnostico', async (req, res) => {
     
     try {
         // 1. Actualizar orden_reparacion
+        const updateFields = { diagnostico, estado, costo };
+        if (estado === 'Entregado') {
+            updateFields.fecha_entrega = new Date().toISOString();
+        }
+
         const { data: updatedOrder, error: errUpdate } = await supabase
             .from('orden_reparacion')
-            .update({ diagnostico, estado, costo })
+            .update(updateFields)
             .eq('id_orden', id_orden)
             .select();
         
