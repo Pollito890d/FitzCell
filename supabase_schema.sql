@@ -43,7 +43,7 @@ CREATE TABLE Dispositivo (
 CREATE TABLE Orden_Reparacion (
     id_orden SERIAL PRIMARY KEY,
     id_dispositivo INT REFERENCES Dispositivo(id_dispositivo) ON DELETE CASCADE,
-    codigo_seguimiento VARCHAR(20) UNIQUE NOT NULL,
+    codigo_seguimiento VARCHAR(20) UNIQUE,
     fecha_entrada TIMESTAMP DEFAULT NOW(),
     fecha_entrega TIMESTAMP,
     falla_reportada TEXT,

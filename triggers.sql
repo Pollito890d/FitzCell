@@ -135,3 +135,5 @@ CREATE TRIGGER tr_registrar_fecha_entrega
 BEFORE UPDATE OF estado ON Orden_Reparacion
 FOR EACH ROW EXECUTE FUNCTION registrar_fecha_entrega();
 
+-- Sincronizar el secuenciador de la tabla Garantia para evitar conflictos con los IDs manuales 1 y 2
+SELECT setval('garantia_id_garantia_seq', COALESCE((SELECT MAX(id_garantia) FROM Garantia), 2), true);
