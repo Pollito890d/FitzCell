@@ -11,6 +11,7 @@ const authRoutes = require('./routes/auth');
 const productosRoutes = require('./routes/productos');
 const pedidosRoutes = require('./routes/pedidos');
 const ventasRoutes = require('./routes/ventas');
+const corteCajaRoutes = require('./routes/corte_caja');
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api/pedidos', pedidosRoutes);
 app.use('/api/ventas', ventasRoutes);
+app.use('/api/corte-caja', corteCajaRoutes);
 
 // Exportar en lugar de escuchar en un puerto (Requerido por Vercel)
 module.exports = app;

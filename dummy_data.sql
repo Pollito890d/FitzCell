@@ -60,5 +60,10 @@ INSERT INTO Venta (id_orden, total, subtotal, metodo_pago) VALUES
 INSERT INTO Detalle_Venta (id_venta, id_producto, cantidad, precio_unitario) VALUES 
 (1, 16, 2, 150.00);
 
+-- 11. Registrar Cortes de Caja de ejemplo
+INSERT INTO Corte_Caja (fecha, cajero_nombre, fondo_inicial, ventas_efectivo, ventas_transferencia, efectivo_esperado, efectivo_real, diferencia, observaciones) VALUES
+(NOW() - INTERVAL '1 day', 'Ana Ventas', 1000.00, 300.00, 0.00, 1300.00, 1300.00, 0.00, 'Corte de caja de prueba del día anterior sin novedades.');
+
+
 -- 10. Sincronizar el secuenciador de la tabla Garantia para evitar conflictos en futuras inserciones
 SELECT setval('garantia_id_garantia_seq', COALESCE((SELECT MAX(id_garantia) FROM Garantia), 2), true);

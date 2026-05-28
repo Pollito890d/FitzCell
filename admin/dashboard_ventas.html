@@ -63,6 +63,7 @@
       <a href="#" onclick="showSection('sec-comprobantes')" id="nav-sec-comprobantes" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🧾 Comprobantes</a>
       <a href="#" onclick="showSection('sec-inventario')" id="nav-sec-inventario" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📦 Catálogo</a>
       <a href="#" onclick="showSection('sec-garantias')" id="nav-sec-garantias" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🛡️ Garantías</a>
+      <a href="#" onclick="showSection('sec-corte')" id="nav-sec-corte" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">💵 Corte de Caja</a>
     </nav>
     
     <button onclick="logout()" class="mt-auto p-3 bg-red-900/20 text-red-400 rounded-lg font-bold hover:bg-red-900/40 border border-red-900/50 transition-all flex justify-center items-center gap-2">
@@ -128,7 +129,6 @@
               <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Método de Pago</label>
               <select id="ticket-metodo-pago" onchange="togglePagoRecibido()" class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:border-brand outline-none transition appearance-none cursor-pointer">
                 <option value="Efectivo">💵 Efectivo</option>
-                <option value="Tarjeta">💳 Tarjeta de Crédito/Débito</option>
                 <option value="Transferencia">🏦 Transferencia Bancaria</option>
               </select>
             </div>
@@ -247,6 +247,91 @@
       </div>
     </section>
 
+    <!-- SECCIÓN: CORTE DE CAJA -->
+    <section id="sec-corte" class="fade-in hidden">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold mb-1">Corte de <span class="text-brand">Caja</span></h1>
+        <p class="text-gray-400">Arqueo de caja y cierre de turno.</p>
+      </header>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Panel Formulario (Col 5) -->
+        <div class="lg:col-span-5 bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl space-y-6">
+          <h2 class="text-xl font-bold text-white border-b border-gray-800 pb-3 flex items-center gap-2">
+            <span>💵</span> Registrar Arqueo
+          </h2>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Fondo Inicial ($)</label>
+              <input type="number" id="corte-fondo-inicial" oninput="calcularDiferenciaCorte()" value="1000" step="0.01" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Ventas Efectivo ($)</label>
+                <div id="corte-ventas-efectivo" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-brand font-bold">$0.00</div>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Ventas Transf. ($)</label>
+                <div id="corte-ventas-transferencia" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-blue-400 font-bold">$0.00</div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Efectivo Esperado ($)</label>
+              <div id="corte-efectivo-esperado" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white font-black text-lg">$1,000.00</div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Efectivo Real en Caja ($)</label>
+              <input type="number" id="corte-efectivo-real" oninput="calcularDiferenciaCorte()" placeholder="0.00" step="0.01" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-lg font-bold">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Diferencia ($)</label>
+              <div id="corte-diferencia-badge" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 font-black text-lg text-center text-gray-400">
+                $0.00
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Observaciones / Notas</label>
+              <textarea id="corte-observaciones" placeholder="Detalles de diferencias, billetes falsificados, faltantes justificados, etc..." rows="3" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm"></textarea>
+            </div>
+          </div>
+
+          <button onclick="registrarCorteCaja()" class="w-full bg-brand text-gray-950 py-4 rounded-xl font-bold text-lg hover:bg-brand-light transition shadow-[0_0_15px_rgba(7,183,107,0.3)]">
+            Registrar Corte de Caja
+          </button>
+        </div>
+
+        <!-- Panel Historial (Col 7) -->
+        <div class="lg:col-span-7 bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl flex flex-col min-h-0">
+          <h2 class="text-xl font-bold text-white border-b border-gray-800 pb-3 mb-6 flex items-center gap-2">
+            <span>🧾</span> Historial de Cortes de Caja
+          </h2>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-gray-800 text-gray-400 text-xs uppercase tracking-wider">
+                  <th class="pb-3 font-semibold">Fecha</th>
+                  <th class="pb-3 font-semibold">Cajero</th>
+                  <th class="pb-3 font-semibold text-right">Esperado</th>
+                  <th class="pb-3 font-semibold text-right">Real</th>
+                  <th class="pb-3 font-semibold text-center">Dif.</th>
+                </tr>
+              </thead>
+              <tbody id="corte-tbody" class="divide-y divide-gray-800 text-sm">
+                <tr><td colspan="5" class="py-4 text-center text-gray-500">Cargando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Modal de Ticket Térmico -->
@@ -350,6 +435,10 @@
          }
       }
       if(sectionId === 'sec-comprobantes') loadVentas();
+      if(sectionId === 'sec-corte') {
+         cargarTotalesCorte();
+         cargarHistorialCortes();
+      }
     }
 
     async function loadInventario() {
@@ -759,6 +848,148 @@
       const recibido = parseFloat(document.getElementById('ticket-pago-recibido').value) || 0;
       const cambio = Math.max(0, recibido - total);
       document.getElementById('ticket-cambio').innerText = formatCurrency(cambio);
+    }
+
+    let corteVentasEfectivo = 0;
+    let corteVentasTransferencia = 0;
+
+    async function cargarTotalesCorte() {
+      try {
+        const localDate = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
+        const res = await fetch(`/api/corte-caja/totales-hoy?date=${localDate}`);
+        if (res.ok) {
+          const data = await res.json();
+          corteVentasEfectivo = parseFloat(data.ventas_efectivo) || 0;
+          corteVentasTransferencia = parseFloat(data.ventas_transferencia) || 0;
+          
+          document.getElementById('corte-ventas-efectivo').innerText = formatCurrency(corteVentasEfectivo);
+          document.getElementById('corte-ventas-transferencia').innerText = formatCurrency(corteVentasTransferencia);
+          
+          calcularDiferenciaCorte();
+        }
+      } catch (e) {
+        console.error('Error al cargar totales del corte:', e);
+      }
+    }
+
+    function calcularDiferenciaCorte() {
+      const fondoInicial = parseFloat(document.getElementById('corte-fondo-inicial').value) || 0;
+      const esperado = fondoInicial + corteVentasEfectivo;
+      document.getElementById('corte-efectivo-esperado').innerText = formatCurrency(esperado);
+      
+      const real = parseFloat(document.getElementById('corte-efectivo-real').value) || 0;
+      const dif = real - esperado;
+      
+      const badge = document.getElementById('corte-diferencia-badge');
+      badge.innerText = formatCurrency(dif);
+      
+      badge.className = "w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 font-black text-lg text-center ";
+      if (dif > 0.01) {
+        badge.className += "text-green-400";
+        badge.innerText = "+" + formatCurrency(dif) + " (Sobrante)";
+      } else if (dif < -0.01) {
+        badge.className += "text-red-400";
+        badge.innerText = formatCurrency(dif) + " (Faltante)";
+      } else {
+        badge.className += "text-gray-400";
+        badge.innerText = formatCurrency(dif) + " (Sin diferencia)";
+      }
+    }
+
+    async function registrarCorteCaja() {
+      const cajero_nombre = localStorage.getItem('fitzcell_nombre') || 'Cajero';
+      const fondo_inicial = parseFloat(document.getElementById('corte-fondo-inicial').value) || 0;
+      const ventas_efectivo = corteVentasEfectivo;
+      const ventas_transferencia = corteVentasTransferencia;
+      const esperado = fondo_inicial + ventas_efectivo;
+      const real = parseFloat(document.getElementById('corte-efectivo-real').value) || 0;
+      
+      if (isNaN(real) || real < 0) {
+        alert('Por favor introduce un valor válido de efectivo real en caja.');
+        return;
+      }
+      
+      const diferencia = real - esperado;
+      const observaciones = document.getElementById('corte-observaciones').value.trim();
+      
+      try {
+        const res = await fetch('/api/corte-caja', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cajero_nombre,
+            fondo_inicial,
+            ventas_efectivo,
+            ventas_transferencia,
+            efectivo_esperado: esperado,
+            efectivo_real: real,
+            diferencia,
+            observaciones
+          })
+        });
+        
+        if (res.ok) {
+          alert('¡Corte de caja registrado exitosamente!');
+          document.getElementById('corte-efectivo-real').value = '';
+          document.getElementById('corte-observaciones').value = '';
+          cargarTotalesCorte();
+          cargarHistorialCortes();
+        } else {
+          alert('Error al guardar corte de caja.');
+        }
+      } catch (e) {
+        console.error('Error al registrar corte de caja:', e);
+        alert('Error de red al registrar el corte.');
+      }
+    }
+
+    async function cargarHistorialCortes() {
+      try {
+        const res = await fetch('/api/corte-caja');
+        if (res.ok) {
+          const list = await res.json();
+          const tbody = document.getElementById('corte-tbody');
+          
+          if (!list || list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="py-4 text-center text-gray-500">No hay cortes de caja registrados.</td></tr>';
+            return;
+          }
+          
+          let html = '';
+          list.forEach(c => {
+            const fechaStr = new Date(c.fecha).toLocaleString('es-MX');
+            
+            let difClass = 'text-gray-400';
+            let difSign = '';
+            if (c.diferencia > 0.01) {
+              difClass = 'text-green-400 font-bold';
+              difSign = '+';
+            } else if (c.diferencia < -0.01) {
+              difClass = 'text-red-400 font-bold';
+            }
+            
+            html += `<tr class="border-b border-gray-800 hover:bg-gray-900/30 transition">
+              <td class="py-3 font-medium text-gray-300">${fechaStr}</td>
+              <td class="py-3 text-gray-400">${c.cajero_nombre}</td>
+              <td class="py-3 text-right text-gray-400">${formatCurrency(c.efectivo_esperado)}</td>
+              <td class="py-3 text-right text-gray-300 font-medium">${formatCurrency(c.efectivo_real)}</td>
+              <td class="py-3 text-center ${difClass}">${difSign}${formatCurrency(c.diferencia)}</td>
+            </tr>`;
+            
+            if (c.observaciones) {
+              html += `<tr class="border-b border-gray-800/50 bg-gray-950/20 text-xs">
+                <td colspan="5" class="py-2 px-4 text-gray-500 italic">
+                  <strong>Notas:</strong> ${c.observaciones}
+                </td>
+              </tr>`;
+            }
+          });
+          
+          tbody.innerHTML = html;
+        }
+      } catch (e) {
+        console.error('Error al cargar historial de cortes:', e);
+      }
     }
 
     showSection('sec-pos');

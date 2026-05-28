@@ -63,6 +63,7 @@
       <a href="#" onclick="showSection('sec-nueva-reparacion')" id="nav-sec-nueva-reparacion" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">➕ Nueva Reparación</a>
       <a href="#" onclick="showSection('sec-ventas')" id="nav-sec-ventas" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">💰 Historial de Ventas</a>
       <a href="#" onclick="showSection('sec-estadisticas')" id="nav-sec-estadisticas" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📈 Estadísticas Gerente</a>
+      <a href="#" onclick="showSection('sec-cortes')" id="nav-sec-cortes" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">💵 Cortes de Caja</a>
     </nav>
     
     <button onclick="logout()" class="mt-auto p-3 bg-red-900/20 text-red-400 rounded-lg font-bold hover:bg-red-900/40 border border-red-900/50 transition-all flex justify-center items-center gap-2">
@@ -297,6 +298,36 @@
             <tr><td colspan="4" class="p-4 text-center text-gray-500">Cargando...</td></tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: HISTORIAL DE CORTES DE CAJA -->
+    <section id="sec-cortes" class="fade-in hidden">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold mb-1">Cortes de <span class="text-brand">Caja</span></h1>
+        <p class="text-gray-400">Historial completo y arqueos registrados por cajeros.</p>
+      </header>
+
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg p-6">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-gray-800 text-gray-400 text-xs uppercase tracking-wider">
+                <th class="pb-3 font-semibold">Fecha y Hora</th>
+                <th class="pb-3 font-semibold">Cajero</th>
+                <th class="pb-3 font-semibold text-right">Fondo Inicial</th>
+                <th class="pb-3 font-semibold text-right">Ventas Efectivo</th>
+                <th class="pb-3 font-semibold text-right">Ventas Transferencia</th>
+                <th class="pb-3 font-semibold text-right">Efectivo Esperado</th>
+                <th class="pb-3 font-semibold text-right">Efectivo Real</th>
+                <th class="pb-3 font-semibold text-center">Diferencia</th>
+              </tr>
+            </thead>
+            <tbody id="manager-cortes-tbody" class="divide-y divide-gray-800 text-sm">
+              <tr><td colspan="8" class="py-4 text-center text-gray-500">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -763,7 +794,7 @@
       });
       const a = document.getElementById('nav-'+id);
       if(a){ a.classList.remove('text-gray-400','hover:bg-gray-800'); a.classList.add('bg-brand/10','text-brand','font-bold','border','border-brand/20'); }
-      const loaders = { 'sec-resumen':loadResumen,'sec-inventario':loadInventario,'sec-empleados':loadEmpleados,'sec-reparaciones':loadReparaciones,'sec-ventas':loadVentas, 'sec-estadisticas':loadEstadisticas };
+      const loaders = { 'sec-resumen':loadResumen,'sec-inventario':loadInventario,'sec-empleados':loadEmpleados,'sec-reparaciones':loadReparaciones,'sec-ventas':loadVentas, 'sec-estadisticas':loadEstadisticas, 'sec-cortes':loadCortesManager };
       if(loaders[id]) loaders[id]();
     }
 
@@ -1494,6 +1525,58 @@
 
     function cerrarDetalleReparacion() {
       document.getElementById('modal-detalle-reparacion').classList.add('hidden');
+    }
+
+    async function loadCortesManager() {
+      try {
+        const res = await fetch('/api/corte-caja');
+        if (res.ok) {
+          const list = await res.json();
+          const tbody = document.getElementById('manager-cortes-tbody');
+          
+          if (!list || list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="py-4 text-center text-gray-500">No hay cortes de caja registrados en el sistema.</td></tr>';
+            return;
+          }
+          
+          let html = '';
+          list.forEach(c => {
+            const fechaStr = new Date(c.fecha).toLocaleString('es-MX');
+            
+            let difClass = 'text-gray-400';
+            let difSign = '';
+            if (c.diferencia > 0.01) {
+              difClass = 'text-green-400 font-bold';
+              difSign = '+';
+            } else if (c.diferencia < -0.01) {
+              difClass = 'text-red-400 font-bold';
+            }
+            
+            html += `<tr class="border-b border-gray-800 hover:bg-gray-800/30 transition">
+              <td class="p-4 text-gray-300 font-medium">${fechaStr}</td>
+              <td class="p-4 text-gray-400">${c.cajero_nombre}</td>
+              <td class="p-4 text-right text-gray-400">${fmt(c.fondo_inicial)}</td>
+              <td class="p-4 text-right text-brand">${fmt(c.ventas_efectivo)}</td>
+              <td class="p-4 text-right text-blue-400">${fmt(c.ventas_transferencia)}</td>
+              <td class="p-4 text-right text-gray-300">${fmt(c.efectivo_esperado)}</td>
+              <td class="p-4 text-right text-white font-bold">${fmt(c.efectivo_real)}</td>
+              <td class="p-4 text-center ${difClass}">${difSign}${fmt(c.diferencia)}</td>
+            </tr>`;
+            
+            if (c.observaciones) {
+              html += `<tr class="bg-gray-950/20 text-xs">
+                <td colspan="8" class="p-3 text-gray-500 italic border-b border-gray-800/50">
+                  <strong>Notas del Cajero:</strong> ${c.observaciones}
+                </td>
+              </tr>`;
+            }
+          });
+          
+          tbody.innerHTML = html;
+        }
+      } catch (err) {
+        console.error('Error al cargar cortes de caja para gerente:', err);
+      }
     }
 
     showSection('sec-resumen');

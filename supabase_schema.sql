@@ -10,6 +10,8 @@ DROP TABLE IF EXISTS Orden_Reparacion;
 DROP TABLE IF EXISTS Dispositivo;
 DROP TABLE IF EXISTS Cliente;
 DROP TABLE IF EXISTS Usuario;
+DROP TABLE IF EXISTS Corte_Caja;
+
 
 -- 1. Tabla de Usuarios (Roles)
 CREATE TABLE Usuario (
@@ -44,8 +46,8 @@ CREATE TABLE Orden_Reparacion (
     id_orden SERIAL PRIMARY KEY,
     id_dispositivo INT REFERENCES Dispositivo(id_dispositivo) ON DELETE CASCADE,
     codigo_seguimiento VARCHAR(20) UNIQUE,
-    fecha_entrada TIMESTAMP DEFAULT NOW(),
-    fecha_entrega TIMESTAMP,
+    fecha_entrada TIMESTAMPTZ DEFAULT NOW(),
+    fecha_entrega TIMESTAMPTZ,
     falla_reportada TEXT,
     diagnostico TEXT,
     anticipo DECIMAL(10,2) DEFAULT 0,
@@ -87,7 +89,7 @@ CREATE TABLE Detalle_Reparacion (
 CREATE TABLE Venta (
     id_venta SERIAL PRIMARY KEY,
     id_orden INT REFERENCES Orden_Reparacion(id_orden) ON DELETE SET NULL,
-    fecha TIMESTAMP DEFAULT NOW(),
+    fecha TIMESTAMPTZ DEFAULT NOW(),
     total DECIMAL(10,2) NOT NULL,
     subtotal DECIMAL(10,2) NOT NULL,
     metodo_pago VARCHAR(50)
@@ -101,3 +103,18 @@ CREATE TABLE Detalle_Venta (
     cantidad INT DEFAULT 1,
     precio_unitario DECIMAL(10,2) NOT NULL
 );
+
+-- 10. Tabla de Cortes de Caja
+CREATE TABLE Corte_Caja (
+    id_corte SERIAL PRIMARY KEY,
+    fecha TIMESTAMPTZ DEFAULT NOW(),
+    cajero_nombre VARCHAR(150),
+    fondo_inicial DECIMAL(10,2) DEFAULT 0,
+    ventas_efectivo DECIMAL(10,2) DEFAULT 0,
+    ventas_transferencia DECIMAL(10,2) DEFAULT 0,
+    efectivo_esperado DECIMAL(10,2) DEFAULT 0,
+    efectivo_real DECIMAL(10,2) DEFAULT 0,
+    diferencia DECIMAL(10,2) DEFAULT 0,
+    observaciones TEXT
+);
+

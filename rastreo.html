@@ -144,6 +144,100 @@
         }
         const rep = await res.json();
         const fmt = (v) => new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(v||0);
+        
+        // Calcular la sección de garantía según el estado y piezas usadas
+        const aplicaGarantia = ['Reparando', 'Listo para entrega', 'Listo para Entrega', 'Entregado'].includes(rep.estado);
+        let garantiaHtml = '';
+        
+        if (aplicaGarantia) {
+          garantiaHtml += '<div class="bg-gray-800/40 p-4 rounded-xl border border-gray-700/50 space-y-3 mt-4">';
+          garantiaHtml += '<h4 class="text-xs font-black uppercase text-brand tracking-widest flex items-center gap-1">🛡️ Cobertura de Garantía</h4>';
+          
+          if (rep.detalle_reparacion && rep.detalle_reparacion.length > 0) {
+            rep.detalle_reparacion.forEach(det => {
+              const gDesc = det.garantia?.descripcion || 'Garantía Estándar';
+              const diasDuracion = det.garantia?.dias_duracion || 30;
+              
+              let disponibleHasta = '---';
+              let diasRestantesText = 'Activa tras la entrega';
+              
+              if (rep.estado === 'Entregado' && rep.fecha_entrega) {
+                const fechaEntrega = new Date(rep.fecha_entrega);
+                const fechaLimite = new Date(fechaEntrega.getTime() + (diasDuracion * 24 * 60 * 60 * 1000));
+                disponibleHasta = fechaLimite.toLocaleDateString('es-MX');
+                
+                const hoy = new Date();
+                hoy.setHours(0,0,0,0);
+                const diffTime = fechaLimite - hoy;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays >= 0) {
+                  diasRestantesText = `🟢 ACTIVA (${diffDays} días restantes)`;
+                } else {
+                  diasRestantesText = '🔴 EXPIRADA';
+                }
+              } else {
+                disponibleHasta = 'Todavía no disponible (Se activa al entregar)';
+                diasRestantesText = '⏳ Por iniciar (Equipo no entregado)';
+              }
+              
+              garantiaHtml += `<div class="border-b border-gray-800 pb-2 last:border-b-0 last:pb-0 text-xs">
+                <div class="flex justify-between font-bold text-gray-200">
+                  <span>Refacción: ${det.producto?.nombre_producto || 'Servicio Técnico'}</span>
+                  <span class="text-brand">${gDesc}</span>
+                </div>
+                <div class="flex justify-between text-gray-400 mt-1">
+                  <span>Garantía disponible hasta:</span>
+                  <span class="text-gray-300 font-medium">${disponibleHasta}</span>
+                </div>
+                <div class="flex justify-between text-gray-400 mt-0.5">
+                  <span>Estado de cobertura:</span>
+                  <span class="font-bold">${diasRestantesText}</span>
+                </div>
+              </div>`;
+            });
+          } else {
+            let disponibleHasta = '---';
+            let diasRestantesText = 'Activa tras la entrega';
+            
+            if (rep.estado === 'Entregado' && rep.fecha_entrega) {
+              const fechaEntrega = new Date(rep.fecha_entrega);
+              const fechaLimite = new Date(fechaEntrega.getTime() + (30 * 24 * 60 * 60 * 1000));
+              disponibleHasta = fechaLimite.toLocaleDateString('es-MX');
+              
+              const hoy = new Date();
+              hoy.setHours(0,0,0,0);
+              const diffTime = fechaLimite - hoy;
+              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+              
+              if (diffDays >= 0) {
+                diasRestantesText = `🟢 ACTIVA (${diffDays} días restantes)`;
+              } else {
+                diasRestantesText = '🔴 EXPIRADA';
+              }
+            } else {
+              disponibleHasta = 'Todavía no disponible (Se activa al entregar)';
+              diasRestantesText = '⏳ Por iniciar (Equipo no entregado)';
+            }
+            
+            garantiaHtml += `<div class="text-xs">
+              <div class="flex justify-between font-bold text-gray-200">
+                <span>Servicio: Mano de obra general</span>
+                <span class="text-brand">Garantía Estándar (30 días)</span>
+              </div>
+              <div class="flex justify-between text-gray-400 mt-1">
+                <span>Garantía disponible hasta:</span>
+                <span class="text-gray-300 font-medium">${disponibleHasta}</span>
+              </div>
+              <div class="flex justify-between text-gray-400 mt-0.5">
+                <span>Estado de cobertura:</span>
+                <span class="font-bold">${diasRestantesText}</span>
+              </div>
+            </div>`;
+          }
+          garantiaHtml += '</div>';
+        }
+        
         resultado.innerHTML =
           '<div class="bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden fade-in">' +
             '<div class="bg-gray-800 px-6 py-4 flex items-center justify-between border-b border-gray-700">' +
@@ -153,7 +247,8 @@
             '<div class="p-6 space-y-4">' +
               '<div class="grid grid-cols-2 gap-4 text-sm">' +
                 '<div><div class="text-gray-500 text-xs mb-1">Cliente</div><div class="font-semibold">' + (rep.cliente?.nombre_completo || rep.dispositivo?.cliente?.nombre_completo || '—') + '</div></div>' +
-                '<div><div class="text-gray-500 text-xs mb-1">Dispositivo (ID)</div><div class="font-semibold">' + (rep.id_dispositivo||'—') + '</div></div>' +
+                '<div><div class="text-gray-500 text-xs mb-1">Equipo</div><div class="font-semibold text-white">' + (rep.dispositivo?.marca || '—') + ' ' + (rep.dispositivo?.modelo || '') + ' (' + (rep.dispositivo?.color || '') + ')</div></div>' +
+                '<div class="col-span-2"><div class="text-gray-500 text-xs mb-1">Descripción del Estado Físico</div><div class="font-semibold text-gray-300 bg-gray-950/40 p-3 rounded-xl border border-gray-800/50 italic">' + (rep.dispositivo?.descripcion || 'Sin observaciones') + '</div></div>' +
                 '<div><div class="text-gray-500 text-xs mb-1">Fecha Ingreso</div><div class="font-semibold text-gray-300">' + (rep.fecha_ingreso ? new Date(rep.fecha_ingreso).toLocaleDateString('es-MX') : '—') + '</div></div>' +
                 '<div><div class="text-gray-500 text-xs mb-1">Falla Reportada</div><div class="font-semibold text-gray-300">' + (rep.falla_reportada||'—') + '</div></div>' +
               '</div>' +
@@ -161,7 +256,8 @@
                 '<div><div class="text-gray-500 text-xs mb-1">Costo Estimado/Total</div><div class="font-bold text-white">' + fmt(rep.costo) + '</div></div>' +
                 '<div><div class="text-gray-500 text-xs mb-1">Anticipo Pagado</div><div class="font-bold text-brand">' + fmt(rep.anticipo) + '</div></div>' +
               '</div>' +
-              (rep.estado === 'Listo para Entrega' || rep.estado === 'Listo' ? '<div class="bg-amber-900/20 border border-amber-700/40 rounded-xl p-4 text-center"><div class="text-amber-400 font-semibold mb-1">🎉 ¡Tu equipo ya está listo!</div><div class="text-xs text-gray-400">Pasa a recogerlo al taller con tu comprobante.</div></div>' : '') +
+              garantiaHtml +
+              (rep.estado === 'Listo para Entrega' || rep.estado === 'Listo' || rep.estado === 'Listo para entrega' ? '<div class="bg-amber-900/20 border border-amber-700/40 rounded-xl p-4 text-center"><div class="text-amber-400 font-semibold mb-1">🎉 ¡Tu equipo ya está listo!</div><div class="text-xs text-gray-400">Pasa a recogerlo al taller con tu comprobante.</div></div>' : '') +
               (rep.estado === 'Entregado' ? '<div class="bg-emerald-900/20 border border-emerald-700/40 rounded-xl p-4 text-center"><div class="text-emerald-400 font-semibold mb-1">✅ Equipo entregado</div><div class="text-xs text-gray-400">Este equipo ya fue devuelto a su dueño.</div></div>' : '') +
             '</div>' +
           '</div>';
