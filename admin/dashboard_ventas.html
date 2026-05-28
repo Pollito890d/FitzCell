@@ -25,7 +25,7 @@
       body * {
         visibility: hidden !important;
       }
-      #modal-ticket, #modal-ticket * {
+      #modal-ticket, #modal-ticket *, #modal-ticket-recepcion, #modal-ticket-recepcion * {
         visibility: visible !important;
       }
       #modal-ticket {
@@ -64,6 +64,7 @@
       <a href="#" onclick="showSection('sec-inventario')" id="nav-sec-inventario" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📦 Catálogo</a>
       <a href="#" onclick="showSection('sec-garantias')" id="nav-sec-garantias" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🛡️ Garantías</a>
       <a href="#" onclick="showSection('sec-corte')" id="nav-sec-corte" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">💵 Corte de Caja</a>
+      <a href="#" onclick="showSection('sec-entregas')" id="nav-sec-entregas" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📦 Entregas</a>
     </nav>
     
     <button onclick="logout()" class="mt-auto p-3 bg-red-900/20 text-red-400 rounded-lg font-bold hover:bg-red-900/40 border border-red-900/50 transition-all flex justify-center items-center gap-2">
@@ -332,6 +333,38 @@
       </div>
     </section>
 
+    <!-- SECCIÓN: ENTREGAS -->
+    <section id="sec-entregas" class="fade-in hidden">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold mb-1">Equipos <span class="text-brand">Listos para la Entrega</span></h1>
+        <p class="text-gray-400">Liquidación, saldo y entrega de equipos reparados.</p>
+      </header>
+
+      <div class="mb-6">
+        <input type="text" id="entregas-buscador" oninput="filtrarEquiposListos()" placeholder="Buscar equipo listo por folio, cliente, dispositivo..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+      </div>
+
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-950 border-b border-gray-800 text-gray-400 text-sm">
+              <th class="p-4 font-semibold">Folio</th>
+              <th class="p-4 font-semibold">Cliente</th>
+              <th class="p-4 font-semibold">Dispositivo</th>
+              <th class="p-4 font-semibold">Falla / Diagnóstico</th>
+              <th class="p-4 font-semibold text-right">Costo Total</th>
+              <th class="p-4 font-semibold text-right">Anticipo</th>
+              <th class="p-4 font-semibold text-right">Saldo Pendiente</th>
+              <th class="p-4 font-semibold text-center">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="entregas-tbody" class="divide-y divide-gray-800 text-base">
+            <tr><td colspan="8" class="p-4 text-center text-gray-500">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
   </main>
 
   <!-- Modal de Ticket Térmico -->
@@ -388,6 +421,96 @@
     </div>
   </div>
 
+  <!-- Modal de Cobro de Reparación -->
+  <div id="modal-cobro-reparacion" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-gray-900 border border-gray-800 text-gray-100 w-[420px] p-6 rounded-2xl shadow-2xl relative">
+      <h2 class="text-xl font-bold text-white mb-6 border-b border-gray-800 pb-3 flex justify-between items-center">
+        <span>💵 Liquidar Reparación</span>
+        <button onclick="cerrarCobroReparacion()" class="text-gray-400 hover:text-white">❌</button>
+      </h2>
+      <div class="space-y-4">
+        <div class="bg-gray-950 p-4 rounded-xl border border-gray-800 space-y-2 text-sm">
+          <div class="flex justify-between"><span class="text-gray-500">Folio:</span><span id="cob-rep-folio" class="font-bold text-brand"></span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Cliente:</span><span id="cob-rep-cliente" class="font-bold text-white"></span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Equipo:</span><span id="cob-rep-equipo" class="text-gray-300"></span></div>
+          <div class="flex justify-between border-t border-gray-800 pt-2 text-base font-bold"><span class="text-gray-400">Saldo a Liquidar:</span><span id="cob-rep-saldo" class="text-brand"></span></div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Método de Pago</label>
+          <select id="cob-rep-metodo" onchange="toggleMetodoReparacion()" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm appearance-none cursor-pointer">
+            <option value="Efectivo">💵 Efectivo</option>
+            <option value="Transferencia">🏦 Transferencia Bancaria</option>
+          </select>
+        </div>
+
+        <div id="cob-rep-recibido-container">
+          <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">¿Con cuánto paga el cliente? ($)</label>
+          <input type="number" id="cob-rep-recibido" oninput="calcularCambioReparacion()" min="0" step="0.01" placeholder="0.00" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+        </div>
+
+        <div id="cob-rep-cambio-container" class="flex justify-between text-brand font-bold text-base bg-gray-950/60 p-3 rounded-xl border border-gray-800">
+          <span>Cambio a devolver</span>
+          <span id="cob-rep-cambio">$0.00</span>
+        </div>
+
+        <button onclick="guardarPagoYEntrega()" class="w-full bg-brand text-gray-950 py-4 rounded-xl font-bold text-lg hover:bg-brand-light transition shadow-[0_0_15px_rgba(7,183,107,0.3)]">
+          Confirmar Pago y Entrega
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Ticket de Recepción / Entrega (Ventas) -->
+  <div id="modal-ticket-recepcion" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden print:bg-white print:backdrop-blur-none print:absolute print:inset-0">
+    <div class="bg-white text-gray-900 w-80 p-6 rounded-2xl shadow-2xl relative flex flex-col print:shadow-none print:p-0 print:w-full font-mono text-xs max-h-[90vh] overflow-y-auto print:max-h-none print:overflow-visible">
+      <!-- Botones superiores -->
+      <div class="flex justify-between mb-4 border-b pb-2 print-hide">
+        <button onclick="window.print()" class="bg-brand text-gray-950 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-brand-dark transition">
+          🖨️ Imprimir
+        </button>
+        <button onclick="cerrarTicketRecepcion()" class="bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-bold hover:bg-gray-300 transition">
+          ❌ Cerrar
+        </button>
+      </div>
+
+      <!-- Contenido del Ticket Físico -->
+      <div class="text-center mb-4">
+        <h2 class="text-base font-bold uppercase tracking-wider text-gray-950">FITZCELL</h2>
+        <p class="text-[10px] text-gray-500">Servicio Técnico & Accesorios</p>
+        <p class="text-[10px] text-gray-500">C. Zaragoza 151-133, Barrio de San Antonio, 71266 San Pablo Huixtepec, Oax.</p>
+        <p class="text-[10px] text-gray-500">Tel: +52 951 581 2992</p>
+      </div>
+
+      <div class="border-t border-b border-dashed py-2 mb-4 text-gray-800 space-y-1">
+        <div class="text-center my-2">
+          <p id="tr-titulo-ticket" class="text-[10px] uppercase text-gray-500 font-bold">COMPROBANTE DE RECEPCIÓN</p>
+          <p id="tr-folio" class="text-4xl font-black text-gray-950 tracking-wider my-2 py-2 bg-gray-100 rounded border border-dashed border-gray-400 font-mono text-center">R-1000</p>
+        </div>
+        <div class="flex justify-between"><span>Fecha:</span><span id="tr-fecha">20/05/2026</span></div>
+      </div>
+
+      <div class="mb-4 text-gray-800 space-y-2 border-b border-dashed pb-2">
+        <p class="font-bold text-[10px] uppercase border-b pb-0.5 text-gray-600">Datos del Servicio</p>
+        <div><span class="text-gray-500">Cliente:</span> <span id="tr-cliente" class="font-bold">Juan Pérez</span></div>
+        <div><span class="text-gray-500">Teléfono:</span> <span id="tr-telefono">951 123 4567</span></div>
+        <div><span class="text-gray-500">Equipo:</span> <span id="tr-equipo" class="font-bold">iPhone 13 Pro</span></div>
+        <div><span class="text-gray-500">Detalles/Estado:</span> <span id="tr-descripcion-ticket">—</span></div>
+        <div class="mt-1"><span class="text-gray-500">Falla Reportada:</span><br><p id="tr-falla" class="text-[10px] bg-gray-100 p-1.5 rounded mt-0.5 italic text-gray-700 whitespace-pre-wrap">Pantalla estrellada</p></div>
+      </div>
+
+      <div id="tr-seccion-pagos" class="pt-1 mb-6 text-[11px] text-gray-800 space-y-1">
+        <!-- Relleno dinámico -->
+      </div>
+
+      <div class="text-center text-[10px] text-gray-500 space-y-1 border-t border-dashed pt-4">
+        <p class="font-bold text-gray-700">Conserve este comprobante</p>
+        <p>Garantía aplicable únicamente a las piezas sustituidas y mano de obra bajo condiciones normales de uso.</p>
+        <p class="mt-2 text-[9px] font-mono text-gray-400">fitzcell.vercel.app</p>
+      </div>
+    </div>
+  </div>
+
   <script>
     const r = localStorage.getItem('fitzcell_rol'); 
     if(r !== 'ventas' && r !== 'admin') { window.location.href = '../login.html'; }
@@ -438,6 +561,9 @@
       if(sectionId === 'sec-corte') {
          cargarTotalesCorte();
          cargarHistorialCortes();
+      }
+      if(sectionId === 'sec-entregas') {
+         cargarEquiposListos();
       }
     }
 
@@ -990,6 +1116,227 @@
       } catch (e) {
         console.error('Error al cargar historial de cortes:', e);
       }
+    }
+
+    let readyReparaciones = [];
+    let activeRepId = null;
+    let activeRepSaldo = 0;
+
+    async function cargarEquiposListos() {
+      try {
+        const res = await fetch('/api/reparaciones');
+        if (res.ok) {
+          const list = await res.json();
+          readyReparaciones = list.filter(r => r.estado === 'Listo para entrega' || r.estado === 'Listo para Entrega' || r.estado === 'Listo');
+          filtrarEquiposListos();
+        }
+      } catch (e) {
+        console.error('Error al cargar equipos listos:', e);
+      }
+    }
+
+    function filtrarEquiposListos() {
+      const query = document.getElementById('entregas-buscador').value.toLowerCase().trim();
+      let data = readyReparaciones;
+      
+      if (query) {
+        data = data.filter(r => {
+          const cliente = (r.dispositivo?.cliente?.nombre_completo || r.cliente_nombre || '').toLowerCase();
+          const folio = (r.codigo_seguimiento || '').toLowerCase();
+          const dev = (r.dispositivo ? `${r.dispositivo.marca || ''} ${r.dispositivo.modelo || ''}` : '').toLowerCase();
+          return cliente.includes(query) || folio.includes(query) || dev.includes(query);
+        });
+      }
+      
+      const tbody = document.getElementById('entregas-tbody');
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-gray-500">No hay ningún equipo en mostrador listo para entrega.</td></tr>';
+        return;
+      }
+      
+      let html = '';
+      data.forEach(r => {
+        const clientName = r.dispositivo?.cliente?.nombre_completo || 'Cliente de paso';
+        const deviceName = r.dispositivo ? `${r.dispositivo.marca || ''} ${r.dispositivo.modelo || ''} (${r.dispositivo.color || ''})` : 'Dispositivo Desconocido';
+        const fault = r.falla_reportada || '—';
+        const diag = r.diagnostico || '—';
+        const total = parseFloat(r.costo) || 0;
+        const anticipo = parseFloat(r.anticipo) || 0;
+        const saldo = Math.max(0, total - anticipo);
+        
+        html += `<tr class="border-b border-gray-800 hover:bg-gray-800/30 transition">
+          <td class="p-4 font-bold text-white">${r.codigo_seguimiento || '—'}</td>
+          <td class="p-4 text-gray-300 font-medium">${clientName}</td>
+          <td class="p-4 text-gray-400">${deviceName}</td>
+          <td class="p-4 text-xs text-gray-400">
+            <span class="block"><strong>Falla:</strong> ${fault}</span>
+            <span class="block mt-1 text-gray-550"><strong>Diag:</strong> ${diag}</span>
+          </td>
+          <td class="p-4 text-right text-gray-400">${formatCurrency(total)}</td>
+          <td class="p-4 text-right text-gray-500">${formatCurrency(anticipo)}</td>
+          <td class="p-4 text-right text-brand font-black">${formatCurrency(saldo)}</td>
+          <td class="p-4 text-center">
+            <button onclick="abrirCobroReparacion(${r.id_orden}, '${r.codigo_seguimiento}', '${clientName.replace(/'/g, "\\'")}', '${deviceName.replace(/'/g, "\\'")}', ${saldo})" class="bg-brand hover:bg-brand-light text-gray-950 px-3 py-1.5 rounded-lg font-bold text-xs transition shadow-[0_0_8px_rgba(7,183,107,0.2)]">
+              Cobrar y Entregar
+            </button>
+          </td>
+        </tr>`;
+      });
+      tbody.innerHTML = html;
+    }
+
+    function abrirCobroReparacion(id_orden, codigo_seguimiento, cliente, dispositivo, saldo) {
+      activeRepId = id_orden;
+      activeRepSaldo = saldo;
+      
+      document.getElementById('cob-rep-folio').innerText = codigo_seguimiento || '—';
+      document.getElementById('cob-rep-cliente').innerText = cliente;
+      document.getElementById('cob-rep-equipo').innerText = dispositivo;
+      document.getElementById('cob-rep-saldo').innerText = formatCurrency(saldo);
+      
+      document.getElementById('cob-rep-recibido').value = '';
+      document.getElementById('cob-rep-cambio').innerText = formatCurrency(0);
+      document.getElementById('cob-rep-metodo').value = 'Efectivo';
+      
+      toggleMetodoReparacion();
+      document.getElementById('modal-cobro-reparacion').classList.remove('hidden');
+    }
+
+    function cerrarCobroReparacion() {
+      document.getElementById('modal-cobro-reparacion').classList.add('hidden');
+    }
+
+    function toggleMetodoReparacion() {
+      const met = document.getElementById('cob-rep-metodo').value;
+      const rec = document.getElementById('cob-rep-recibido-container');
+      const cam = document.getElementById('cob-rep-cambio-container');
+      
+      if (met === 'Efectivo') {
+        rec.classList.remove('hidden');
+        cam.classList.remove('hidden');
+        calcularCambioReparacion();
+      } else {
+        rec.classList.add('hidden');
+        cam.classList.add('hidden');
+      }
+    }
+
+    function calcularCambioReparacion() {
+      const recibido = parseFloat(document.getElementById('cob-rep-recibido').value) || 0;
+      const cambio = Math.max(0, recibido - activeRepSaldo);
+      document.getElementById('cob-rep-cambio').innerText = formatCurrency(cambio);
+    }
+
+    async function guardarPagoYEntrega() {
+      const metodo_pago = document.getElementById('cob-rep-metodo').value;
+      const recibido = parseFloat(document.getElementById('cob-rep-recibido').value) || 0;
+      
+      if (metodo_pago === 'Efectivo' && recibido < activeRepSaldo) {
+        alert('El pago recibido es menor al saldo pendiente.');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/ventas/reparacion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id_orden: activeRepId,
+            total: activeRepSaldo,
+            metodo_pago
+          })
+        });
+        
+        if (response.ok) {
+          const folio = document.getElementById('cob-rep-folio').innerText;
+          
+          alert('¡Reparación liquidada y entregada con éxito!');
+          cerrarCobroReparacion();
+          cargarEquiposListos();
+          
+          const resDetail = await fetch(`/api/reparaciones/${folio}`);
+          if (resDetail.ok) {
+            const rep = await resDetail.json();
+            abrirTicketRecepcion(rep);
+          }
+        } else {
+          const err = await response.json();
+          alert('Error: ' + err.message);
+        }
+      } catch (e) {
+        console.error('Error al registrar pago y entrega:', e);
+        alert('Error de red al liquidar la reparación.');
+      }
+    }
+
+    function abrirTicketRecepcion(rep) {
+      document.getElementById('tr-folio').innerText = rep.codigo_seguimiento || `R-${rep.id_orden}`;
+      
+      const fechaIngresoStr = rep.fecha_entrada ? new Date(rep.fecha_entrada).toLocaleString('es-MX') : new Date().toLocaleString('es-MX');
+      document.getElementById('tr-fecha').innerText = fechaIngresoStr;
+      
+      const clientName = rep.dispositivo?.cliente?.nombre_completo || rep.cliente?.nombre_completo || '—';
+      const phone = rep.dispositivo?.cliente?.telefono || rep.cliente_telefono || '—';
+      const deviceName = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color ? `(${rep.dispositivo.color})` : ''}` : '—';
+      
+      document.getElementById('tr-cliente').innerText = clientName;
+      document.getElementById('tr-telefono').innerText = phone;
+      document.getElementById('tr-equipo').innerText = deviceName;
+      document.getElementById('tr-falla').innerText = rep.falla_reportada || '—';
+      document.getElementById('tr-descripcion-ticket').innerText = rep.dispositivo?.descripcion || '—';
+      
+      const esEntregado = rep.estado === 'Entregado';
+      let htmlPagos = '';
+      
+      if (esEntregado) {
+        document.getElementById('tr-titulo-ticket').innerText = 'COMPROBANTE DE ENTREGA / GARANTÍA';
+        
+        const metodoPago = rep.venta && rep.venta[0] ? rep.venta[0].metodo_pago : 'Efectivo';
+        const totalPagado = rep.costo || 0;
+        const anticipo = rep.anticipo || 0;
+        const liquidado = Math.max(0, totalPagado - anticipo);
+        const fechaEntregaStr = rep.fecha_entrega ? new Date(rep.fecha_entrega).toLocaleString('es-MX') : new Date().toLocaleString('es-MX');
+        
+        htmlPagos += `
+          <div class="flex justify-between"><span>Costo Total:</span><span>${formatCurrency(totalPagado)}</span></div>
+          <div class="flex justify-between"><span>Anticipo Pagado:</span><span>${formatCurrency(anticipo)}</span></div>
+          <div class="flex justify-between border-b border-dashed pb-1"><span>Saldo Liquidado:</span><span>${formatCurrency(liquidado)}</span></div>
+          <div class="flex justify-between text-xs font-bold uppercase mt-1"><span>Total Pagado:</span><span class="text-base font-black text-brand">${formatCurrency(totalPagado)}</span></div>
+          <div class="flex justify-between text-[10px] text-gray-500 mt-2"><span>Fecha Entrega:</span><span>${fechaEntregaStr}</span></div>
+          <div class="flex justify-between text-[10px] text-gray-500"><span>Método de Pago:</span><span>${metodoPago}</span></div>
+        `;
+        
+        if (rep.detalle_reparacion && rep.detalle_reparacion.length > 0) {
+          htmlPagos += `<div class="mt-4 border-t border-dashed pt-2 text-[9px] text-gray-700 space-y-1">
+            <p class="font-bold uppercase text-[9px] text-gray-600">Pólizas de Garantía Activas</p>`;
+          rep.detalle_reparacion.forEach(det => {
+            const gDesc = det.garantia?.descripcion || 'Garantía Estándar';
+            const diasDuracion = det.garantia?.dias_duracion || 30;
+            const fEntrega = rep.fecha_entrega ? new Date(rep.fecha_entrega) : new Date();
+            const fVence = new Date(fEntrega.getTime() + (diasDuracion * 24 * 60 * 60 * 1000));
+            htmlPagos += `
+              <div class="flex justify-between">
+                <span class="truncate max-w-[120px]">${det.producto?.nombre_producto || 'Mano de obra'}</span>
+                <span>${gDesc} (Vence: ${fVence.toLocaleDateString('es-MX')})</span>
+              </div>
+            `;
+          });
+          htmlPagos += `</div>`;
+        }
+      } else {
+        document.getElementById('tr-titulo-ticket').innerText = 'COMPROBANTE DE RECEPCIÓN';
+        htmlPagos += `
+          <div class="flex justify-between"><span>Costo Estimado:</span><span>${formatCurrency(rep.costo || 0)}</span></div>
+          <div class="flex justify-between text-xs font-bold uppercase border-t border-dashed pt-1 mt-1"><span>Anticipo:</span><span class="text-base font-black text-brand">${formatCurrency(rep.anticipo || 0)}</span></div>
+        `;
+      }
+      
+      document.getElementById('tr-seccion-pagos').innerHTML = htmlPagos;
+      document.getElementById('modal-ticket-recepcion').classList.remove('hidden');
+    }
+
+    function cerrarTicketRecepcion() {
+      document.getElementById('modal-ticket-recepcion').classList.add('hidden');
     }
 
     showSection('sec-pos');

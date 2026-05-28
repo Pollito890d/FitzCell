@@ -51,6 +51,51 @@ router.post('/', async (req, res) => {
     }
 });
 
+// Registrar cobro y entrega de una reparación
+router.post('/reparacion', async (req, res) => {
+    const { id_orden, total, metodo_pago } = req.body;
+    try {
+        // 1. Crear la venta asociada a la orden
+        const { data: newVenta, error: errVenta } = await supabase
+            .from('venta')
+            .insert([{ 
+                id_orden, 
+                total, 
+                subtotal: total, 
+                metodo_pago: metodo_pago || 'Efectivo' 
+            }])
+            .select();
+        
+        if (errVenta) throw errVenta;
+
+        // 2. Obtener el costo total de la reparación para liquidarlo
+        const { data: ord, error: errOrdSelect } = await supabase
+            .from('orden_reparacion')
+            .select('costo')
+            .eq('id_orden', id_orden)
+            .single();
+        
+        if (errOrdSelect) throw errOrdSelect;
+
+        // 3. Actualizar la orden a 'Entregado', liquidando el anticipo e ingresando la fecha de entrega
+        const { error: errOrd } = await supabase
+            .from('orden_reparacion')
+            .update({ 
+                estado: 'Entregado',
+                anticipo: ord.costo, // Liquidar el saldo completo
+                fecha_entrega: new Date().toISOString()
+            })
+            .eq('id_orden', id_orden);
+        
+        if (errOrd) throw errOrd;
+
+        res.status(201).json({ message: 'Cobro y entrega registrados exitosamente', id_venta: newVenta[0].id_venta });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al registrar entrega de reparación', error: error.message });
+    }
+});
+
 // Obtener todas las ventas con detalles
 router.get('/', async (req, res) => {
     try {

@@ -193,8 +193,8 @@
               <th class="p-4 font-semibold">Contacto</th>
               <th class="p-4 font-semibold">Dispositivo</th>
               <th class="p-4 font-semibold">Falla Reportada</th>
-              <th class="p-4 font-semibold text-center">ID Venta</th>
-              <th class="p-4 font-semibold text-center">Costo Aprox</th>
+              <th class="p-4 font-semibold text-center">Ticket</th>
+              <th class="p-4 font-semibold text-right">Costo Aprox</th>
               <th class="p-4 font-semibold text-center">Estado</th>
             </tr>
           </thead>
@@ -361,12 +361,22 @@
         </div>
 
         <!-- Gráfico 3: Marcas y Modelos Más Reparados -->
-        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col lg:col-span-2">
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col">
           <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-bl-full blur-2xl"></div>
           <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">📱 Equipos Más Reparados</h3>
           <p class="text-xs text-gray-500 mb-4">Marcas y modelos de dispositivos atendidos en el taller.</p>
           <div class="flex-1 min-h-[350px] flex items-center justify-center">
             <canvas id="chart-marcas" class="w-full h-full"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico 4: Clasificación por Método de Pago -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 rounded-bl-full blur-xl"></div>
+          <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">💵 Método de Pago</h3>
+          <p class="text-xs text-gray-500 mb-4">Distribución de ingresos según el método de pago utilizado.</p>
+          <div class="flex-1 min-h-[350px] flex items-center justify-center max-w-[320px] mx-auto">
+            <canvas id="chart-pagos" class="w-full h-full"></canvas>
           </div>
         </div>
       </div>
@@ -687,7 +697,7 @@
 
       <div class="border-t border-b border-dashed py-2 mb-4 text-gray-800 space-y-1">
         <div class="text-center my-2">
-          <p class="text-[10px] uppercase text-gray-500 font-bold">COMPROBANTE DE RECEPCIÓN</p>
+          <p id="tr-titulo-ticket" class="text-[10px] uppercase text-gray-500 font-bold">COMPROBANTE DE RECEPCIÓN</p>
           <p id="tr-folio" class="text-4xl font-black text-gray-950 tracking-wider my-2 py-2 bg-gray-100 rounded border border-dashed border-gray-400 font-mono text-center">R-1000</p>
         </div>
         <div class="flex justify-between"><span>Fecha:</span><span id="tr-fecha">20/05/2026</span></div>
@@ -702,8 +712,8 @@
         <div class="mt-1"><span class="text-gray-500">Falla Reportada:</span><br><p id="tr-falla" class="text-[10px] bg-gray-100 p-1.5 rounded mt-0.5 italic text-gray-700 whitespace-pre-wrap">Pantalla estrellada</p></div>
       </div>
 
-      <div class="pt-1 mb-6 text-[11px] text-gray-800 space-y-1">
-        <div class="flex justify-between text-xs font-bold uppercase"><span>Anticipo:</span><span id="tr-anticipo" class="text-base font-black text-brand">$0.00</span></div>
+      <div id="tr-seccion-pagos" class="pt-1 mb-6 text-[11px] text-gray-800 space-y-1">
+        <!-- Contenido dinámico de pagos y garantías -->
       </div>
 
       <div class="text-center text-[10px] text-gray-500 space-y-1 border-t border-dashed pt-4">
@@ -736,8 +746,79 @@
       document.getElementById('tr-telefono').innerText = telefono;
       document.getElementById('tr-equipo').innerText = dispositivo;
       document.getElementById('tr-falla').innerText = falla;
-      document.getElementById('tr-anticipo').innerText = fmt(anticipo);
       document.getElementById('tr-descripcion-ticket').innerText = descripcion || '—';
+      
+      document.getElementById('tr-titulo-ticket').innerText = 'COMPROBANTE DE RECEPCIÓN';
+      document.getElementById('tr-seccion-pagos').innerHTML = `
+        <div class="flex justify-between text-xs font-bold uppercase"><span>Anticipo:</span><span class="text-base font-black text-brand">${fmt(anticipo)}</span></div>
+      `;
+      
+      document.getElementById('modal-ticket-recepcion').classList.remove('hidden');
+    }
+
+    function abrirTicketRecepcionConObjeto(rep) {
+      document.getElementById('tr-folio').innerText = rep.codigo_seguimiento || `R-${rep.id_orden}`;
+      
+      const fechaIngresoStr = rep.fecha_entrada ? new Date(rep.fecha_entrada).toLocaleString('es-MX') : new Date().toLocaleString('es-MX');
+      document.getElementById('tr-fecha').innerText = fechaIngresoStr;
+      
+      const clientName = rep.dispositivo?.cliente?.nombre_completo || rep.cliente?.nombre_completo || '—';
+      const phone = rep.dispositivo?.cliente?.telefono || rep.cliente_telefono || '—';
+      const deviceName = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color ? `(${rep.dispositivo.color})` : ''}` : '—';
+      
+      document.getElementById('tr-cliente').innerText = clientName;
+      document.getElementById('tr-telefono').innerText = phone;
+      document.getElementById('tr-equipo').innerText = deviceName;
+      document.getElementById('tr-falla').innerText = rep.falla_reportada || '—';
+      document.getElementById('tr-descripcion-ticket').innerText = rep.dispositivo?.descripcion || '—';
+      
+      const esEntregado = rep.estado === 'Entregado';
+      let htmlPagos = '';
+      
+      if (esEntregado) {
+        document.getElementById('tr-titulo-ticket').innerText = 'COMPROBANTE DE ENTREGA / GARANTÍA';
+        
+        const metodoPago = rep.venta && rep.venta[0] ? rep.venta[0].metodo_pago : 'Efectivo';
+        const totalPagado = rep.costo || 0;
+        const anticipo = rep.anticipo || 0;
+        const liquidado = Math.max(0, totalPagado - anticipo);
+        const fechaEntregaStr = rep.fecha_entrega ? new Date(rep.fecha_entrega).toLocaleString('es-MX') : new Date().toLocaleString('es-MX');
+        
+        htmlPagos += `
+          <div class="flex justify-between"><span>Costo Total:</span><span>${fmt(totalPagado)}</span></div>
+          <div class="flex justify-between"><span>Anticipo Pagado:</span><span>${fmt(anticipo)}</span></div>
+          <div class="flex justify-between border-b border-dashed pb-1"><span>Saldo Liquidado:</span><span>${fmt(liquidado)}</span></div>
+          <div class="flex justify-between text-xs font-bold uppercase mt-1"><span>Total Pagado:</span><span class="text-base font-black text-brand">${fmt(totalPagado)}</span></div>
+          <div class="flex justify-between text-[10px] text-gray-500 mt-2"><span>Fecha Entrega:</span><span>${fechaEntregaStr}</span></div>
+          <div class="flex justify-between text-[10px] text-gray-500"><span>Método de Pago:</span><span>${metodoPago}</span></div>
+        `;
+        
+        if (rep.detalle_reparacion && rep.detalle_reparacion.length > 0) {
+          htmlPagos += `<div class="mt-4 border-t border-dashed pt-2 text-[9px] text-gray-700 space-y-1">
+            <p class="font-bold uppercase text-[9px] text-gray-600">Pólizas de Garantía Activas</p>`;
+          rep.detalle_reparacion.forEach(det => {
+            const gDesc = det.garantia?.descripcion || 'Garantía Estándar';
+            const diasDuracion = det.garantia?.dias_duracion || 30;
+            const fEntrega = rep.fecha_entrega ? new Date(rep.fecha_entrega) : new Date();
+            const fVence = new Date(fEntrega.getTime() + (diasDuracion * 24 * 60 * 60 * 1000));
+            htmlPagos += `
+              <div class="flex justify-between">
+                <span class="truncate max-w-[120px]">${det.producto?.nombre_producto || 'Mano de obra'}</span>
+                <span>${gDesc} (Vence: ${fVence.toLocaleDateString('es-MX')})</span>
+              </div>
+            `;
+          });
+          htmlPagos += `</div>`;
+        }
+      } else {
+        document.getElementById('tr-titulo-ticket').innerText = 'COMPROBANTE DE RECEPCIÓN';
+        htmlPagos += `
+          <div class="flex justify-between"><span>Costo Estimado:</span><span>${fmt(rep.costo || 0)}</span></div>
+          <div class="flex justify-between text-xs font-bold uppercase border-t border-dashed pt-1 mt-1"><span>Anticipo:</span><span class="text-base font-black text-brand">${fmt(rep.anticipo || 0)}</span></div>
+        `;
+      }
+      
+      document.getElementById('tr-seccion-pagos').innerHTML = htmlPagos;
       document.getElementById('modal-ticket-recepcion').classList.remove('hidden');
     }
 
@@ -1104,6 +1185,7 @@
         else if (rep.estado === 'Listo' || rep.estado === 'Listo para entrega') badgeColor = 'bg-brand/20 text-brand border-brand/30';
         else if (rep.estado === 'Entregado') badgeColor = 'bg-purple-900/30 text-purple-400 border-purple-900/50';
 
+        const repJsonEscaped = JSON.stringify(rep).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         h += `<tr onclick="verDetalleReparacion('${rep.codigo_seguimiento}')" class="hover:bg-gray-800/70 cursor-pointer transition">
           <td class="p-4 font-bold text-white">${rep.codigo_seguimiento || '—'}</td>
           <td class="p-4 text-gray-300">${fecha}</td>
@@ -1111,7 +1193,11 @@
           <td class="p-4 text-gray-400">${contact}</td>
           <td class="p-4 text-gray-400">${devText}</td>
           <td class="p-4 text-gray-400 truncate max-w-xs" title="${rep.falla_reportada || ''}">${rep.falla_reportada || '—'}</td>
-          <td class="p-4 font-mono font-bold text-blue-400 text-center">${idVenta}</td>
+          <td class="p-4 text-center">
+            <button onclick="event.stopPropagation(); abrirTicketRecepcionConObjeto(JSON.parse('${repJsonEscaped}'))" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded font-bold text-xs transition">
+              📄 Ticket
+            </button>
+          </td>
           <td class="p-4 font-bold text-brand text-right">${fmt(rep.costo)}</td>
           <td class="p-4 text-center">
             <span class="px-2.5 py-1 rounded text-xs border font-bold ${badgeColor}">${rep.estado}</span>
@@ -1204,6 +1290,7 @@
     let chartProductos = null;
     let chartFallas = null;
     let chartMarcas = null;
+    let chartPagos = null;
 
     async function loadEstadisticas() {
       try {
@@ -1277,6 +1364,7 @@
         if (chartProductos) chartProductos.destroy();
         if (chartFallas) chartFallas.destroy();
         if (chartMarcas) chartMarcas.destroy();
+        if (chartPagos) chartPagos.destroy();
 
         // Estilos y Paletas Modernas
         const colorsGreen = {
@@ -1422,6 +1510,69 @@
                 ticks: { color: '#9ca3af', font: { family: 'monospace', size: 10 } }
               }
             }
+          }
+        });
+
+        // 4. Agrupar Método de Pago (Ingresos/Ventas)
+        const pagosCounts = { 'Efectivo': 0, 'Transferencia': 0 };
+        ventas.forEach(v => {
+          const m = v.metodo_pago || 'Efectivo';
+          const totalVal = parseFloat(v.total) || 0;
+          if (pagosCounts[m] !== undefined) {
+            pagosCounts[m] += totalVal;
+          } else {
+            pagosCounts[m] = totalVal;
+          }
+        });
+
+        const ctxPagos = document.getElementById('chart-pagos').getContext('2d');
+        chartPagos = new Chart(ctxPagos, {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(pagosCounts),
+            datasets: [{
+              data: Object.values(pagosCounts),
+              backgroundColor: [
+                'rgba(7, 183, 107, 0.65)',
+                'rgba(99, 102, 241, 0.65)'
+              ],
+              borderColor: [
+                '#07B76B',
+                '#6366f1'
+              ],
+              borderWidth: 2,
+              hoverOffset: 10
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: '#e5e7eb',
+                  font: { size: 10, weight: 'bold' },
+                  padding: 15,
+                  usePointStyle: true
+                }
+              },
+              tooltip: {
+                backgroundColor: '#1f2937',
+                titleColor: '#fff',
+                bodyColor: '#e5e7eb',
+                borderColor: '#374151',
+                borderWidth: 1,
+                callbacks: {
+                  label: function(context) {
+                    const label = context.label || '';
+                    const value = context.parsed || 0;
+                    return ` ${label}: ${fmt(value)}`;
+                  }
+                }
+              }
+            },
+            cutout: '65%'
           }
         });
 
