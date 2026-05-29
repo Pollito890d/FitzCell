@@ -140,9 +140,31 @@
                 <textarea id="diag-texto" rows="4" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition" placeholder="Describe qué le falla al equipo y qué se necesita hacer..."></textarea>
               </div>
 
+              <!-- Costo de Refacciones (Solo Lectura) -->
               <div>
-                <label class="block text-sm font-medium text-gray-400 mb-1">Costo Final de la Reparación ($)</label>
-                <input type="number" id="diag-costo" min="0" step="0.01" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition" placeholder="0.00">
+                <label class="block text-sm font-medium text-gray-400 mb-1">Costo Refacciones ($)</label>
+                <div class="relative">
+                  <span class="absolute left-4 top-3 text-gray-500 font-bold">$</span>
+                  <input type="number" id="diag-costo-refacciones" readonly min="0" step="0.01" value="0.00" class="w-full bg-gray-950 border border-gray-800 rounded-xl pl-8 pr-4 py-3 text-gray-500 font-mono font-bold cursor-not-allowed outline-none transition" placeholder="0.00">
+                </div>
+              </div>
+
+              <!-- Costo de Mano de Obra (Rellenable) -->
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Costo Mano de Obra ($) *</label>
+                <div class="relative">
+                  <span class="absolute left-4 top-3 text-gray-500 font-bold">$</span>
+                  <input type="number" id="diag-costo-mano-obra" oninput="calcularCostoTotalDiagnostico()" min="0" step="0.01" class="w-full bg-gray-950 border border-gray-700 rounded-xl pl-8 pr-4 py-3 text-white focus:border-brand outline-none transition font-mono font-bold" placeholder="0.00">
+                </div>
+              </div>
+
+              <!-- Costo Total (Solo Lectura) -->
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Costo Total ($)</label>
+                <div class="relative">
+                  <span class="absolute left-4 top-3 text-brand font-black">$</span>
+                  <input type="number" id="diag-costo" readonly min="0" step="0.01" value="0.00" class="w-full bg-gray-950 border border-gray-800 rounded-xl pl-8 pr-4 py-3 text-brand font-mono font-black cursor-not-allowed outline-none transition" placeholder="0.00">
+                </div>
               </div>
               
               <div>
@@ -300,9 +322,19 @@
         <p class="text-gray-400">Monitor del estado de todas las reparaciones en el taller.</p>
       </header>
 
-      <!-- Buscador de Reparaciones Globales -->
-      <div class="mb-6">
-        <input type="text" id="global-rep-buscador" oninput="filtrarReparacionesGlobales()" placeholder="Buscar reparación global por folio, cliente, dispositivo..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+      <!-- Buscadores de Reparaciones Globales -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
+        <div class="md:col-span-8">
+          <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Buscar por Texto</label>
+          <input type="text" id="global-rep-buscador" oninput="resetReparacionesPaginacion(); filtrarReparacionesGlobales()" placeholder="Buscar por folio, cliente, dispositivo..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+        </div>
+        <div class="md:col-span-4">
+          <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Filtrar por Fecha de Ingreso</label>
+          <div class="relative">
+            <input type="date" id="global-rep-fecha-buscador" oninput="resetReparacionesPaginacion(); filtrarReparacionesGlobales()" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm cursor-pointer font-mono">
+            <button onclick="document.getElementById('global-rep-fecha-buscador').value = ''; resetReparacionesPaginacion(); filtrarReparacionesGlobales();" type="button" class="absolute right-3 top-3 text-red-400 hover:text-red-300 text-xs font-bold transition">Limpiar</button>
+          </div>
+        </div>
       </div>
       
       <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
@@ -325,6 +357,17 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Paginación de Reparaciones Globales -->
+      <div class="flex items-center justify-between mt-6 bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-lg">
+        <button onclick="repCambiarPagina(-1)" id="btn-rep-prev" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          ◀ Anterior
+        </button>
+        <span id="rep-paginacion-info" class="text-xs font-bold text-gray-400 tracking-wider">Página 1 de 1</span>
+        <button onclick="repCambiarPagina(1)" id="btn-rep-next" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          Siguiente ▶
+        </button>
+      </div>
     </section>
 
 
@@ -337,97 +380,119 @@
         </div>
       </header>
 
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-lg max-w-2xl">
-        <form id="form-nueva-reparacion" onsubmit="crearNuevaReparacion(event)" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Nombre del Cliente *</label>
-              <input type="text" id="nr-cliente" required placeholder="Ej. Juan Pérez" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Teléfono *</label>
-              <input type="text" id="nr-telefono" required placeholder="Ej. 951 123 4567" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Correo Electrónico</label>
-              <input type="email" id="nr-email" placeholder="ejemplo@correo.com" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Marca del Dispositivo *</label>
-              <input type="text" id="nr-marca" required placeholder="Ej. Apple" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Modelo del Dispositivo *</label>
-              <input type="text" id="nr-modelo" required placeholder="Ej. iPhone 13 Pro" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Color *</label>
-              <input type="text" id="nr-color" required placeholder="Ej. Azul Sierra" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Contraseña/Pin de Bloqueo</label>
-              
-              <!-- Selector de tipo de contraseña -->
-              <div class="flex gap-2 mb-2">
-                <button type="button" onclick="setContraseniaTipo('texto')" id="btn-tipo-texto" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition bg-brand text-gray-950 border border-brand/20">PIN / Texto</button>
-                <button type="button" onclick="setContraseniaTipo('patron')" id="btn-tipo-patron" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition bg-gray-950 text-gray-400 border border-gray-800 hover:bg-gray-900">Patrón (Dibujar)</button>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-7xl mx-auto">
+        <!-- Formulario (Izquierda) -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 lg:col-span-7 shadow-lg">
+          <h2 class="text-2xl font-bold mb-6 text-white border-b border-gray-800 pb-4">Formulario de Registro</h2>
+          <form id="form-nueva-reparacion" onsubmit="crearNuevaReparacion(event)" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Nombre del Cliente *</label>
+                <input type="text" id="nr-cliente" required placeholder="Ej. Juan Pérez" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
               </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Teléfono *</label>
+                <input type="text" id="nr-telefono" required placeholder="Ej. 951 123 4567" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Correo Electrónico</label>
+                <input type="email" id="nr-email" placeholder="ejemplo@correo.com" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Marca del Dispositivo *</label>
+                <input type="text" id="nr-marca" required placeholder="Ej. Apple" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Modelo del Dispositivo *</label>
+                <input type="text" id="nr-modelo" required placeholder="Ej. iPhone 13 Pro" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Color *</label>
+                <input type="text" id="nr-color" required placeholder="Ej. Azul Sierra" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Contraseña/Pin de Bloqueo</label>
+                
+                <!-- Selector de tipo de contraseña -->
+                <div class="flex gap-2 mb-2">
+                  <button type="button" onclick="setContraseniaTipo('texto')" id="btn-tipo-texto" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition bg-brand text-gray-950 border border-brand/20">PIN / Texto</button>
+                  <button type="button" onclick="setContraseniaTipo('patron')" id="btn-tipo-patron" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition bg-gray-950 text-gray-400 border border-gray-800 hover:bg-gray-900">Patrón (Dibujar)</button>
+                </div>
 
-              <!-- Input normal para PIN / Texto -->
-              <input type="text" id="nr-contrasenia" placeholder="Ej. 1234 o Patrón" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-              
-              <!-- Contenedor del Dibujador de Patrón -->
-              <div id="patron-drawer-container" class="hidden mt-3 p-4 bg-gray-950/60 border border-gray-800 rounded-2xl text-center">
-                <p class="text-xs text-gray-400 mb-3 font-semibold">Dibuja el patrón arrastrando sobre los círculos:</p>
-                <div class="relative w-56 h-56 bg-gray-950/90 border border-gray-800 rounded-2xl mx-auto p-4 flex items-center justify-center select-none" id="pattern-container">
-                  <div class="grid grid-cols-3 gap-6 w-full h-full relative" id="pattern-grid">
-                    <div data-index="1" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="2" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="3" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="4" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="5" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="6" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="7" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="8" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="9" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                <!-- Input normal para PIN / Texto -->
+                <input type="text" id="nr-contrasenia" placeholder="Ej. 1234 o Patrón" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+                
+                <!-- Contenedor del Dibujador de Patrón -->
+                <div id="patron-drawer-container" class="hidden mt-3 p-4 bg-gray-950/60 border border-gray-800 rounded-2xl text-center">
+                  <p class="text-xs text-gray-400 mb-3 font-semibold">Dibuja el patrón arrastrando sobre los círculos:</p>
+                  <div class="relative w-56 h-56 bg-gray-950/90 border border-gray-800 rounded-2xl mx-auto p-4 flex items-center justify-center select-none" id="pattern-container">
+                    <div class="grid grid-cols-3 gap-6 w-full h-full relative" id="pattern-grid">
+                      <div data-index="1" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="2" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="3" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="4" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="5" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="6" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="7" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="8" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="9" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                    </div>
+                    <svg class="absolute inset-0 pointer-events-none w-full h-full" id="pattern-svg"></svg>
                   </div>
-                  <svg class="absolute inset-0 pointer-events-none w-full h-full" id="pattern-svg"></svg>
+                  <div class="mt-3 flex items-center justify-between">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">Patrón: <span id="pattern-sequence-text" class="text-brand">Ninguno</span></span>
+                    <button type="button" onclick="clearPattern()" class="px-2.5 py-1 bg-red-950/30 text-red-400 hover:bg-red-900/20 border border-red-900/50 rounded-lg text-xs font-bold transition">Limpiar</button>
+                  </div>
                 </div>
-                <div class="mt-3 flex items-center justify-between">
-                  <span class="text-[10px] text-gray-500 font-bold uppercase">Patrón: <span id="pattern-sequence-text" class="text-brand">Ninguno</span></span>
-                  <button type="button" onclick="clearPattern()" class="px-2.5 py-1 bg-red-950/30 text-red-400 hover:bg-red-900/20 border border-red-900/50 rounded-lg text-xs font-bold transition">Limpiar</button>
-                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Descripción Física / Estado del Equipo</label>
+                <input type="text" id="nr-descripcion" placeholder="Ej. Rayones en tapa, pantalla rota" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
               </div>
             </div>
             <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Descripción Física / Estado del Equipo</label>
-              <input type="text" id="nr-descripcion" placeholder="Ej. Rayones en tapa, pantalla rota" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Falla Reportada *</label>
+              <textarea id="nr-falla" required rows="3" placeholder="Descripción detallada de la falla..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base"></textarea>
             </div>
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Falla Reportada *</label>
-            <textarea id="nr-falla" required rows="3" placeholder="Descripción detallada de la falla..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base"></textarea>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="hidden">
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Folio (Opcional)</label>
-              <input type="text" id="nr-folio" value="" placeholder="Ej. FITZ-1005" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base uppercase font-mono">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="hidden">
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Folio (Opcional)</label>
+                <input type="text" id="nr-folio" value="" placeholder="Ej. FITZ-1005" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base uppercase font-mono">
+              </div>
+              <div class="col-span-2 md:col-span-2">
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Anticipo ($)</label>
+                <div class="relative">
+                  <span class="absolute left-4 top-3 text-gray-500 font-bold">$</span>
+                  <input type="number" id="nr-anticipo" min="0" step="0.01" placeholder="0.00" class="w-full bg-gray-950 border border-gray-700 rounded-xl pl-8 pr-4 py-3 text-white focus:border-brand outline-none transition text-base">
+                </div>
+              </div>
             </div>
-            <div class="col-span-2 md:col-span-2">
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Anticipo ($)</label>
-              <input type="number" id="nr-anticipo" min="0" step="0.01" placeholder="0.00" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-            </div>
+            <button type="submit" class="w-full bg-brand text-gray-950 py-3 rounded-xl font-bold hover:bg-brand-light transition mt-2 shadow-[0_0_15px_rgba(7,183,107,0.3)] text-lg">
+              Registrar Ingreso
+            </button>
+          </form>
+        </div>
+
+        <!-- Buscador de Clientes (Derecha) -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 lg:col-span-5 shadow-lg flex flex-col min-h-[500px]">
+          <h2 class="text-xl font-bold mb-4 text-white border-b border-gray-800 pb-4">Clientes Registrados</h2>
+          <p class="text-xs text-gray-400 mb-4">Selecciona un cliente para auto-rellenar los datos de contacto en el formulario.</p>
+          
+          <div class="relative mb-4">
+            <input type="text" id="buscador-cliente-rapido" oninput="filtrarClientesRapido()" placeholder="Buscar cliente por nombre o teléfono..." class="w-full bg-gray-950 border border-gray-700 rounded-xl pl-10 pr-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+            <span class="absolute left-3.5 top-3.5 text-gray-500 font-bold">🔍</span>
           </div>
-          <button type="submit" class="w-full bg-brand text-gray-950 py-3 rounded-xl font-bold hover:bg-brand-light transition mt-2 shadow-[0_0_15px_rgba(7,183,107,0.3)] text-lg">
-            Registrar Ingreso
-          </button>
-        </form>
+          
+          <div class="overflow-y-auto pr-1 space-y-2 border border-gray-800 bg-gray-950/40 p-3 rounded-xl max-h-[350px] flex-1" id="lista-clientes-rapido">
+            <p class="text-gray-500 text-xs text-center py-6">Cargando clientes registrados...</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -654,7 +719,7 @@
       if(id === 'sec-reparaciones-globales') loadReparacionesGlobales();
     }
 
-    function irADiagnostico(folio, equipoId, idOrden, falla, estado, dispositivoText, diagnostico, costo, contrasenia) {
+    async function irADiagnostico(folio, equipoId, idOrden, falla, estado, dispositivoText, diagnostico, costo, contrasenia) {
       localStorage.setItem('fitzcell_active_folio', folio);
       localStorage.setItem('fitzcell_active_equipo_id', equipoId);
       localStorage.setItem('fitzcell_active_id_orden', idOrden);
@@ -669,7 +734,12 @@
       document.getElementById('dispositivo-activo').innerText = dispositivoText;
       document.getElementById('diag-falla-reportada').innerText = falla || '—';
       document.getElementById('diag-texto').value = diagnostico || '';
-      document.getElementById('diag-costo').value = costo || '';
+      
+      // Defaults
+      const totalCosto = parseFloat(costo || 0);
+      document.getElementById('diag-costo').value = totalCosto.toFixed(2);
+      document.getElementById('diag-costo-refacciones').value = '0.00';
+      document.getElementById('diag-costo-mano-obra').value = totalCosto > 0 ? totalCosto.toFixed(2) : '';
       
       const sel = document.getElementById('diag-estado');
       for(let i=0;i<sel.options.length;i++){ if(sel.options[i].value === estado){ sel.selectedIndex=i; break; } }
@@ -680,6 +750,47 @@
       
       actualizarVisualizadorContrasenia();
       showSection('sec-diagnostico');
+
+      // Fetch precise parts list and segmented prices
+      try {
+        const response = await fetch(`/api/reparaciones/${folio}`);
+        if (response.ok) {
+          const detail = await response.json();
+          const piezasUsadas = [];
+          let costoRefaccionesTotal = 0;
+          if (detail.detalle_reparacion && detail.detalle_reparacion.length > 0) {
+            detail.detalle_reparacion.forEach(det => {
+              if (det.producto) {
+                const precio = parseFloat(det.producto.precio_venta) || 0;
+                costoRefaccionesTotal += precio;
+                piezasUsadas.push({
+                  id: det.id_producto,
+                  nombre: det.producto.nombre_producto,
+                  precio: precio,
+                  tipo_refaccion: det.tipo_refaccion || 'Original'
+                });
+              }
+            });
+          }
+          
+          localStorage.setItem('fitzcell_active_piezas', JSON.stringify(piezasUsadas));
+          cargarPiezasDeLocalStorage();
+          
+          // Recalcular con los datos reales
+          const totalCostoReal = parseFloat(costo || 0);
+          document.getElementById('diag-costo').value = totalCostoReal.toFixed(2);
+          document.getElementById('diag-costo-refacciones').value = costoRefaccionesTotal.toFixed(2);
+          
+          const manoObra = Math.max(0, totalCostoReal - costoRefaccionesTotal);
+          document.getElementById('diag-costo-mano-obra').value = manoObra > 0 ? manoObra.toFixed(2) : '';
+          
+          // Guardar segmentos en localstorage para persistencia
+          localStorage.setItem('fitzcell_active_costo_refacciones', costoRefaccionesTotal.toFixed(2));
+          localStorage.setItem('fitzcell_active_costo_mano_obra', manoObra > 0 ? manoObra.toFixed(2) : '');
+        }
+      } catch (err) {
+        console.error("Error al cargar detalles de piezas:", err);
+      }
     }
 
     function liberarMesa() {
@@ -921,6 +1032,28 @@
       renderRefaccionesDisponibles(e.target.value);
     });
 
+    function calcularCostoTotalDiagnostico() {
+      const refacciones = parseFloat(document.getElementById('diag-costo-refacciones').value) || 0;
+      const manoObra = parseFloat(document.getElementById('diag-costo-mano-obra').value) || 0;
+      const total = refacciones + manoObra;
+      document.getElementById('diag-costo').value = total.toFixed(2);
+    }
+
+    function calcularCostoRefacciones() {
+      let refTotal = 0;
+      document.querySelectorAll('#lista-piezas-usadas > div').forEach(div => {
+        const id = parseInt(div.getAttribute('data-id'));
+        const prod = refaccionesDB.find(p => p.id_producto === id);
+        if (prod) {
+          refTotal += parseFloat(prod.precio_venta) || 0;
+        } else {
+          refTotal += parseFloat(div.getAttribute('data-precio')) || 0;
+        }
+      });
+      document.getElementById('diag-costo-refacciones').value = refTotal.toFixed(2);
+      calcularCostoTotalDiagnostico();
+    }
+
     function agregarPieza(nombre, id){
       const lista = document.getElementById('lista-piezas-usadas');
       if(lista.innerHTML.includes('No has seleccionado')) lista.innerHTML = '';
@@ -931,13 +1064,17 @@
         return;
       }
 
+      const producto = refaccionesDB.find(p => p.id_producto === id);
+      const precio = producto ? parseFloat(producto.precio_venta) || 0 : 0;
+
       const div = document.createElement('div');
       div.className = 'flex justify-between items-center bg-gray-950 p-3 rounded-xl border border-gray-800';
       div.setAttribute('data-id', id);
       div.setAttribute('data-nombre', nombre);
+      div.setAttribute('data-precio', precio);
       div.innerHTML = '<div>' +
         '<p class="font-bold text-xs">' + nombre + '</p>' +
-        '<p class="text-[10px] text-gray-500">ID Producto: ' + id + '</p>' +
+        '<p class="text-[10px] text-gray-500">ID Producto: ' + id + ' • $' + precio + '</p>' +
         '</div>' +
         '<div class="flex items-center gap-2">' +
         '<select onchange="guardarPiezasEnLocalStorage()" class="ref-tipo bg-gray-950 text-white border border-gray-800 text-xs rounded px-2 py-1 focus:border-brand outline-none transition">' +
@@ -963,11 +1100,14 @@
       document.querySelectorAll('#lista-piezas-usadas > div').forEach(div => {
         const id = parseInt(div.getAttribute('data-id'));
         const nombre = div.getAttribute('data-nombre');
+        const prod = refaccionesDB.find(p => p.id_producto === id);
+        const precio = prod ? parseFloat(prod.precio_venta) || 0 : (parseFloat(div.getAttribute('data-precio')) || 0);
         const sel = div.querySelector('select');
         const tipo_refaccion = sel ? sel.value : 'Original';
-        if (id) piezas.push({ id, nombre, tipo_refaccion });
+        if (id) piezas.push({ id, nombre, precio, tipo_refaccion });
       });
       localStorage.setItem('fitzcell_active_piezas', JSON.stringify(piezas));
+      calcularCostoRefacciones();
     }
 
     function cargarPiezasDeLocalStorage() {
@@ -983,9 +1123,10 @@
               div.className = 'flex justify-between items-center bg-gray-950 p-3 rounded-xl border border-gray-800';
               div.setAttribute('data-id', p.id);
               div.setAttribute('data-nombre', p.nombre);
+              div.setAttribute('data-precio', p.precio || 0);
               div.innerHTML = '<div>' +
                 '<p class="font-bold text-xs">' + p.nombre + '</p>' +
-                '<p class="text-[10px] text-gray-500">ID: ' + p.id + '</p>' +
+                '<p class="text-[10px] text-gray-500">ID: ' + p.id + ' • $' + (p.precio || 0) + '</p>' +
                 '</div>' +
                 '<div class="flex items-center gap-2">' +
                 '<select onchange="guardarPiezasEnLocalStorage()" class="ref-tipo bg-gray-950 text-white border border-gray-800 text-xs rounded px-2 py-1 focus:border-brand outline-none transition">' +
@@ -1004,6 +1145,7 @@
           }
         } catch(e) { console.error(e); }
       }
+      calcularCostoRefacciones();
     }
 
     async function guardarDiagnostico() {
@@ -1017,6 +1159,11 @@
       const estado = document.getElementById('diag-estado').value;
       const costo = parseFloat(document.getElementById('diag-costo').value) || 0;
       
+      if (estado === 'Listo para entrega' && costo <= 0) {
+        alert('⚠️ El costo total de la reparación no puede ser $0.00 al cambiar el estado a "Listo para Entrega". Ingrese el costo de Mano de Obra o agregue refacciones.');
+        return;
+      }
+
       // Obtener las piezas agregadas
       const piezas = [];
       document.querySelectorAll('#lista-piezas-usadas > div').forEach(div => {
@@ -1054,6 +1201,8 @@
           document.getElementById('diag-falla-reportada').innerText = '—';
           document.getElementById('diag-texto').value = '';
           document.getElementById('diag-costo').value = '';
+          document.getElementById('diag-costo-refacciones').value = '0.00';
+          document.getElementById('diag-costo-mano-obra').value = '';
           document.getElementById('lista-piezas-usadas').innerHTML = '<p class="text-gray-500 text-sm text-center mt-10">No has seleccionado ninguna refacción.</p>';
           
           showSection('sec-ordenes');
@@ -1181,6 +1330,17 @@
     }
 
     let globalReparaciones = [];
+    let repPaginaActual = 1;
+    const repLimitePorPagina = 10;
+
+    function resetReparacionesPaginacion() {
+      repPaginaActual = 1;
+    }
+
+    function repCambiarPagina(dir) {
+      repPaginaActual += dir;
+      filtrarReparacionesGlobales();
+    }
 
     async function loadReparacionesGlobales() {
       try {
@@ -1196,8 +1356,11 @@
 
     function filtrarReparacionesGlobales() {
       const query = document.getElementById('global-rep-buscador').value.toLowerCase().trim();
+      const fechaBusqueda = document.getElementById('global-rep-fecha-buscador').value;
+      
       let data = globalReparaciones;
       
+      // 1. Filtrar por texto
       if (query) {
         data = data.filter(rep => {
           const clientName = (rep.dispositivo?.cliente?.nombre_completo || rep.cliente_nombre || '').toLowerCase();
@@ -1215,15 +1378,43 @@
                  estado.includes(query);
         });
       }
+
+      // 2. Filtrar por fecha
+      if (fechaBusqueda) {
+        data = data.filter(rep => {
+          if (!rep.fecha_entrada) return false;
+          const repFecha = rep.fecha_entrada.split('T')[0];
+          return repFecha === fechaBusqueda;
+        });
+      }
+      
+      // 3. Paginación
+      const totalItems = data.length;
+      const totalPaginas = Math.ceil(totalItems / repLimitePorPagina) || 1;
+      
+      if (repPaginaActual > totalPaginas) repPaginaActual = totalPaginas;
+      if (repPaginaActual < 1) repPaginaActual = 1;
+      
+      const inicio = (repPaginaActual - 1) * repLimitePorPagina;
+      const fin = inicio + repLimitePorPagina;
+      const paginados = data.slice(inicio, fin);
+      
+      const btnPrev = document.getElementById('btn-rep-prev');
+      const btnNext = document.getElementById('btn-rep-next');
+      const infoPag = document.getElementById('rep-paginacion-info');
+      
+      if (btnPrev) btnPrev.disabled = (repPaginaActual === 1);
+      if (btnNext) btnNext.disabled = (repPaginaActual === totalPaginas);
+      if (infoPag) infoPag.innerText = `Página ${repPaginaActual} de ${totalPaginas}`;
       
       const tbody = document.getElementById('global-rep-tbody');
-      if (data.length === 0) {
+      if (paginados.length === 0) {
         tbody.innerHTML = '<tr><td colspan="9" class="p-4 text-center text-gray-500">Sin reparaciones globales que coincidan.</td></tr>';
         return;
       }
       
       let html = '';
-      data.forEach(rep => {
+      paginados.forEach(rep => {
         const clientName = rep.dispositivo?.cliente?.nombre_completo || 'Cliente de paso';
         const contact = rep.dispositivo?.cliente?.telefono || rep.dispositivo?.cliente?.correo_electronico || '—';
         const devText = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} (${rep.dispositivo.color || ''})` : 'Dispositivo Desconocido';
@@ -1257,6 +1448,83 @@
         </tr>`;
       });
       tbody.innerHTML = html;
+    }
+
+    // --- CRM CLIENTS LOGIC ---
+    let allCRMClientes = [];
+
+    async function cargarCRMClientes() {
+      try {
+        const res = await fetch('/api/reparaciones/clientes/listado');
+        if (res.ok) {
+          allCRMClientes = await res.json();
+          renderCRMClientes(allCRMClientes);
+        } else {
+          document.getElementById('lista-clientes-rapido').innerHTML = '<p class="text-red-400 text-xs text-center py-6">Error al cargar clientes.</p>';
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('lista-clientes-rapido').innerHTML = '<p class="text-red-400 text-xs text-center py-6">Error de conexión.</p>';
+      }
+    }
+
+    function renderCRMClientes(clientes) {
+      const container = document.getElementById('lista-clientes-rapido');
+      if (!container) return;
+      if (clientes.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-xs text-center py-6">Sin clientes que coincidan.</p>';
+        return;
+      }
+
+      let html = '';
+      clientes.forEach(c => {
+        const nomEsc = (c.nombre_completo || '').replace(/'/g, "\\'");
+        const telEsc = (c.telefono || '').replace(/'/g, "\\'");
+        const mailEsc = (c.correo_electronico || '').replace(/'/g, "\\'");
+        
+        html += `
+          <div onclick="seleccionarCRMCliente('${nomEsc}', '${telEsc}', '${mailEsc}')" class="p-3 bg-gray-950 hover:bg-gray-800/80 border border-gray-800 hover:border-brand/40 rounded-xl cursor-pointer transition flex justify-between items-center group">
+            <div>
+              <p class="text-xs font-semibold text-white group-hover:text-brand transition">${c.nombre_completo}</p>
+              <p class="text-[9px] text-gray-400 mt-0.5">${c.telefono || 'Sin teléfono'}</p>
+              <p class="text-[9px] text-gray-500 font-mono">${c.correo_electronico || ''}</p>
+            </div>
+            <span class="text-xs text-gray-500 group-hover:text-brand transition-all">➕</span>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function filtrarClientesRapido() {
+      const q = document.getElementById('buscador-cliente-rapido').value.toLowerCase().trim();
+      if (!q) {
+        renderCRMClientes(allCRMClientes);
+        return;
+      }
+      const filtered = allCRMClientes.filter(c => 
+        (c.nombre_completo || '').toLowerCase().includes(q) || 
+        (c.telefono || '').toLowerCase().includes(q) ||
+        (c.correo_electronico || '').toLowerCase().includes(q)
+      );
+      renderCRMClientes(filtered);
+    }
+
+    function seleccionarCRMCliente(nombre, telefono, email) {
+      const inpNombre = document.getElementById('nr-cliente');
+      const inpTelefono = document.getElementById('nr-telefono');
+      const inpEmail = document.getElementById('nr-email');
+
+      if (inpNombre) { inpNombre.value = nombre; highlightField(inpNombre); }
+      if (inpTelefono) { inpTelefono.value = telefono; highlightField(inpTelefono); }
+      if (inpEmail) { inpEmail.value = email; highlightField(inpEmail); }
+    }
+
+    function highlightField(el) {
+      el.classList.add('border-brand', 'bg-brand/10');
+      setTimeout(() => {
+        el.classList.remove('border-brand', 'bg-brand/10');
+      }, 800);
     }
 
     function abrirTicketRecepcionConObjeto(rep) {
@@ -1535,6 +1803,7 @@
     // Auto-cargar mesa de trabajo al iniciar
     window.addEventListener('DOMContentLoaded', () => {
       initPatternLock();
+      cargarCRMClientes();
       
       const activeFolio = localStorage.getItem('fitzcell_active_folio');
       if (activeFolio) {
@@ -1543,6 +1812,8 @@
         document.getElementById('diag-falla-reportada').innerText = localStorage.getItem('fitzcell_active_falla') || '—';
         document.getElementById('diag-texto').value = localStorage.getItem('fitzcell_active_diagnostico') || '';
         document.getElementById('diag-costo').value = localStorage.getItem('fitzcell_active_costo') || '';
+        document.getElementById('diag-costo-refacciones').value = localStorage.getItem('fitzcell_active_costo_refacciones') || '0.00';
+        document.getElementById('diag-costo-mano-obra').value = localStorage.getItem('fitzcell_active_costo_mano_obra') || '';
         
         const est = localStorage.getItem('fitzcell_active_estado');
         const sel = document.getElementById('diag-estado');

@@ -178,9 +178,19 @@
         <p class="text-gray-400">Monitor en tiempo real del taller.</p>
       </header>
 
-      <!-- Buscador de Reparaciones -->
-      <div class="mb-6">
-        <input type="text" id="rep-buscador" oninput="filtrarReparaciones()" placeholder="Buscar por Folio, Cliente, Dispositivo, ID de Venta..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+      <!-- Buscadores de Reparaciones Globales -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
+        <div class="md:col-span-8">
+          <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Buscar por Texto</label>
+          <input type="text" id="rep-buscador" oninput="resetReparacionesPaginacion(); filtrarReparaciones()" placeholder="Buscar por Folio, Cliente, Dispositivo, ID de Venta..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+        </div>
+        <div class="md:col-span-4">
+          <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Filtrar por Fecha de Ingreso</label>
+          <div class="relative">
+            <input type="date" id="rep-fecha-buscador" oninput="resetReparacionesPaginacion(); filtrarReparaciones()" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm cursor-pointer font-mono">
+            <button onclick="document.getElementById('rep-fecha-buscador').value = ''; resetReparacionesPaginacion(); filtrarReparaciones();" type="button" class="absolute right-3 top-3 text-red-400 hover:text-red-300 text-xs font-bold transition">Limpiar</button>
+          </div>
+        </div>
       </div>
       
       <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
@@ -199,9 +209,20 @@
             </tr>
           </thead>
           <tbody id="rep-tbody" class="divide-y divide-gray-800 text-base">
-            <tr><td colspan="7" class="p-4 text-center text-gray-500">Cargando...</td></tr>
+            <tr><td colspan="9" class="p-4 text-center text-gray-500">Cargando...</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Paginación de Reparaciones Globales -->
+      <div class="flex items-center justify-between mt-6 bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-lg">
+        <button onclick="repCambiarPagina(-1)" id="btn-rep-prev" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          ◀ Anterior
+        </button>
+        <span id="rep-paginacion-info" class="text-xs font-bold text-gray-400 tracking-wider">Página 1 de 1</span>
+        <button onclick="repCambiarPagina(1)" id="btn-rep-next" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          Siguiente ▶
+        </button>
       </div>
     </section>
 
@@ -214,97 +235,119 @@
         </div>
       </header>
 
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-lg max-w-2xl">
-        <form id="form-nueva-reparacion" onsubmit="crearNuevaReparacion(event)" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Nombre del Cliente *</label>
-              <input type="text" id="nr-cliente" required placeholder="Ej. Juan Pérez" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Teléfono *</label>
-              <input type="text" id="nr-telefono" required placeholder="Ej. 951 123 4567" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Correo Electrónico</label>
-              <input type="email" id="nr-email" placeholder="ejemplo@correo.com" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Marca del Dispositivo *</label>
-              <input type="text" id="nr-marca" required placeholder="Ej. Apple" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Modelo del Dispositivo *</label>
-              <input type="text" id="nr-modelo" required placeholder="Ej. iPhone 13 Pro" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Color *</label>
-              <input type="text" id="nr-color" required placeholder="Ej. Azul Sierra" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Contraseña/Pin de Bloqueo</label>
-              
-              <!-- Selector de tipo de contraseña -->
-              <div class="flex gap-2 mb-2">
-                <button type="button" onclick="setContraseniaTipo('texto')" id="btn-tipo-texto" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition bg-brand text-gray-950 border border-brand/20">PIN / Texto</button>
-                <button type="button" onclick="setContraseniaTipo('patron')" id="btn-tipo-patron" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition bg-gray-950 text-gray-400 border border-gray-800 hover:bg-gray-900">Patrón (Dibujar)</button>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-7xl mx-auto">
+        <!-- Formulario (Izquierda) -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 lg:col-span-7 shadow-lg">
+          <h2 class="text-2xl font-bold mb-6 text-white border-b border-gray-800 pb-4">Formulario de Registro</h2>
+          <form id="form-nueva-reparacion" onsubmit="crearNuevaReparacion(event)" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Nombre del Cliente *</label>
+                <input type="text" id="nr-cliente" required placeholder="Ej. Juan Pérez" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
               </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Teléfono *</label>
+                <input type="text" id="nr-telefono" required placeholder="Ej. 951 123 4567" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Correo Electrónico</label>
+                <input type="email" id="nr-email" placeholder="ejemplo@correo.com" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Marca del Dispositivo *</label>
+                <input type="text" id="nr-marca" required placeholder="Ej. Apple" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Modelo del Dispositivo *</label>
+                <input type="text" id="nr-modelo" required placeholder="Ej. iPhone 13 Pro" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Color *</label>
+                <input type="text" id="nr-color" required placeholder="Ej. Azul Sierra" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Contraseña/Pin de Bloqueo</label>
+                
+                <!-- Selector de tipo de contraseña -->
+                <div class="flex gap-2 mb-2">
+                  <button type="button" onclick="setContraseniaTipo('texto')" id="btn-tipo-texto" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition bg-brand text-gray-950 border border-brand/20">PIN / Texto</button>
+                  <button type="button" onclick="setContraseniaTipo('patron')" id="btn-tipo-patron" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition bg-gray-950 text-gray-400 border border-gray-800 hover:bg-gray-900">Patrón (Dibujar)</button>
+                </div>
 
-              <!-- Input normal para PIN / Texto -->
-              <input type="text" id="nr-contrasenia" placeholder="Ej. 1234 o Patrón" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-              
-              <!-- Contenedor del Dibujador de Patrón -->
-              <div id="patron-drawer-container" class="hidden mt-3 p-4 bg-gray-950/60 border border-gray-800 rounded-2xl text-center">
-                <p class="text-xs text-gray-400 mb-3 font-semibold">Dibuja el patrón arrastrando sobre los círculos:</p>
-                <div class="relative w-56 h-56 bg-gray-950/90 border border-gray-800 rounded-2xl mx-auto p-4 flex items-center justify-center select-none" id="pattern-container">
-                  <div class="grid grid-cols-3 gap-6 w-full h-full relative" id="pattern-grid">
-                    <div data-index="1" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="2" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="3" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="4" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="5" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="6" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="7" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="8" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                    <div data-index="9" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                <!-- Input normal para PIN / Texto -->
+                <input type="text" id="nr-contrasenia" placeholder="Ej. 1234 o Patrón" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+                
+                <!-- Contenedor del Dibujador de Patrón -->
+                <div id="patron-drawer-container" class="hidden mt-3 p-4 bg-gray-950/60 border border-gray-800 rounded-2xl text-center">
+                  <p class="text-xs text-gray-400 mb-3 font-semibold">Dibuja el patrón arrastrando sobre los círculos:</p>
+                  <div class="relative w-56 h-56 bg-gray-950/90 border border-gray-800 rounded-2xl mx-auto p-4 flex items-center justify-center select-none" id="pattern-container">
+                    <div class="grid grid-cols-3 gap-6 w-full h-full relative" id="pattern-grid">
+                      <div data-index="1" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="2" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="3" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="4" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="5" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="6" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="7" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="8" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="9" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                    </div>
+                    <svg class="absolute inset-0 pointer-events-none w-full h-full" id="pattern-svg"></svg>
                   </div>
-                  <svg class="absolute inset-0 pointer-events-none w-full h-full" id="pattern-svg"></svg>
+                  <div class="mt-3 flex items-center justify-between">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">Patrón: <span id="pattern-sequence-text" class="text-brand">Ninguno</span></span>
+                    <button type="button" onclick="clearPattern()" class="px-2.5 py-1 bg-red-950/30 text-red-400 hover:bg-red-900/20 border border-red-900/50 rounded-lg text-xs font-bold transition">Limpiar</button>
+                  </div>
                 </div>
-                <div class="mt-3 flex items-center justify-between">
-                  <span class="text-[10px] text-gray-500 font-bold uppercase">Patrón: <span id="pattern-sequence-text" class="text-brand">Ninguno</span></span>
-                  <button type="button" onclick="clearPattern()" class="px-2.5 py-1 bg-red-950/30 text-red-400 hover:bg-red-900/20 border border-red-900/50 rounded-lg text-xs font-bold transition">Limpiar</button>
-                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Descripción Física / Estado del Equipo</label>
+                <input type="text" id="nr-descripcion" placeholder="Ej. Rayones en tapa, pantalla rota" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
               </div>
             </div>
             <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Descripción Física / Estado del Equipo</label>
-              <input type="text" id="nr-descripcion" placeholder="Ej. Rayones en tapa, pantalla rota" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Falla Reportada *</label>
+              <textarea id="nr-falla" required rows="3" placeholder="Descripción detallada de la falla..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base"></textarea>
             </div>
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Falla Reportada *</label>
-            <textarea id="nr-falla" required rows="3" placeholder="Descripción detallada de la falla..." class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base"></textarea>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="hidden">
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Folio (Opcional)</label>
-              <input type="text" id="nr-folio" value="" placeholder="Ej. R-1005" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base uppercase font-mono">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="hidden">
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Folio (Opcional)</label>
+                <input type="text" id="nr-folio" value="" placeholder="Ej. R-1005" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base uppercase font-mono">
+              </div>
+              <div class="col-span-2 md:col-span-2">
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Anticipo ($)</label>
+                <div class="relative">
+                  <span class="absolute left-4 top-3 text-gray-500 font-bold">$</span>
+                  <input type="number" id="nr-anticipo" min="0" step="0.01" placeholder="0.00" class="w-full bg-gray-950 border border-gray-700 rounded-xl pl-8 pr-4 py-3 text-white focus:border-brand outline-none transition text-base">
+                </div>
+              </div>
             </div>
-            <div class="md:col-span-2">
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Anticipo ($)</label>
-              <input type="number" id="nr-anticipo" min="0" step="0.01" placeholder="0.00" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
-            </div>
+            <button type="submit" class="w-full bg-brand text-gray-950 py-3 rounded-xl font-bold hover:bg-brand-light transition mt-2 shadow-[0_0_15px_rgba(7,183,107,0.3)] text-lg">
+              Registrar Ingreso
+            </button>
+          </form>
+        </div>
+
+        <!-- Buscador de Clientes (Derecha) -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 lg:col-span-5 shadow-lg flex flex-col min-h-[500px]">
+          <h2 class="text-xl font-bold mb-4 text-white border-b border-gray-800 pb-4">Clientes Registrados</h2>
+          <p class="text-xs text-gray-400 mb-4">Selecciona un cliente para auto-rellenar los datos de contacto en el formulario.</p>
+          
+          <div class="relative mb-4">
+            <input type="text" id="buscador-cliente-rapido" oninput="filtrarClientesRapido()" placeholder="Buscar cliente por nombre o teléfono..." class="w-full bg-gray-950 border border-gray-700 rounded-xl pl-10 pr-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+            <span class="absolute left-3.5 top-3.5 text-gray-500 font-bold">🔍</span>
           </div>
-          <button type="submit" class="w-full bg-brand text-gray-950 py-3 rounded-xl font-bold hover:bg-brand-light transition mt-2 shadow-[0_0_15px_rgba(7,183,107,0.3)] text-lg">
-            Registrar Ingreso
-          </button>
-        </form>
+          
+          <div class="overflow-y-auto pr-1 space-y-2 border border-gray-800 bg-gray-950/40 p-3 rounded-xl max-h-[350px] flex-1" id="lista-clientes-rapido">
+            <p class="text-gray-500 text-xs text-center py-6">Cargando clientes registrados...</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1168,6 +1211,17 @@
     }
 
     let allReparaciones = [];
+    let repPaginaActual = 1;
+    const repLimitePorPagina = 10;
+
+    function resetReparacionesPaginacion() {
+      repPaginaActual = 1;
+    }
+
+    function repCambiarPagina(dir) {
+      repPaginaActual += dir;
+      filtrarReparaciones();
+    }
 
     async function loadReparaciones(){
       try{
@@ -1181,8 +1235,11 @@
 
     function filtrarReparaciones() {
       const query = (document.getElementById('rep-buscador')?.value || '').toLowerCase().trim();
+      const fechaBusqueda = document.getElementById('rep-fecha-buscador')?.value || '';
+      
       let d = allReparaciones;
       
+      // 1. Filtrar por texto
       if (query) {
         d = d.filter(rep => {
           const clientName = (rep.dispositivo?.cliente ? rep.dispositivo.cliente.nombre_completo : '').toLowerCase();
@@ -1202,14 +1259,41 @@
                  idVenta.includes(query);
         });
       }
+
+      // 2. Filtrar por fecha
+      if (fechaBusqueda) {
+        d = d.filter(rep => {
+          if (!rep.fecha_entrada) return false;
+          const repFecha = rep.fecha_entrada.split('T')[0];
+          return repFecha === fechaBusqueda;
+        });
+      }
+
+      // 3. Paginación
+      const totalItems = d.length;
+      const totalPaginas = Math.ceil(totalItems / repLimitePorPagina) || 1;
+      
+      if (repPaginaActual > totalPaginas) repPaginaActual = totalPaginas;
+      if (repPaginaActual < 1) repPaginaActual = 1;
+      
+      const inicio = (repPaginaActual - 1) * repLimitePorPagina;
+      const fin = inicio + repLimitePorPagina;
+      const paginados = d.slice(inicio, fin);
+      
+      const btnPrev = document.getElementById('btn-rep-prev');
+      const btnNext = document.getElementById('btn-rep-next');
+      const infoPag = document.getElementById('rep-paginacion-info');
+      
+      if (btnPrev) btnPrev.disabled = (repPaginaActual === 1);
+      if (btnNext) btnNext.disabled = (repPaginaActual === totalPaginas);
+      if (infoPag) infoPag.innerText = `Página ${repPaginaActual} de ${totalPaginas}`;
       
       let h = '';
-      d.forEach(rep => {
+      paginados.forEach(rep => {
         const clientName = rep.dispositivo?.cliente ? rep.dispositivo.cliente.nombre_completo : 'General / Mostrador';
         const contact = rep.dispositivo?.cliente?.telefono || rep.dispositivo?.cliente?.correo_electronico || '—';
         const devText = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color ? `(${rep.dispositivo.color})` : ''}`.trim() : 'Dispositivo Desconocido';
         const fecha = rep.fecha_entrada ? new Date(rep.fecha_entrada).toLocaleDateString('es-MX') : '—';
-        const idVenta = rep.venta && rep.venta[0] ? `V-${rep.venta[0].id_venta}` : '—';
         
         let badgeColor = 'bg-gray-800 text-gray-300 border-gray-700';
         if (rep.estado === 'Pendiente') badgeColor = 'bg-yellow-900/30 text-yellow-400 border-yellow-900/50';
@@ -1763,6 +1847,84 @@
       }
     }
 
+    // --- CRM CLIENTS LOGIC ---
+    let allCRMClientes = [];
+
+    async function cargarCRMClientes() {
+      try {
+        const res = await fetch('/api/reparaciones/clientes/listado');
+        if (res.ok) {
+          allCRMClientes = await res.json();
+          renderCRMClientes(allCRMClientes);
+        } else {
+          document.getElementById('lista-clientes-rapido').innerHTML = '<p class="text-red-400 text-xs text-center py-6">Error al cargar clientes.</p>';
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('lista-clientes-rapido').innerHTML = '<p class="text-red-400 text-xs text-center py-6">Error de conexión.</p>';
+      }
+    }
+
+    function renderCRMClientes(clientes) {
+      const container = document.getElementById('lista-clientes-rapido');
+      if (!container) return;
+      if (clientes.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-xs text-center py-6">Sin clientes que coincidan.</p>';
+        return;
+      }
+
+      let html = '';
+      clientes.forEach(c => {
+        const nomEsc = (c.nombre_completo || '').replace(/'/g, "\\'");
+        const telEsc = (c.telefono || '').replace(/'/g, "\\'");
+        const mailEsc = (c.correo_electronico || '').replace(/'/g, "\\'");
+        
+        html += `
+          <div onclick="seleccionarCRMCliente('${nomEsc}', '${telEsc}', '${mailEsc}')" class="p-3 bg-gray-950 hover:bg-gray-800/80 border border-gray-800 hover:border-brand/40 rounded-xl cursor-pointer transition flex justify-between items-center group">
+            <div>
+              <p class="text-xs font-semibold text-white group-hover:text-brand transition">${c.nombre_completo}</p>
+              <p class="text-[9px] text-gray-400 mt-0.5">${c.telefono || 'Sin teléfono'}</p>
+              <p class="text-[9px] text-gray-500 font-mono">${c.correo_electronico || ''}</p>
+            </div>
+            <span class="text-xs text-gray-500 group-hover:text-brand transition-all">➕</span>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function filtrarClientesRapido() {
+      const q = document.getElementById('buscador-cliente-rapido').value.toLowerCase().trim();
+      if (!q) {
+        renderCRMClientes(allCRMClientes);
+        return;
+      }
+      const filtered = allCRMClientes.filter(c => 
+        (c.nombre_completo || '').toLowerCase().includes(q) || 
+        (c.telefono || '').toLowerCase().includes(q) ||
+        (c.correo_electronico || '').toLowerCase().includes(q)
+      );
+      renderCRMClientes(filtered);
+    }
+
+    function seleccionarCRMCliente(nombre, telefono, email) {
+      const inpNombre = document.getElementById('nr-cliente');
+      const inpTelefono = document.getElementById('nr-telefono');
+      const inpEmail = document.getElementById('nr-email');
+
+      if (inpNombre) { inpNombre.value = nombre; highlightField(inpNombre); }
+      if (inpTelefono) { inpTelefono.value = telefono; highlightField(inpTelefono); }
+      if (inpEmail) { inpEmail.value = email; highlightField(inpEmail); }
+    }
+
+    // Dibujar animación de resalte
+    function highlightField(el) {
+      el.classList.add('border-brand', 'bg-brand/10');
+      setTimeout(() => {
+        el.classList.remove('border-brand', 'bg-brand/10');
+      }, 800);
+    }
+
     // Gestión del Dibujador de Patrón (Nueva Reparación)
     let isDrawingPattern = false;
     let patternDrawSeq = [];
@@ -1891,6 +2053,7 @@
 
     // Inicializar el dibujador al cargar
     setTimeout(initPatternLock, 100);
+    setTimeout(cargarCRMClientes, 100);
 
     showSection('sec-resumen');
   </script>

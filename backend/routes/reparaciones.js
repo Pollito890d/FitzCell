@@ -23,6 +23,21 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Obtener todos los clientes registrados
+router.get('/clientes/listado', async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('cliente')
+            .select('*')
+            .order('nombre_completo', { ascending: true });
+        if (error) throw error;
+        res.json(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al obtener los clientes' });
+    }
+});
+
 // Obtener una reparación por folio (Para rastreo y detalles con refacciones y garantías)
 router.get('/:folio', async (req, res) => {
     try {
