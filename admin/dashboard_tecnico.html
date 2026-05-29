@@ -755,6 +755,8 @@
         const d = await res.json();
         if(res.ok) {
           document.getElementById('form-nueva-reparacion').reset();
+          clearPattern();
+          setContraseniaTipo('texto');
           loadOrdenes();
           const dispText = `${payload.marca} ${payload.modelo} (${payload.color})`;
           abrirTicketRecepcion(

@@ -1109,6 +1109,8 @@
         const d = await res.json();
         if(res.ok) {
           document.getElementById('form-nueva-reparacion').reset();
+          clearPattern();
+          setContraseniaTipo('texto');
           loadReparaciones();
           const dispText = `${payload.marca} ${payload.modelo} (${payload.color})`;
           abrirTicketRecepcion(
@@ -1758,6 +1760,9 @@
         }
       } catch (err) {
         console.error('Error al cargar cortes de caja para gerente:', err);
+      }
+    }
+
     // Gestión del Dibujador de Patrón (Nueva Reparación)
     let isDrawingPattern = false;
     let patternDrawSeq = [];
