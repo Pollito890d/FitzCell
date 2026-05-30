@@ -348,45 +348,45 @@ INSERT INTO Venta (id_venta, id_orden, fecha, subtotal, total, metodo_pago) VALU
 (2, NULL, NOW() - INTERVAL '7 days 2 hours', 200.00, 200.00, 'Efectivo'),
 -- DÍA 2 (Hace 6 days)
 (3, NULL, NOW() - INTERVAL '6 days 5 hours', 350.00, 350.00, 'Efectivo'),
-(4, 7,    NOW() - INTERVAL '6 days 2 hours', 0.00,   0.00,   'Efectivo'),
+(4, 7,    NOW() - INTERVAL '6 days 2 hours', 650.00,   650.00,   'Efectivo'),
 -- DÍA 3 (Hace 5 días)
 (5, NULL, NOW() - INTERVAL '5 days 6 hours', 450.00, 450.00, 'Transferencia'),
 (6, NULL, NOW() - INTERVAL '5 days 3 hours', 120.00, 120.00, 'Efectivo'),
-(7, 9,    NOW() - INTERVAL '5 days 1 hour',  0.00,   0.00,   'Efectivo'),
+(7, 9,    NOW() - INTERVAL '5 days 1 hour',  900.00,   900.00,   'Efectivo'),
 
 -- DÍA 4 (Hace 4 días)
-(8, 12,   NOW() - INTERVAL '4 days 6 hours', 0.00,   0.00,   'Transferencia'),
-(9, 15,   NOW() - INTERVAL '4 days 4 hours', 300.00, 300.00, 'Efectivo'),
+(8, 12,   NOW() - INTERVAL '4 days 6 hours', 1200.00,   1200.00,   'Transferencia'),
+(9, 15,   NOW() - INTERVAL '4 days 4 hours', 600.00, 600.00, 'Efectivo'),
 (10, NULL,NOW() - INTERVAL '4 days 2 hours', 150.00, 150.00, 'Efectivo'),
 (24, NULL,NOW() - INTERVAL '4 days 1 hour',  160.00, 160.00, 'Efectivo'),
 -- DÍA 5 (Hace 3 días)
-(11, 20,  NOW() - INTERVAL '3 days 7 hours', 500.00, 500.00, 'Efectivo'),
+(11, 20,  NOW() - INTERVAL '3 days 7 hours', 900.00, 900.00, 'Efectivo'),
 (12, NULL,NOW() - INTERVAL '3 days 5 hours', 240.00, 240.00, 'Efectivo'),
-(13, 27,  NOW() - INTERVAL '3 days 3 hours', 1300.00, 1300.00, 'Efectivo'),
+(13, 27,  NOW() - INTERVAL '3 days 3 hours', 1800.00, 1800.00, 'Efectivo'),
 (17, NULL,NOW() - INTERVAL '3 days 2 hours', 150.00, 150.00, 'Efectivo'),
-(18, 5,    NOW() - INTERVAL '3 days 1 hour',  250.00, 250.00, 'Efectivo'),
+(18, 5,    NOW() - INTERVAL '3 days 1 hour',  350.00, 350.00, 'Efectivo'),
 -- DÍA 6 (Hace 2 días)
-(14, 31,  NOW() - INTERVAL '2 days 8 hours', 100.00, 100.00, 'Transferencia'),
+(14, 31,  NOW() - INTERVAL '2 days 8 hours', 250.00, 250.00, 'Transferencia'),
 (19, NULL,NOW() - INTERVAL '2 days 6 hours', 380.00, 380.00, 'Transferencia'),
 (20, 8,    NOW() - INTERVAL '2 days 4 hours', 250.00, 250.00, 'Transferencia'),
-(25, 3,    NOW() - INTERVAL '2 days 3 hours', 2000.00, 2000.00, 'Efectivo'),
+(25, 3,    NOW() - INTERVAL '2 days 3 hours', 2500.00, 2500.00, 'Efectivo'),
 (26, NULL,NOW() - INTERVAL '2 days 2 hours', 350.00, 350.00, 'Transferencia'),
 (27, 4,    NOW() - INTERVAL '2 days 1 hour',  850.00, 850.00, 'Efectivo'),
 -- DÍA 7 (Hace 1 día)
 (28, NULL,NOW() - INTERVAL '1 day 7 hours',  240.00, 240.00, 'Efectivo'),
-(29, 6,    NOW() - INTERVAL '1 day 6 hours',  400.00, 400.00, 'Efectivo'),
+(29, 6,    NOW() - INTERVAL '1 day 6 hours',  600.00, 600.00, 'Efectivo'),
 (21, NULL,NOW() - INTERVAL '1 day 4 hours',  200.00, 200.00, 'Efectivo'),
-(22, 11,   NOW() - INTERVAL '1 day 3 hours',  100.00, 100.00, 'Efectivo'),
+(22, 11,   NOW() - INTERVAL '1 day 3 hours',  250.00, 250.00, 'Efectivo'),
 (32, NULL,NOW() - INTERVAL '1 day 2 hours',  120.00, 120.00, 'Efectivo'),
 (33, 13,   NOW() - INTERVAL '1 day 1 hour',   250.00, 250.00, 'Efectivo'),
 -- DÍA 8 (Hoy)
 (15, NULL,NOW() - INTERVAL '5 hours',        700.00, 700.00, 'Efectivo'),
-(16, 32,  NOW() - INTERVAL '4 hours',        0.00,   0.00,   'Efectivo'),
+(16, 32,  NOW() - INTERVAL '4 hours',        450.00, 450.00, 'Efectivo'),
 (23, NULL,NOW() - INTERVAL '3 hours',        350.00, 350.00, 'Efectivo'),
 (30, NULL,NOW() - INTERVAL '2 hours',        450.00, 450.00, 'Transferencia'),
 (31, 10,  NOW() - INTERVAL '1 hour',         1500.00, 1500.00, 'Efectivo'),
 (34, NULL,NOW() - INTERVAL '45 minutes',     700.00, 700.00, 'Efectivo'),
-(35, 17,  NOW() - INTERVAL '15 minutes',     0.00,   0.00,   'Efectivo');
+(35, 17,  NOW() - INTERVAL '15 minutes',     2200.00, 2200.00, 'Efectivo');
 
 -- Sincronizar secuenciador de Ventas para evitar colisiones futuras en el sistema web
 SELECT setval('venta_id_venta_seq', COALESCE((SELECT MAX(id_venta) FROM Venta), 35), true);
