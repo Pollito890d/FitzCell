@@ -61,13 +61,12 @@ router.get('/totales-hoy', async (req, res) => {
 
 // Registrar un corte de caja
 router.post('/', async (req, res) => {
-    const { cajero_nombre, fondo_inicial, ventas_efectivo, ventas_transferencia, efectivo_esperado, efectivo_real, diferencia, observaciones } = req.body;
+    const { cajero_nombre, ventas_efectivo, ventas_transferencia, efectivo_esperado, efectivo_real, diferencia, observaciones } = req.body;
     try {
         const { data, error } = await supabase
             .from('corte_caja')
             .insert([{
                 cajero_nombre,
-                fondo_inicial: parseFloat(fondo_inicial) || 0,
                 ventas_efectivo: parseFloat(ventas_efectivo) || 0,
                 ventas_transferencia: parseFloat(ventas_transferencia) || 0,
                 efectivo_esperado: parseFloat(efectivo_esperado) || 0,

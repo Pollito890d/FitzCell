@@ -1447,17 +1447,17 @@
         const repJsonEscaped = JSON.stringify(rep).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         
         html += `<tr class="hover:bg-gray-850/50 transition">
-          <td class="p-4 font-bold text-white">${rep.codigo_seguimiento || '—'}</td>
-          <td class="p-4 text-gray-300">${fecha}</td>
+          <td class="p-4 font-bold text-white whitespace-nowrap">${rep.codigo_seguimiento || '—'}</td>
+          <td class="p-4 text-gray-300 whitespace-nowrap">${fecha}</td>
           <td class="p-4 text-gray-300 font-medium">${clientName}</td>
-          <td class="p-4 text-gray-400">${contact}</td>
+          <td class="p-4 text-gray-400 whitespace-nowrap">${contact}</td>
           <td class="p-4 text-gray-400">${devText}</td>
           <td class="p-4 text-gray-300 truncate max-w-xs" title="${rep.falla_reportada || ''}">${rep.falla_reportada || '—'}</td>
-          <td class="p-4 font-bold text-brand text-right">${fmt(rep.costo)}</td>
-          <td class="p-4 text-center">
-            <span class="px-2.5 py-1 rounded text-xs border font-bold ${badgeColor}">${rep.estado}</span>
+          <td class="p-4 font-bold text-brand text-right whitespace-nowrap">${fmt(rep.costo)}</td>
+          <td class="p-4 text-center whitespace-nowrap">
+            <span class="px-2 py-0.5 rounded text-[10px] border font-extrabold whitespace-nowrap ${badgeColor}">${rep.estado}</span>
           </td>
-          <td class="p-4 text-center">
+          <td class="p-4 text-center whitespace-nowrap">
             <button onclick="abrirTicketRecepcionConObjeto(JSON.parse('${repJsonEscaped}'))" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded font-bold text-xs transition">
               📄 Ticket
             </button>

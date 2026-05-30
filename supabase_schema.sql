@@ -109,7 +109,6 @@ CREATE TABLE Corte_Caja (
     id_corte SERIAL PRIMARY KEY,
     fecha TIMESTAMPTZ DEFAULT NOW(),
     cajero_nombre VARCHAR(150),
-    fondo_inicial DECIMAL(10,2) DEFAULT 0,
     ventas_efectivo DECIMAL(10,2) DEFAULT 0,
     ventas_transferencia DECIMAL(10,2) DEFAULT 0,
     efectivo_esperado DECIMAL(10,2) DEFAULT 0,

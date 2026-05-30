@@ -176,7 +176,7 @@
     <section id="sec-reparaciones" class="fade-in hidden">
       <header class="mb-8">
         <h1 class="text-3xl font-bold mb-1">Reparaciones <span class="text-brand">Globales</span></h1>
-        <p class="text-gray-400">Monitor en tiempo real del taller.</p>
+        <p class="text-gray-400">Monitor del estado de todas las reparaciones en el taller.</p>
       </header>
 
       <!-- Buscadores de Reparaciones Globales -->
@@ -406,7 +406,6 @@
               <tr class="border-b border-gray-800 text-gray-400 text-xs uppercase tracking-wider">
                 <th class="pb-3 font-semibold">Fecha y Hora</th>
                 <th class="pb-3 font-semibold">Cajero</th>
-                <th class="pb-3 font-semibold text-right">Fondo Inicial</th>
                 <th class="pb-3 font-semibold text-right">Ventas Efectivo</th>
                 <th class="pb-3 font-semibold text-right">Ventas Transferencia</th>
                 <th class="pb-3 font-semibold text-right">Efectivo Esperado</th>
@@ -416,7 +415,7 @@
               </tr>
             </thead>
             <tbody id="manager-cortes-tbody" class="divide-y divide-gray-800 text-sm">
-              <tr><td colspan="9" class="py-4 text-center text-gray-500">Cargando...</td></tr>
+              <tr><td colspan="8" class="py-4 text-center text-gray-500">Cargando...</td></tr>
             </tbody>
           </table>
         </div>
@@ -848,7 +847,6 @@
 
       <div class="mb-4 text-gray-800 space-y-1.5 border-b border-dashed pb-3">
         <p class="font-bold text-[10px] uppercase border-b pb-0.5 text-gray-600">Balances Registrados</p>
-        <div class="flex justify-between"><span>Fondo Inicial:</span><span id="tc-fondo-inicial" class="font-bold">$0.00</span></div>
         <div class="flex justify-between"><span>Ventas Efectivo:</span><span id="tc-ventas-efectivo" class="text-green-600 font-bold">$0.00</span></div>
         <div class="flex justify-between"><span>Ventas Transf:</span><span id="tc-ventas-transferencia" class="text-blue-600 font-bold">$0.00</span></div>
         <div class="flex justify-between border-t border-dashed pt-1"><span>Efectivo Esperado:</span><span id="tc-efectivo-esperado" class="font-bold">$0.00</span></div>
@@ -1375,20 +1373,20 @@
 
         const repJsonEscaped = JSON.stringify(rep).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         h += `<tr onclick="verDetalleReparacion('${rep.codigo_seguimiento}')" class="hover:bg-gray-800/70 cursor-pointer transition">
-          <td class="p-4 font-bold text-white">${rep.codigo_seguimiento || '—'}</td>
-          <td class="p-4 text-gray-300">${fecha}</td>
+          <td class="p-4 font-bold text-white whitespace-nowrap">${rep.codigo_seguimiento || '-'}</td>
+          <td class="p-4 text-gray-300 whitespace-nowrap">${fecha}</td>
           <td class="p-4 text-gray-300 font-medium">${clientName}</td>
-          <td class="p-4 text-gray-400">${contact}</td>
+          <td class="p-4 text-gray-400 whitespace-nowrap">${contact}</td>
           <td class="p-4 text-gray-400">${devText}</td>
-          <td class="p-4 text-gray-400 truncate max-w-xs" title="${rep.falla_reportada || ''}">${rep.falla_reportada || '—'}</td>
-          <td class="p-4 text-center">
+          <td class="p-4 text-gray-400 truncate max-w-xs" title="${rep.falla_reportada || ''}">${rep.falla_reportada || '-'}</td>
+          <td class="p-4 text-center whitespace-nowrap">
             <button onclick="event.stopPropagation(); abrirTicketRecepcionConObjeto(JSON.parse('${repJsonEscaped}'))" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded font-bold text-xs transition">
               📄 Ticket
             </button>
           </td>
-          <td class="p-4 font-bold text-brand text-right">${fmt(rep.costo)}</td>
-          <td class="p-4 text-center">
-            <span class="px-2.5 py-1 rounded text-xs border font-bold ${badgeColor}">${rep.estado}</span>
+          <td class="p-4 font-bold text-brand text-right whitespace-nowrap">${fmt(rep.costo)}</td>
+          <td class="p-4 text-center whitespace-nowrap">
+            <span class="px-2 py-0.5 rounded text-[10px] border font-extrabold whitespace-nowrap ${badgeColor}">${rep.estado}</span>
           </td>
         </tr>`;
       });
@@ -1895,7 +1893,6 @@
             html += `<tr class="border-b border-gray-800 hover:bg-gray-800/30 transition">
               <td class="p-4 text-gray-300 font-medium">${fechaStr}</td>
               <td class="p-4 text-gray-400">${c.cajero_nombre}</td>
-              <td class="p-4 text-right text-gray-400">${fmt(c.fondo_inicial)}</td>
               <td class="p-4 text-right text-brand">${fmt(c.ventas_efectivo)}</td>
               <td class="p-4 text-right text-blue-400">${fmt(c.ventas_transferencia)}</td>
               <td class="p-4 text-right text-gray-300">${fmt(c.efectivo_esperado)}</td>
@@ -1910,7 +1907,7 @@
             
             if (c.observaciones) {
               html += `<tr class="bg-gray-950/20 text-xs">
-                <td colspan="9" class="p-3 text-gray-500 italic border-b border-gray-800/50">
+                <td colspan="8" class="p-3 text-gray-500 italic border-b border-gray-800/50">
                   <strong>Notas del Cajero:</strong> ${c.observaciones}
                 </td>
               </tr>`;
@@ -1928,7 +1925,6 @@
       document.getElementById('tc-id').innerText = `CORTE #${c.id_corte || 0}`;
       document.getElementById('tc-fecha').innerText = new Date(c.fecha || new Date()).toLocaleString('es-MX');
       document.getElementById('tc-cajero').innerText = c.cajero_nombre || '—';
-      document.getElementById('tc-fondo-inicial').innerText = fmt(c.fondo_inicial);
       document.getElementById('tc-ventas-efectivo').innerText = fmt(c.ventas_efectivo);
       document.getElementById('tc-ventas-transferencia').innerText = fmt(c.ventas_transferencia);
       document.getElementById('tc-efectivo-esperado').innerText = fmt(c.efectivo_esperado);
