@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Ventas - FitzCell</title>
+  <link rel="icon" type="image/svg+xml" href="../media/images/fitzcell_logo.svg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = { 
@@ -25,10 +26,10 @@
       body * {
         visibility: hidden !important;
       }
-      #modal-ticket, #modal-ticket *, #modal-ticket-recepcion, #modal-ticket-recepcion * {
+      #modal-ticket, #modal-ticket *, #modal-ticket-recepcion, #modal-ticket-recepcion *, #modal-ticket-corte, #modal-ticket-corte * {
         visibility: visible !important;
       }
-      #modal-ticket {
+      #modal-ticket, #modal-ticket-recepcion, #modal-ticket-corte {
         position: absolute;
         left: 0;
         top: 0;
@@ -325,10 +326,11 @@
                   <th class="pb-3 font-semibold text-right">Esperado</th>
                   <th class="pb-3 font-semibold text-right">Real</th>
                   <th class="pb-3 font-semibold text-center">Dif.</th>
+                  <th class="pb-3 font-semibold text-center">Ticket</th>
                 </tr>
               </thead>
               <tbody id="corte-tbody" class="divide-y divide-gray-800 text-sm">
-                <tr><td colspan="5" class="py-4 text-center text-gray-500">Cargando...</td></tr>
+                <tr><td colspan="6" class="py-4 text-center text-gray-500">Cargando...</td></tr>
               </tbody>
             </table>
           </div>
@@ -509,6 +511,59 @@
       <div class="text-center text-[10px] text-gray-500 space-y-1 border-t border-dashed pt-4">
         <p class="font-bold text-gray-700">Conserve este comprobante</p>
         <p>Garantía aplicable únicamente a las piezas sustituidas y mano de obra bajo condiciones normales de uso.</p>
+        <p class="mt-2 text-[9px] font-mono text-gray-400">fitzcell.vercel.app</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Ticket de Corte de Caja -->
+  <div id="modal-ticket-corte" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden print:bg-white print:backdrop-blur-none print:absolute print:inset-0">
+    <div class="bg-white text-gray-900 w-80 p-6 rounded-2xl shadow-2xl relative flex flex-col print:shadow-none print:p-0 print:w-full font-mono text-xs max-h-[90vh] overflow-y-auto print:max-h-none print:overflow-visible">
+      <!-- Botones superiores -->
+      <div class="flex justify-between mb-4 border-b pb-2 print-hide">
+        <button onclick="window.print()" class="bg-brand text-gray-950 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-brand-dark transition">
+          🖨️ Imprimir
+        </button>
+        <button onclick="cerrarTicketCorte()" class="bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-bold hover:bg-gray-300 transition">
+          ❌ Cerrar
+        </button>
+      </div>
+
+      <!-- Contenido del Ticket Físico -->
+      <div class="text-center mb-4">
+        <h2 class="text-base font-bold uppercase tracking-wider text-gray-950">FITZCELL</h2>
+        <p class="text-[10px] text-gray-500">Comprobante de Arqueo / Corte</p>
+        <p class="text-[10px] text-gray-500">San Pablo Huixtepec, Oax.</p>
+        <p class="text-[10px] text-gray-500">Tel: +52 951 581 2992</p>
+      </div>
+
+      <div class="border-t border-b border-dashed py-2 mb-4 text-gray-800 space-y-1">
+        <div class="text-center my-2">
+          <p class="text-[10px] uppercase text-gray-500 font-bold">ARQUEO DE CAJA DIARIO</p>
+          <p id="tc-id" class="text-2xl font-black text-gray-950 tracking-wider my-2 py-1 bg-gray-100 rounded border border-dashed border-gray-400 font-mono text-center">CORTE #0</p>
+        </div>
+        <div class="flex justify-between"><span>Fecha:</span><span id="tc-fecha">—</span></div>
+        <div class="flex justify-between"><span>Cajero:</span><span id="tc-cajero" class="font-bold">—</span></div>
+      </div>
+
+      <div class="mb-4 text-gray-800 space-y-1.5 border-b border-dashed pb-3">
+        <p class="font-bold text-[10px] uppercase border-b pb-0.5 text-gray-600">Balances Registrados</p>
+        <div class="flex justify-between"><span>Fondo Inicial:</span><span id="tc-fondo-inicial" class="font-bold">$0.00</span></div>
+        <div class="flex justify-between"><span>Ventas Efectivo:</span><span id="tc-ventas-efectivo" class="text-green-600 font-bold">$0.00</span></div>
+        <div class="flex justify-between"><span>Ventas Transf:</span><span id="tc-ventas-transferencia" class="text-blue-600 font-bold">$0.00</span></div>
+        <div class="flex justify-between border-t border-dashed pt-1"><span>Efectivo Esperado:</span><span id="tc-efectivo-esperado" class="font-bold">$0.00</span></div>
+        <div class="flex justify-between"><span>Efectivo Real:</span><span id="tc-efectivo-real" class="font-black text-gray-950">$0.00</span></div>
+        <div class="flex justify-between border-t border-dashed pt-1" id="tc-container-diferencia"><span>Diferencia:</span><span id="tc-diferencia" class="font-bold">$0.00</span></div>
+      </div>
+
+      <div class="mb-4 text-gray-800" id="tc-container-observaciones">
+        <p class="font-bold text-[10px] uppercase border-b pb-0.5 text-gray-600">Observaciones</p>
+        <p id="tc-observaciones" class="text-[10px] italic text-gray-700 whitespace-pre-wrap mt-1">Ninguna</p>
+      </div>
+
+      <div class="text-center text-[10px] text-gray-500 space-y-1 border-t border-dashed pt-4">
+        <p class="font-bold text-gray-700">FitzCell Administrativo</p>
+        <p>Arqueo validado en sistema central.</p>
         <p class="mt-2 text-[9px] font-mono text-gray-400">fitzcell.vercel.app</p>
       </div>
     </div>
@@ -1058,11 +1113,15 @@
         });
         
         if (res.ok) {
+          const d = await res.json();
           alert('¡Corte de caja registrado exitosamente!');
           document.getElementById('corte-efectivo-real').value = '';
           document.getElementById('corte-observaciones').value = '';
           cargarTotalesCorte();
           cargarHistorialCortes();
+          if (d && d.data) {
+            abrirTicketCorteConObjeto(d.data);
+          }
         } else {
           alert('Error al guardar corte de caja.');
         }
@@ -1097,17 +1156,24 @@
               difClass = 'text-red-400 font-bold';
             }
             
+            const corteJson = JSON.stringify(c).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            
             html += `<tr class="border-b border-gray-800 hover:bg-gray-900/30 transition">
               <td class="py-3 font-medium text-gray-300">${fechaStr}</td>
               <td class="py-3 text-gray-400">${c.cajero_nombre}</td>
               <td class="py-3 text-right text-gray-400">${formatCurrency(c.efectivo_esperado)}</td>
               <td class="py-3 text-right text-gray-300 font-medium">${formatCurrency(c.efectivo_real)}</td>
               <td class="py-3 text-center ${difClass}">${difSign}${formatCurrency(c.diferencia)}</td>
+              <td class="py-3 text-center">
+                <button onclick="abrirTicketCorteConObjeto(JSON.parse(this.dataset.corte))" data-corte="${corteJson}" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded font-bold text-xs transition">
+                  📄 Ticket
+                </button>
+              </td>
             </tr>`;
             
             if (c.observaciones) {
               html += `<tr class="border-b border-gray-800/50 bg-gray-950/20 text-xs">
-                <td colspan="5" class="py-2 px-4 text-gray-500 italic">
+                <td colspan="6" class="py-2 px-4 text-gray-500 italic">
                   <strong>Notas:</strong> ${c.observaciones}
                 </td>
               </tr>`;
@@ -1119,6 +1185,44 @@
       } catch (e) {
         console.error('Error al cargar historial de cortes:', e);
       }
+    }
+
+    function abrirTicketCorteConObjeto(c) {
+      document.getElementById('tc-id').innerText = `CORTE #${c.id_corte || 0}`;
+      document.getElementById('tc-fecha').innerText = new Date(c.fecha || new Date()).toLocaleString('es-MX');
+      document.getElementById('tc-cajero').innerText = c.cajero_nombre || '—';
+      document.getElementById('tc-fondo-inicial').innerText = formatCurrency(c.fondo_inicial);
+      document.getElementById('tc-ventas-efectivo').innerText = formatCurrency(c.ventas_efectivo);
+      document.getElementById('tc-ventas-transferencia').innerText = formatCurrency(c.ventas_transferencia);
+      document.getElementById('tc-efectivo-esperado').innerText = formatCurrency(c.efectivo_esperado);
+      document.getElementById('tc-efectivo-real').innerText = formatCurrency(c.efectivo_real);
+      
+      const diff = parseFloat(c.diferencia) || 0;
+      const tcDiff = document.getElementById('tc-diferencia');
+      tcDiff.innerText = (diff >= 0 ? '+' : '') + formatCurrency(diff);
+      if (diff > 0.01) {
+        tcDiff.className = 'font-bold text-green-600';
+      } else if (diff < -0.01) {
+        tcDiff.className = 'font-bold text-red-600';
+      } else {
+        tcDiff.className = 'font-bold text-gray-600';
+      }
+
+      const tcObs = document.getElementById('tc-observaciones');
+      const tcContainerObs = document.getElementById('tc-container-observaciones');
+      if (c.observaciones && c.observaciones.trim() !== '') {
+        tcObs.innerText = c.observaciones;
+        tcContainerObs.classList.remove('hidden');
+      } else {
+        tcObs.innerText = '';
+        tcContainerObs.classList.add('hidden');
+      }
+      
+      document.getElementById('modal-ticket-corte').classList.remove('hidden');
+    }
+
+    function cerrarTicketCorte() {
+      document.getElementById('modal-ticket-corte').classList.add('hidden');
     }
 
     let readyReparaciones = [];

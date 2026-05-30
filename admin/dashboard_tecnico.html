@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Técnico - FitzCell</title>
+  <link rel="icon" type="image/svg+xml" href="../media/images/fitzcell_logo.svg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = { 
@@ -236,15 +237,15 @@
             <p class="text-xs text-gray-400 font-bold uppercase tracking-wider mb-2 text-center">Dibujo del Patrón de Desbloqueo:</p>
             <div class="relative w-48 h-48 bg-gray-950 border border-gray-800 rounded-2xl p-4 flex items-center justify-center select-none">
               <div class="grid grid-cols-3 gap-6 w-full h-full relative">
-                <div data-vindex="1" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700"></div>
-                <div data-vindex="2" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700"></div>
-                <div data-vindex="3" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700"></div>
-                <div data-vindex="4" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700"></div>
-                <div data-vindex="5" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700"></div>
-                <div data-vindex="6" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700"></div>
-                <div data-vindex="7" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700"></div>
-                <div data-vindex="8" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700"></div>
-                <div data-vindex="9" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700"></div>
+                <div data-vindex="1" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-[7px] font-bold text-gray-500">1</div>
+                <div data-vindex="2" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-[7px] font-bold text-gray-500">2</div>
+                <div data-vindex="3" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-[7px] font-bold text-gray-500">3</div>
+                <div data-vindex="4" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-[7px] font-bold text-gray-500">4</div>
+                <div data-vindex="5" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-[7px] font-bold text-gray-500">5</div>
+                <div data-vindex="6" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-[7px] font-bold text-gray-500">6</div>
+                <div data-vindex="7" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-[7px] font-bold text-gray-500">7</div>
+                <div data-vindex="8" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-[7px] font-bold text-gray-500">8</div>
+                <div data-vindex="9" class="v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-[7px] font-bold text-gray-500">9</div>
               </div>
               <svg class="absolute inset-0 pointer-events-none w-full h-full" id="v-pattern-svg"></svg>
             </div>
@@ -433,21 +434,37 @@
                   <p class="text-xs text-gray-400 mb-3 font-semibold">Dibuja el patrón arrastrando sobre los círculos:</p>
                   <div class="relative w-56 h-56 bg-gray-950/90 border border-gray-800 rounded-2xl mx-auto p-4 flex items-center justify-center select-none" id="pattern-container">
                     <div class="grid grid-cols-3 gap-6 w-full h-full relative" id="pattern-grid">
-                      <div data-index="1" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="2" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="3" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="4" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="5" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="6" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="7" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="8" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="9" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="1" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">1</div>
+                      <div data-index="2" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">2</div>
+                      <div data-index="3" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">3</div>
+                      <div data-index="4" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">4</div>
+                      <div data-index="5" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">5</div>
+                      <div data-index="6" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">6</div>
+                      <div data-index="7" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">7</div>
+                      <div data-index="8" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">8</div>
+                      <div data-index="9" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">9</div>
                     </div>
                     <svg class="absolute inset-0 pointer-events-none w-full h-full" id="pattern-svg"></svg>
                   </div>
                   <div class="mt-3 flex items-center justify-between">
                     <span class="text-[10px] text-gray-500 font-bold uppercase">Patrón: <span id="pattern-sequence-text" class="text-brand">Ninguno</span></span>
                     <button type="button" onclick="clearPattern()" class="px-2.5 py-1 bg-red-950/30 text-red-400 hover:bg-red-900/20 border border-red-900/50 rounded-lg text-xs font-bold transition">Limpiar</button>
+                  </div>
+
+                  <!-- Guía visual del patrón con números en sus posiciones correspondientes -->
+                  <div class="mt-4 pt-3 border-t border-gray-900/80 flex flex-col items-center">
+                    <p class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold mb-2">Guía de Posiciones del Patrón</p>
+                    <div class="grid grid-cols-3 gap-3 bg-gray-950/80 border border-gray-900 rounded-xl p-3 w-32 justify-items-center select-none shadow-inner shadow-black">
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">1</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">2</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">3</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">4</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">5</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">6</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">7</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">8</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">9</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1014,12 +1031,12 @@
         html += `
           <div onclick="agregarPieza('${nom}', ${p.id_producto})" class="p-3 bg-gray-950 hover:bg-gray-800/80 border border-gray-800 hover:border-brand/40 rounded-xl cursor-pointer flex justify-between items-center transition">
             <div>
-              <p class="text-xs font-semibold text-white">${p.nombre_producto}</p>
-              <p class="text-[9px] text-gray-400 mt-0.5">${p.categoria || 'Sin categoría'} ${p.marcas_compatibles ? `• ${p.marcas_compatibles}` : ''}</p>
+              <p class="text-sm font-bold text-white">${p.nombre_producto}</p>
+              <p class="text-xs text-gray-300 mt-1">${p.categoria || 'Sin categoría'} ${p.marcas_compatibles ? `• ${p.marcas_compatibles}` : ''}</p>
             </div>
             <div class="text-right">
-              <span class="text-[10px] font-bold text-brand bg-brand/10 px-2 py-0.5 rounded border border-brand/20">Stock: ${p.stock}</span>
-              <p class="text-[9px] text-gray-500 mt-1">$${p.precio_venta}</p>
+              <span class="text-xs font-black text-brand bg-brand/15 px-2.5 py-1 rounded border border-brand/35">Stock: ${p.stock}</span>
+              <p class="text-sm font-extrabold text-white mt-1.5">$${p.precio_venta}</p>
             </div>
           </div>
         `;
@@ -1485,9 +1502,9 @@
         html += `
           <div onclick="seleccionarCRMCliente('${nomEsc}', '${telEsc}', '${mailEsc}')" class="p-3 bg-gray-950 hover:bg-gray-800/80 border border-gray-800 hover:border-brand/40 rounded-xl cursor-pointer transition flex justify-between items-center group">
             <div>
-              <p class="text-xs font-semibold text-white group-hover:text-brand transition">${c.nombre_completo}</p>
-              <p class="text-[9px] text-gray-400 mt-0.5">${c.telefono || 'Sin teléfono'}</p>
-              <p class="text-[9px] text-gray-500 font-mono">${c.correo_electronico || ''}</p>
+              <p class="text-sm font-bold text-white group-hover:text-brand transition">${c.nombre_completo}</p>
+              <p class="text-[12px] text-gray-300 mt-1">📞 ${c.telefono || 'Sin teléfono'}</p>
+              <p class="text-[11px] text-gray-400 font-mono mt-0.5">✉️ ${c.correo_electronico || 'Sin correo'}</p>
             </div>
             <span class="text-xs text-gray-500 group-hover:text-brand transition-all">➕</span>
           </div>
@@ -1664,7 +1681,7 @@
         patternDrawSeq = [];
         svg.innerHTML = '';
         dots.forEach(dot => {
-          dot.className = 'pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition';
+          dot.className = 'pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300';
         });
         handleMove(e);
       }
@@ -1682,7 +1699,7 @@
             const idx = parseInt(dot.getAttribute('data-index'));
             if (!patternDrawSeq.includes(idx)) {
               patternDrawSeq.push(idx);
-              dot.className = 'pattern-dot w-5 h-5 rounded-full bg-brand border-2 border-brand-light scale-125 shadow-[0_0_10px_rgba(7,183,107,0.6)] cursor-pointer flex items-center justify-center transition-all';
+              dot.className = 'pattern-dot w-5 h-5 rounded-full bg-brand border-2 border-brand-light scale-125 shadow-[0_0_10px_rgba(7,183,107,0.6)] cursor-pointer flex items-center justify-center transition-all text-[10px] font-black text-gray-950';
               updateDrawLines();
             }
           }
@@ -1713,7 +1730,7 @@
       
       const dots = document.querySelectorAll('.pattern-dot');
       dots.forEach(dot => {
-        dot.className = 'pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition';
+        dot.className = 'pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300';
       });
       document.getElementById('nr-contrasenia').value = '';
       document.getElementById('pattern-sequence-text').innerText = 'Ninguno';
@@ -1728,7 +1745,7 @@
 
       const dots = document.querySelectorAll('.v-pattern-dot');
       dots.forEach(dot => {
-        dot.className = 'v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700';
+        dot.className = 'v-pattern-dot w-4 h-4 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-[7px] font-bold text-gray-500';
       });
 
       if (!secuenciaStr || !/^[1-9](-[1-9])*$/.test(secuenciaStr)) {
@@ -1746,7 +1763,7 @@
       seq.forEach(idx => {
         const dot = document.querySelector(`.v-pattern-dot[data-vindex="${idx}"]`);
         if (dot) {
-          dot.className = 'v-pattern-dot w-4 h-4 rounded-full bg-brand border border-brand-light shadow-[0_0_8px_rgba(7,183,107,0.5)]';
+          dot.className = 'v-pattern-dot w-4 h-4 rounded-full bg-brand border border-brand-light shadow-[0_0_8px_rgba(7,183,107,0.5)] flex items-center justify-center text-[7px] font-black text-gray-950';
         }
       });
 

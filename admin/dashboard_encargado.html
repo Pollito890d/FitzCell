@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Encargado - FitzCell</title>
+  <link rel="icon" type="image/svg+xml" href="../media/images/fitzcell_logo.svg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = { 
@@ -22,10 +23,10 @@
       body * {
         visibility: hidden !important;
       }
-      #modal-ticket, #modal-ticket *, #modal-ticket-recepcion, #modal-ticket-recepcion * {
+      #modal-ticket, #modal-ticket *, #modal-ticket-recepcion, #modal-ticket-recepcion *, #modal-ticket-corte, #modal-ticket-corte * {
         visibility: visible !important;
       }
-      #modal-ticket, #modal-ticket-recepcion {
+      #modal-ticket, #modal-ticket-recepcion, #modal-ticket-corte {
         position: absolute;
         left: 0;
         top: 0;
@@ -288,21 +289,37 @@
                   <p class="text-xs text-gray-400 mb-3 font-semibold">Dibuja el patrón arrastrando sobre los círculos:</p>
                   <div class="relative w-56 h-56 bg-gray-950/90 border border-gray-800 rounded-2xl mx-auto p-4 flex items-center justify-center select-none" id="pattern-container">
                     <div class="grid grid-cols-3 gap-6 w-full h-full relative" id="pattern-grid">
-                      <div data-index="1" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="2" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="3" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="4" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="5" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="6" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="7" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="8" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
-                      <div data-index="9" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition"></div>
+                      <div data-index="1" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">1</div>
+                      <div data-index="2" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">2</div>
+                      <div data-index="3" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">3</div>
+                      <div data-index="4" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">4</div>
+                      <div data-index="5" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">5</div>
+                      <div data-index="6" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">6</div>
+                      <div data-index="7" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">7</div>
+                      <div data-index="8" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">8</div>
+                      <div data-index="9" class="pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300">9</div>
                     </div>
                     <svg class="absolute inset-0 pointer-events-none w-full h-full" id="pattern-svg"></svg>
                   </div>
                   <div class="mt-3 flex items-center justify-between">
                     <span class="text-[10px] text-gray-500 font-bold uppercase">Patrón: <span id="pattern-sequence-text" class="text-brand">Ninguno</span></span>
                     <button type="button" onclick="clearPattern()" class="px-2.5 py-1 bg-red-950/30 text-red-400 hover:bg-red-900/20 border border-red-900/50 rounded-lg text-xs font-bold transition">Limpiar</button>
+                  </div>
+
+                  <!-- Guía visual del patrón con números en sus posiciones correspondientes -->
+                  <div class="mt-4 pt-3 border-t border-gray-900/80 flex flex-col items-center">
+                    <p class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold mb-2">Guía de Posiciones del Patrón</p>
+                    <div class="grid grid-cols-3 gap-3 bg-gray-950/80 border border-gray-900 rounded-xl p-3 w-32 justify-items-center select-none shadow-inner shadow-black">
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">1</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">2</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">3</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">4</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">5</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">6</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">7</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">8</div>
+                      <div class="w-6 h-6 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-xs font-bold text-gray-400">9</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -395,10 +412,11 @@
                 <th class="pb-3 font-semibold text-right">Efectivo Esperado</th>
                 <th class="pb-3 font-semibold text-right">Efectivo Real</th>
                 <th class="pb-3 font-semibold text-center">Diferencia</th>
+                <th class="pb-3 font-semibold text-center">Ticket</th>
               </tr>
             </thead>
             <tbody id="manager-cortes-tbody" class="divide-y divide-gray-800 text-sm">
-              <tr><td colspan="8" class="py-4 text-center text-gray-500">Cargando...</td></tr>
+              <tr><td colspan="9" class="py-4 text-center text-gray-500">Cargando...</td></tr>
             </tbody>
           </table>
         </div>
@@ -793,6 +811,59 @@
       <div class="text-center text-[10px] text-gray-500 space-y-1 border-t border-dashed pt-4">
         <p class="font-bold text-gray-700">Conserve este comprobante</p>
         <p>Garantía aplicable únicamente a las piezas sustituidas y mano de obra bajo condiciones normales de uso.</p>
+        <p class="mt-2 text-[9px] font-mono text-gray-400">fitzcell.vercel.app</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Ticket de Corte de Caja -->
+  <div id="modal-ticket-corte" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden print:bg-white print:backdrop-blur-none print:absolute print:inset-0">
+    <div class="bg-white text-gray-900 w-80 p-6 rounded-2xl shadow-2xl relative flex flex-col print:shadow-none print:p-0 print:w-full font-mono text-xs max-h-[90vh] overflow-y-auto print:max-h-none print:overflow-visible">
+      <!-- Botones superiores -->
+      <div class="flex justify-between mb-4 border-b pb-2 print-hide">
+        <button onclick="window.print()" class="bg-brand text-gray-950 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-brand-light transition">
+          🖨️ Imprimir
+        </button>
+        <button onclick="cerrarTicketCorte()" class="bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg font-bold hover:bg-gray-300 transition">
+          ❌ Cerrar
+        </button>
+      </div>
+
+      <!-- Contenido del Ticket Físico -->
+      <div class="text-center mb-4">
+        <h2 class="text-base font-bold uppercase tracking-wider text-gray-950">FITZCELL</h2>
+        <p class="text-[10px] text-gray-500">Comprobante de Arqueo / Corte</p>
+        <p class="text-[10px] text-gray-500">San Pablo Huixtepec, Oax.</p>
+        <p class="text-[10px] text-gray-500">Tel: +52 951 581 2992</p>
+      </div>
+
+      <div class="border-t border-b border-dashed py-2 mb-4 text-gray-800 space-y-1">
+        <div class="text-center my-2">
+          <p class="text-[10px] uppercase text-gray-500 font-bold">ARQUEO DE CAJA DIARIO</p>
+          <p id="tc-id" class="text-2xl font-black text-gray-950 tracking-wider my-2 py-1 bg-gray-100 rounded border border-dashed border-gray-400 font-mono text-center">CORTE #0</p>
+        </div>
+        <div class="flex justify-between"><span>Fecha:</span><span id="tc-fecha">—</span></div>
+        <div class="flex justify-between"><span>Cajero:</span><span id="tc-cajero" class="font-bold">—</span></div>
+      </div>
+
+      <div class="mb-4 text-gray-800 space-y-1.5 border-b border-dashed pb-3">
+        <p class="font-bold text-[10px] uppercase border-b pb-0.5 text-gray-600">Balances Registrados</p>
+        <div class="flex justify-between"><span>Fondo Inicial:</span><span id="tc-fondo-inicial" class="font-bold">$0.00</span></div>
+        <div class="flex justify-between"><span>Ventas Efectivo:</span><span id="tc-ventas-efectivo" class="text-green-600 font-bold">$0.00</span></div>
+        <div class="flex justify-between"><span>Ventas Transf:</span><span id="tc-ventas-transferencia" class="text-blue-600 font-bold">$0.00</span></div>
+        <div class="flex justify-between border-t border-dashed pt-1"><span>Efectivo Esperado:</span><span id="tc-efectivo-esperado" class="font-bold">$0.00</span></div>
+        <div class="flex justify-between"><span>Efectivo Real:</span><span id="tc-efectivo-real" class="font-black text-gray-950">$0.00</span></div>
+        <div class="flex justify-between border-t border-dashed pt-1" id="tc-container-diferencia"><span>Diferencia:</span><span id="tc-diferencia" class="font-bold">$0.00</span></div>
+      </div>
+
+      <div class="mb-4 text-gray-800" id="tc-container-observaciones">
+        <p class="font-bold text-[10px] uppercase border-b pb-0.5 text-gray-600">Observaciones</p>
+        <p id="tc-observaciones" class="text-[10px] italic text-gray-700 whitespace-pre-wrap mt-1">Ninguna</p>
+      </div>
+
+      <div class="text-center text-[10px] text-gray-500 space-y-1 border-t border-dashed pt-4">
+        <p class="font-bold text-gray-700">FitzCell Administrativo</p>
+        <p>Arqueo validado en sistema central.</p>
         <p class="mt-2 text-[9px] font-mono text-gray-400">fitzcell.vercel.app</p>
       </div>
     </div>
@@ -1803,7 +1874,7 @@
           const tbody = document.getElementById('manager-cortes-tbody');
           
           if (!list || list.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" class="py-4 text-center text-gray-500">No hay cortes de caja registrados en el sistema.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" class="py-4 text-center text-gray-500">No hay cortes de caja registrados en el sistema.</td></tr>';
             return;
           }
           
@@ -1820,6 +1891,7 @@
               difClass = 'text-red-400 font-bold';
             }
             
+            const corteJson = JSON.stringify(c).replace(/'/g, "\\'").replace(/"/g, '&quot;');
             html += `<tr class="border-b border-gray-800 hover:bg-gray-800/30 transition">
               <td class="p-4 text-gray-300 font-medium">${fechaStr}</td>
               <td class="p-4 text-gray-400">${c.cajero_nombre}</td>
@@ -1829,11 +1901,16 @@
               <td class="p-4 text-right text-gray-300">${fmt(c.efectivo_esperado)}</td>
               <td class="p-4 text-right text-white font-bold">${fmt(c.efectivo_real)}</td>
               <td class="p-4 text-center ${difClass}">${difSign}${fmt(c.diferencia)}</td>
+              <td class="p-4 text-center">
+                <button onclick="abrirTicketCorteConObjeto(JSON.parse(this.dataset.corte))" data-corte="${corteJson}" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded font-bold text-xs transition">
+                  📄 Ticket
+                </button>
+              </td>
             </tr>`;
             
             if (c.observaciones) {
               html += `<tr class="bg-gray-950/20 text-xs">
-                <td colspan="8" class="p-3 text-gray-500 italic border-b border-gray-800/50">
+                <td colspan="9" class="p-3 text-gray-500 italic border-b border-gray-800/50">
                   <strong>Notas del Cajero:</strong> ${c.observaciones}
                 </td>
               </tr>`;
@@ -1845,6 +1922,44 @@
       } catch (err) {
         console.error('Error al cargar cortes de caja para gerente:', err);
       }
+    }
+
+    function abrirTicketCorteConObjeto(c) {
+      document.getElementById('tc-id').innerText = `CORTE #${c.id_corte || 0}`;
+      document.getElementById('tc-fecha').innerText = new Date(c.fecha || new Date()).toLocaleString('es-MX');
+      document.getElementById('tc-cajero').innerText = c.cajero_nombre || '—';
+      document.getElementById('tc-fondo-inicial').innerText = fmt(c.fondo_inicial);
+      document.getElementById('tc-ventas-efectivo').innerText = fmt(c.ventas_efectivo);
+      document.getElementById('tc-ventas-transferencia').innerText = fmt(c.ventas_transferencia);
+      document.getElementById('tc-efectivo-esperado').innerText = fmt(c.efectivo_esperado);
+      document.getElementById('tc-efectivo-real').innerText = fmt(c.efectivo_real);
+      
+      const diff = parseFloat(c.diferencia) || 0;
+      const tcDiff = document.getElementById('tc-diferencia');
+      tcDiff.innerText = (diff >= 0 ? '+' : '') + fmt(diff);
+      if (diff > 0.01) {
+        tcDiff.className = 'font-bold text-green-600';
+      } else if (diff < -0.01) {
+        tcDiff.className = 'font-bold text-red-600';
+      } else {
+        tcDiff.className = 'font-bold text-gray-600';
+      }
+
+      const tcObs = document.getElementById('tc-observaciones');
+      const tcContainerObs = document.getElementById('tc-container-observaciones');
+      if (c.observaciones && c.observaciones.trim() !== '') {
+        tcObs.innerText = c.observaciones;
+        tcContainerObs.classList.remove('hidden');
+      } else {
+        tcObs.innerText = '';
+        tcContainerObs.classList.add('hidden');
+      }
+      
+      document.getElementById('modal-ticket-corte').classList.remove('hidden');
+    }
+
+    function cerrarTicketCorte() {
+      document.getElementById('modal-ticket-corte').classList.add('hidden');
     }
 
     // --- CRM CLIENTS LOGIC ---
@@ -1882,9 +1997,9 @@
         html += `
           <div onclick="seleccionarCRMCliente('${nomEsc}', '${telEsc}', '${mailEsc}')" class="p-3 bg-gray-950 hover:bg-gray-800/80 border border-gray-800 hover:border-brand/40 rounded-xl cursor-pointer transition flex justify-between items-center group">
             <div>
-              <p class="text-xs font-semibold text-white group-hover:text-brand transition">${c.nombre_completo}</p>
-              <p class="text-[9px] text-gray-400 mt-0.5">${c.telefono || 'Sin teléfono'}</p>
-              <p class="text-[9px] text-gray-500 font-mono">${c.correo_electronico || ''}</p>
+              <p class="text-sm font-bold text-white group-hover:text-brand transition">${c.nombre_completo}</p>
+              <p class="text-[12px] text-gray-300 mt-1">📞 ${c.telefono || 'Sin teléfono'}</p>
+              <p class="text-[11px] text-gray-400 font-mono mt-0.5">✉️ ${c.correo_electronico || 'Sin correo'}</p>
             </div>
             <span class="text-xs text-gray-500 group-hover:text-brand transition-all">➕</span>
           </div>
@@ -1996,7 +2111,7 @@
         patternDrawSeq = [];
         svg.innerHTML = '';
         dots.forEach(dot => {
-          dot.className = 'pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition';
+          dot.className = 'pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300';
         });
         handleMove(e);
       }
@@ -2014,7 +2129,7 @@
             const idx = parseInt(dot.getAttribute('data-index'));
             if (!patternDrawSeq.includes(idx)) {
               patternDrawSeq.push(idx);
-              dot.className = 'pattern-dot w-5 h-5 rounded-full bg-brand border-2 border-brand-light scale-125 shadow-[0_0_10px_rgba(7,183,107,0.6)] cursor-pointer flex items-center justify-center transition-all';
+              dot.className = 'pattern-dot w-5 h-5 rounded-full bg-brand border-2 border-brand-light scale-125 shadow-[0_0_10px_rgba(7,183,107,0.6)] cursor-pointer flex items-center justify-center transition-all text-[10px] font-black text-gray-950';
               updateDrawLines();
             }
           }
@@ -2045,7 +2160,7 @@
       
       const dots = document.querySelectorAll('.pattern-dot');
       dots.forEach(dot => {
-        dot.className = 'pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition';
+        dot.className = 'pattern-dot w-5 h-5 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[9px] font-bold text-gray-300';
       });
       document.getElementById('nr-contrasenia').value = '';
       document.getElementById('pattern-sequence-text').innerText = 'Ninguno';
