@@ -42,17 +42,17 @@ INSERT INTO Cliente (curp, nombre_completo, telefono, correo_electronico) VALUES
 ('SILI860606MDFSLV30', 'Isabella Silva', '9511230018', 'isabella.s@email.com');
 
 -- 3. Insertar Dispositivos (Asociados por CURP en id_cliente)
-INSERT INTO Dispositivo (id_cliente, marca, modelo, color, contrasenia, descripcion) VALUES 
-('PERJ880101HDFLMN01', 'Apple', 'iPhone 13', 'Azul Sierra', '1234', 'Detalle: Rayones leves en pantalla'),
-('LOPM900202MDFLNS02', 'Samsung', 'Galaxy S22 Ultra', 'Negro', 'Patrón: 1-4-7-8-9', 'Detalle: Sin tapa trasera'),
-('GOMA920303HDFGRS03', 'Xiaomi', 'Redmi Note 11', 'Gris', '0000', 'Detalle: Pantalla totalmente estrellada'),
-('RODS940404MDFRDR04', 'Motorola', 'Moto G60', 'Plateado', '1995', 'Detalle: Centro de carga dañado'),
-('HERD960505HDFHRN05', 'Apple', 'iPhone 11', 'Blanco', '8888', 'Detalle: Pantalla rota y mojado'),
-('MARL980606MDFMTN06', 'Huawei', 'P30 Pro', 'Aurora', '1478', 'Detalle: Batería inflada'),
-('LOPC800707HDFLPC07', 'Samsung', 'Galaxy A53', 'Azul', '2580', 'Detalle: No enciende'),
-('VILA820808MDFVLN08', 'Apple', 'iPhone 14 Pro Max', 'Morado', 'Patrón: 2-5-8', 'Detalle: Estrellado de atrás'),
-('TORL840909HDFTRN09', 'Xiaomi', 'Poco X3 Pro', 'Azul', '9999', 'Detalle: Muerte súbita, sin encender'),
-('RUIE861010MDFRZR10', 'Apple', 'iPhone XR', 'Rojo', '1111', 'Detalle: Pantalla fantasma');
+INSERT INTO Dispositivo (id_dispositivo, id_cliente, marca, modelo, color, contrasenia, descripcion) VALUES 
+(1, 'PERJ880101HDFLMN01', 'Apple', 'iPhone 13', 'Azul Sierra', '1234', 'Detalle: Rayones leves en pantalla'),
+(2, 'LOPM900202MDFLNS02', 'Samsung', 'Galaxy S22 Ultra', 'Negro', 'Patrón: 1-4-7-8-9', 'Detalle: Sin tapa trasera'),
+(3, 'GOMA920303HDFGRS03', 'Xiaomi', 'Redmi Note 11', 'Gris', '0000', 'Detalle: Pantalla totalmente estrellada'),
+(4, 'RODS940404MDFRDR04', 'Motorola', 'Moto G60', 'Plateado', '1995', 'Detalle: Centro de carga dañado'),
+(5, 'HERD960505HDFHRN05', 'Apple', 'iPhone 11', 'Blanco', '8888', 'Detalle: Pantalla rota y mojado'),
+(6, 'MARL980606MDFMTN06', 'Huawei', 'P30 Pro', 'Aurora', '1478', 'Detalle: Batería inflada'),
+(7, 'LOPC800707HDFLPC07', 'Samsung', 'Galaxy A53', 'Azul', '2580', 'Detalle: No enciende'),
+(8, 'VILA820808MDFVLN08', 'Apple', 'iPhone 14 Pro Max', 'Morado', 'Patrón: 2-5-8', 'Detalle: Estrellado de atrás'),
+(9, 'TORL840909HDFTRN09', 'Xiaomi', 'Poco X3 Pro', 'Azul', '9999', 'Detalle: Muerte súbita, sin encender'),
+(10, 'RUIE861010MDFRZR10', 'Apple', 'iPhone XR', 'Rojo', '1111', 'Detalle: Pantalla fantasma');
 
 -- 4. Insertar Garantías
 INSERT INTO Garantia (id_garantia, descripcion, condiciones, dias_duracion) VALUES 
@@ -85,13 +85,13 @@ INSERT INTO Producto (codigo_barras, nombre_producto, categoria, precio_compra, 
 ('750100000020', 'Cristal de Cámara iPhone 13 Pro', 'Accesorio', 30.00, 120.00, 40, 'iPhone 13 Pro', 'Apple');
 
 -- 6. Insertar Órdenes de Reparación
-INSERT INTO Orden_Reparacion (id_dispositivo, codigo_seguimiento, fecha_entrada, fecha_entrega, falla_reportada, diagnostico, anticipo, costo, estado) VALUES 
-(1, 'R-1001', NOW() - INTERVAL '5 days', NOW() - INTERVAL '4 days', 'Falla en visualización, pantalla negra', 'Cambio de pantalla completa original.', 500.00, 2700.00, 'Entregado'),
-(2, 'R-1002', NOW() - INTERVAL '4 days', NULL, 'Reinicios constantes en el logotipo', 'Falla de software y centro de carga sucio.', 200.00, 650.00, 'Listo para entrega'),
-(3, 'R-1003', NOW() - INTERVAL '3 days', NULL, 'Pantalla estrellada y no responde el táctil', 'Requiere cambio de pantalla LCD completa.', 0.00, 1450.00, 'Reparando'),
-(4, 'R-1004', NOW() - INTERVAL '2 days', NULL, 'No carga al conectar cable', 'Cambio de flex de carga.', 100.00, 450.00, 'Pendiente'),
-(5, 'R-1005', NOW() - INTERVAL '1 days', NULL, 'No enciende tras mojarse', 'Cortocircuito en placa principal, en revisión.', 0.00, 0.00, 'Esperando Refacción'),
-(6, 'R-1006', NOW() - INTERVAL '12 hours', NULL, 'Tapa despegada y batería dura muy poco', 'Cambio de batería original.', 150.00, 1000.00, 'Listo para entrega');
+INSERT INTO Orden_Reparacion (id_orden, id_dispositivo, codigo_seguimiento, fecha_entrada, fecha_entrega, falla_reportada, diagnostico, anticipo, costo, estado) VALUES 
+(1, 1, 'R-1001', NOW() - INTERVAL '5 days', NOW() - INTERVAL '4 days', 'Falla en visualización, pantalla negra', 'Cambio de pantalla completa original.', 500.00, 2700.00, 'Entregado'),
+(2, 2, 'R-1002', NOW() - INTERVAL '4 days', NULL, 'Reinicios constantes en el logotipo', 'Falla de software y centro de carga sucio.', 200.00, 650.00, 'Listo para entrega'),
+(3, 3, 'R-1003', NOW() - INTERVAL '3 days', NULL, 'Pantalla estrellada y no responde el táctil', 'Requiere cambio de pantalla LCD completa.', 0.00, 1450.00, 'Reparando'),
+(4, 4, 'R-1004', NOW() - INTERVAL '2 days', NULL, 'No carga al conectar cable', 'Cambio de flex de carga.', 100.00, 450.00, 'Pendiente'),
+(5, 5, 'R-1005', NOW() - INTERVAL '1 days', NULL, 'No enciende tras mojarse', 'Cortocircuito en placa principal, en revisión.', 0.00, 0.00, 'Esperando Refacción'),
+(6, 6, 'R-1006', NOW() - INTERVAL '12 hours', NULL, 'Tapa despegada y batería dura muy poco', 'Cambio de batería original.', 150.00, 1000.00, 'Listo para entrega');
 
 -- 7. Insertar Detalles de Reparaciones (Uso de códigos de barras)
 INSERT INTO Detalle_Reparacion (id_orden, id_producto, id_garantia, tipo_refaccion, cantidad_usada) VALUES 
