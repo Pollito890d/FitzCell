@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
             const { data: prod, error: errProd } = await supabase
                 .from('producto')
                 .select('stock')
-                .eq('id_producto', item.id_producto)
+                .eq('codigo_barras', item.id_producto)
                 .single();
             
             if (errProd) throw errProd;
@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
             await supabase
                 .from('producto')
                 .update({ stock: newStock })
-                .eq('id_producto', item.id_producto);
+                .eq('codigo_barras', item.id_producto);
         }
 
         res.status(201).json({ message: 'Venta registrada exitosamente', id_venta });

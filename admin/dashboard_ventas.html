@@ -61,7 +61,7 @@
     
     <nav class="flex-1 space-y-2">
       <a href="#" onclick="showSection('sec-pos')" id="nav-sec-pos" class="nav-item block p-3 bg-brand/10 text-brand rounded-lg font-bold border border-brand/20 transition-all">🛒 Punto de Venta</a>
-      <a href="#" onclick="showSection('sec-comprobantes')" id="nav-sec-comprobantes" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🧾 Comprobantes</a>
+      <a href="#" onclick="showSection('sec-comprobantes')" id="nav-sec-comprobantes" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🧾 Historial de Ventas</a>
       <a href="#" onclick="showSection('sec-inventario')" id="nav-sec-inventario" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📦 Catálogo</a>
       <a href="#" onclick="showSection('sec-garantias')" id="nav-sec-garantias" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🛡️ Garantías</a>
       <a href="#" onclick="showSection('sec-corte')" id="nav-sec-corte" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">💵 Corte de Caja</a>
@@ -181,6 +181,16 @@
           </tbody>
         </table>
       </div>
+      <!-- Paginación de Historial de Ventas -->
+      <div class="flex items-center justify-between mt-6 bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-lg">
+        <button onclick="venCambiarPagina(-1)" id="btn-ven-prev" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          ◀ Anterior
+        </button>
+        <span id="ven-paginacion-info" class="text-xs font-bold text-gray-400 tracking-wider">Página 1 de 1</span>
+        <button onclick="venCambiarPagina(1)" id="btn-ven-next" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          Siguiente ▶
+        </button>
+      </div>
     </section>
 
     <!-- SECCIÓN: CATÁLOGO -->
@@ -227,6 +237,16 @@
             <tr><td colspan="4" class="p-4 text-center text-gray-500">Cargando...</td></tr>
           </tbody>
         </table>
+      </div>
+      <!-- Paginación de Catálogo -->
+      <div class="flex items-center justify-between mt-6 bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-lg">
+        <button onclick="catCambiarPagina(-1)" id="btn-cat-prev" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          ◀ Anterior
+        </button>
+        <span id="cat-paginacion-info" class="text-xs font-bold text-gray-400 tracking-wider">Página 1 de 1</span>
+        <button onclick="catCambiarPagina(1)" id="btn-cat-next" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          Siguiente ▶
+        </button>
       </div>
     </section>
 
@@ -286,7 +306,10 @@
 
             <div>
               <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Efectivo Real en Caja ($)</label>
-              <input type="number" id="corte-efectivo-real" oninput="calcularDiferenciaCorte()" placeholder="0.00" step="0.01" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-lg font-bold">
+              <div class="relative">
+                <span class="absolute left-4 top-3 text-gray-500 font-bold text-lg">$</span>
+                <input type="number" id="corte-efectivo-real" oninput="calcularDiferenciaCorte()" placeholder="0.00" step="0.01" class="w-full bg-gray-950 border border-gray-700 rounded-xl pl-8 pr-4 py-3 text-white focus:border-brand outline-none transition text-lg font-bold">
+              </div>
             </div>
 
             <div>
@@ -363,6 +386,16 @@
             <tr><td colspan="8" class="p-4 text-center text-gray-500">Cargando...</td></tr>
           </tbody>
         </table>
+      </div>
+      <!-- Paginación de Equipos Listos -->
+      <div class="flex items-center justify-between mt-6 bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-lg">
+        <button onclick="entregasCambiarPagina(-1)" id="btn-entregas-prev" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          ◀ Anterior
+        </button>
+        <span id="entregas-paginacion-info" class="text-xs font-bold text-gray-400 tracking-wider">Página 1 de 1</span>
+        <button onclick="entregasCambiarPagina(1)" id="btn-entregas-next" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          Siguiente ▶
+        </button>
       </div>
     </section>
 
@@ -719,6 +752,21 @@
       const subtotal = ticketItems.reduce((acc, curr) => acc + (curr.qty * curr.precio), 0);
       const total = subtotal;
       const metodo_pago = document.getElementById('ticket-metodo-pago').value;
+
+      // VALIDACIÓN: Evitar ventas en efectivo vacías o menores al total
+      if (metodo_pago === 'Efectivo') {
+        const recibidoVal = document.getElementById('ticket-pago-recibido').value.trim();
+        if (!recibidoVal) {
+          alert('⚠️ Por favor ingrese el monto pagado por el cliente.');
+          return;
+        }
+        const recibido = parseFloat(recibidoVal);
+        if (isNaN(recibido) || recibido < total) {
+          alert('⚠️ Pago recibido insuficiente. Debe ser de al menos $' + total.toFixed(2));
+          return;
+        }
+      }
+
       const items = ticketItems.map(i => ({
         id_producto: i.id,
         cantidad: i.qty,
@@ -779,6 +827,14 @@
       renderCatalogo();
     }
 
+    let catPaginaActual = 1;
+    const catLimitePorPagina = 10;
+
+    function catCambiarPagina(dir) {
+      catPaginaActual += dir;
+      renderCatalogo();
+    }
+
     function renderCatalogo() {
       const searchVal = document.getElementById('cat-buscador').value.toLowerCase();
       let data = inventarioDB;
@@ -795,9 +851,27 @@
           (p.modelos_compatibles && p.modelos_compatibles.toLowerCase().includes(searchVal))
         );
       }
+
+      // Aplicar Paginación
+      const totalItems = data.length;
+      const totalPaginas = Math.ceil(totalItems / catLimitePorPagina) || 1;
+      
+      if (catPaginaActual > totalPaginas) catPaginaActual = totalPaginas;
+      if (catPaginaActual < 1) catPaginaActual = 1;
+      
+      const inicio = (catPaginaActual - 1) * catLimitePorPagina;
+      const fin = inicio + catLimitePorPagina;
+      const paginados = data.slice(inicio, fin);
+      
+      const btnPrev = document.getElementById('btn-cat-prev');
+      const btnNext = document.getElementById('btn-cat-next');
+      const infoPag = document.getElementById('cat-paginacion-info');
+      if (btnPrev) btnPrev.disabled = (catPaginaActual === 1);
+      if (btnNext) btnNext.disabled = (catPaginaActual === totalPaginas);
+      if (infoPag) infoPag.innerText = `Página ${catPaginaActual} de ${totalPaginas}`;
       
       let html = '';
-      data.forEach(p => {
+      paginados.forEach(p => {
         let stockCls = p.stock <= 5 ? "bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-900/50" : "";
         html += `<tr class="hover:bg-gray-800/50 transition">
           <td class="p-4 font-medium text-white">${p.nombre_producto}</td>
@@ -811,26 +885,59 @@
 
     // Buscador interactivo en el catálogo
     document.getElementById('cat-buscador').addEventListener('input', () => {
+      catPaginaActual = 1;
       renderCatalogo();
     });
+
+    let venPaginaActual = 1;
+    const venLimitePorPagina = 10;
+    let allVentas = [];
+
+    function venCambiarPagina(dir) {
+      venPaginaActual += dir;
+      renderVentasPaginadas();
+    }
+
+    function renderVentasPaginadas() {
+      const data = allVentas;
+      const totalItems = data.length;
+      const totalPaginas = Math.ceil(totalItems / venLimitePorPagina) || 1;
+      
+      if (venPaginaActual > totalPaginas) venPaginaActual = totalPaginas;
+      if (venPaginaActual < 1) venPaginaActual = 1;
+      
+      const inicio = (venPaginaActual - 1) * venLimitePorPagina;
+      const fin = inicio + venLimitePorPagina;
+      const paginados = data.slice(inicio, fin);
+      
+      const btnPrev = document.getElementById('btn-ven-prev');
+      const btnNext = document.getElementById('btn-ven-next');
+      const infoPag = document.getElementById('ven-paginacion-info');
+      if (btnPrev) btnPrev.disabled = (venPaginaActual === 1);
+      if (btnNext) btnNext.disabled = (venPaginaActual === totalPaginas);
+      if (infoPag) infoPag.innerText = `Página ${venPaginaActual} de ${totalPaginas}`;
+      
+      let html = '';
+      paginados.forEach(v => {
+        html += `<tr class="hover:bg-gray-800/50 transition">
+          <td class="p-4 font-bold text-white">V-${v.id_venta}</td>
+          <td class="p-4 font-bold text-brand">${formatCurrency(v.total)}</td>
+          <td class="p-4 text-gray-300">${v.metodo_pago || 'Efectivo'}</td>
+          <td class="p-4 text-center">
+            <button class="text-brand hover:text-white underline font-semibold transition" onclick="verTicket(${v.id_venta})">Ver Ticket</button>
+          </td>
+        </tr>`;
+      });
+      document.getElementById('com-tbody').innerHTML = html || '<tr><td colspan="4" class="p-4 text-center text-gray-500">Sin historial de ventas</td></tr>';
+    }
 
     async function loadVentas() {
       try {
         const res = await fetch('/api/ventas');
         if(res.ok) {
-          const ventas = await res.json();
-          let html = '';
-          ventas.forEach(v => {
-            html += `<tr class="hover:bg-gray-800/50 transition">
-              <td class="p-4 font-bold text-white">V-${v.id_venta}</td>
-              <td class="p-4 font-bold text-brand">${formatCurrency(v.total)}</td>
-              <td class="p-4 text-gray-300">${v.metodo_pago || 'Efectivo'}</td>
-              <td class="p-4 text-center">
-                <button class="text-brand hover:text-white underline font-semibold transition" onclick="verTicket(${v.id_venta})">Ver Ticket</button>
-              </td>
-            </tr>`;
-          });
-          document.getElementById('com-tbody').innerHTML = html || '<tr><td colspan="4" class="p-4 text-center text-gray-500">Sin historial de ventas</td></tr>';
+          allVentas = await res.json();
+          venPaginaActual = 1;
+          renderVentasPaginadas();
         }
       } catch(e){
         console.error(e);
@@ -1233,6 +1340,14 @@
       }
     }
 
+    let entregasPaginaActual = 1;
+    const entregasLimitePorPagina = 10;
+
+    function entregasCambiarPagina(dir) {
+      entregasPaginaActual += dir;
+      filtrarEquiposListos();
+    }
+
     function filtrarEquiposListos() {
       const query = document.getElementById('entregas-buscador').value.toLowerCase().trim();
       let data = readyReparaciones;
@@ -1245,15 +1360,33 @@
           return cliente.includes(query) || folio.includes(query) || dev.includes(query);
         });
       }
+
+      // Aplicar Paginación
+      const totalItems = data.length;
+      const totalPaginas = Math.ceil(totalItems / entregasLimitePorPagina) || 1;
+      
+      if (entregasPaginaActual > totalPaginas) entregasPaginaActual = totalPaginas;
+      if (entregasPaginaActual < 1) entregasPaginaActual = 1;
+      
+      const inicio = (entregasPaginaActual - 1) * entregasLimitePorPagina;
+      const fin = inicio + entregasLimitePorPagina;
+      const paginados = data.slice(inicio, fin);
+      
+      const btnPrev = document.getElementById('btn-entregas-prev');
+      const btnNext = document.getElementById('btn-entregas-next');
+      const infoPag = document.getElementById('entregas-paginacion-info');
+      if (btnPrev) btnPrev.disabled = (entregasPaginaActual === 1);
+      if (btnNext) btnNext.disabled = (entregasPaginaActual === totalPaginas);
+      if (infoPag) infoPag.innerText = `Página ${entregasPaginaActual} de ${totalPaginas}`;
       
       const tbody = document.getElementById('entregas-tbody');
-      if (data.length === 0) {
+      if (paginados.length === 0) {
         tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-center text-gray-500">No hay ningún equipo en mostrador listo para entrega.</td></tr>';
         return;
       }
       
       let html = '';
-      data.forEach(r => {
+      paginados.forEach(r => {
         const clientName = r.dispositivo?.cliente?.nombre_completo || 'Cliente de paso';
         const deviceName = r.dispositivo ? `${r.dispositivo.marca || ''} ${r.dispositivo.modelo || ''} (${r.dispositivo.color || ''})` : 'Dispositivo Desconocido';
         const fault = r.falla_reportada || '—';

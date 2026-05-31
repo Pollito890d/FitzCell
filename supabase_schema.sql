@@ -24,7 +24,7 @@ CREATE TABLE Usuario (
 
 -- 2. Tabla de Clientes
 CREATE TABLE Cliente (
-    id_cliente SERIAL PRIMARY KEY,
+    curp VARCHAR(18) PRIMARY KEY,
     nombre_completo VARCHAR(150) NOT NULL,
     telefono VARCHAR(20),
     correo_electronico VARCHAR(100)
@@ -33,7 +33,7 @@ CREATE TABLE Cliente (
 -- 3. Tabla de Dispositivos
 CREATE TABLE Dispositivo (
     id_dispositivo SERIAL PRIMARY KEY,
-    id_cliente INT REFERENCES Cliente(id_cliente) ON DELETE CASCADE,
+    id_cliente VARCHAR(18) REFERENCES Cliente(curp) ON DELETE CASCADE,
     marca VARCHAR(50),
     modelo VARCHAR(50),
     color VARCHAR(30),
@@ -65,7 +65,7 @@ CREATE TABLE Garantia (
 
 -- 6. Tabla de Productos (Refacciones / Inventario)
 CREATE TABLE Producto (
-    id_producto SERIAL PRIMARY KEY,
+    codigo_barras VARCHAR(100) PRIMARY KEY,
     nombre_producto VARCHAR(150) NOT NULL,
     categoria VARCHAR(50),
     precio_compra DECIMAL(10,2) DEFAULT 0,
@@ -79,7 +79,7 @@ CREATE TABLE Producto (
 CREATE TABLE Detalle_Reparacion (
     id_detalle SERIAL PRIMARY KEY,
     id_orden INT REFERENCES Orden_Reparacion(id_orden) ON DELETE CASCADE,
-    id_producto INT REFERENCES Producto(id_producto) ON DELETE SET NULL,
+    id_producto VARCHAR(100) REFERENCES Producto(codigo_barras) ON DELETE SET NULL,
     id_garantia INT REFERENCES Garantia(id_garantia) ON DELETE SET NULL,
     tipo_refaccion VARCHAR(100),
     cantidad_usada INT DEFAULT 1
@@ -99,14 +99,14 @@ CREATE TABLE Venta (
 CREATE TABLE Detalle_Venta (
     id_detalle SERIAL PRIMARY KEY,
     id_venta INT REFERENCES Venta(id_venta) ON DELETE CASCADE,
-    id_producto INT REFERENCES Producto(id_producto) ON DELETE SET NULL,
+    id_producto VARCHAR(100) REFERENCES Producto(codigo_barras) ON DELETE SET NULL,
     cantidad INT DEFAULT 1,
     precio_unitario DECIMAL(10,2) NOT NULL
 );
 
 -- 10. Tabla de Cortes de Caja
 CREATE TABLE Corte_Caja (
-    id_corte SERIAL PRIMARY KEY,
+    id_corte VARCHAR(100) PRIMARY KEY,
     fecha TIMESTAMPTZ DEFAULT NOW(),
     cajero_nombre VARCHAR(150),
     ventas_efectivo DECIMAL(10,2) DEFAULT 0,
@@ -116,4 +116,3 @@ CREATE TABLE Corte_Caja (
     diferencia DECIMAL(10,2) DEFAULT 0,
     observaciones TEXT
 );
-

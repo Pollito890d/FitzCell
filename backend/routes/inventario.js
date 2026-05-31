@@ -16,14 +16,23 @@ router.get('/', async (req, res) => {
 
 // Agregar producto
 router.post('/', async (req, res) => {
-    const { nombre_producto, stock, categoria, precio_compra, precio_venta } = req.body;
+    const { codigo_barras, nombre_producto, stock, categoria, precio_compra, precio_venta, modelos_compatibles, marcas_compatibles } = req.body;
     try {
         const { data, error } = await supabase
             .from('producto')
-            .insert([{ nombre_producto, stock: stock || 0, categoria, precio_compra, precio_venta }])
+            .insert([{ 
+                codigo_barras, 
+                nombre_producto, 
+                stock: stock || 0, 
+                categoria, 
+                precio_compra: parseFloat(precio_compra) || 0, 
+                precio_venta: parseFloat(precio_venta) || 0,
+                modelos_compatibles,
+                marcas_compatibles
+            }])
             .select();
         if (error) throw error;
-        res.status(201).json({ message: 'Producto agregado', id: data[0].id_producto });
+        res.status(201).json({ message: 'Producto agregado', id: data[0].codigo_barras });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error al crear producto' });
@@ -32,12 +41,20 @@ router.post('/', async (req, res) => {
 
 // Actualizar producto
 router.put('/:id', async (req, res) => {
-    const { nombre_producto, stock, categoria, precio_compra, precio_venta } = req.body;
+    const { nombre_producto, stock, categoria, precio_compra, precio_venta, modelos_compatibles, marcas_compatibles } = req.body;
     try {
         const { data, error } = await supabase
             .from('producto')
-            .update({ nombre_producto, stock, categoria, precio_compra, precio_venta })
-            .eq('id_producto', req.params.id)
+            .update({ 
+                nombre_producto, 
+                stock: parseInt(stock) || 0, 
+                categoria, 
+                precio_compra: parseFloat(precio_compra) || 0, 
+                precio_venta: parseFloat(precio_venta) || 0,
+                modelos_compatibles,
+                marcas_compatibles
+            })
+            .eq('codigo_barras', req.params.id)
             .select();
         if (error) throw error;
         if (data.length === 0) return res.status(404).json({ message: 'Producto no encontrado' });
@@ -59,7 +76,7 @@ router.patch('/:id/stock', async (req, res) => {
         const { data: prod, error: getErr } = await supabase
             .from('producto')
             .select('stock')
-            .eq('id_producto', req.params.id)
+            .eq('codigo_barras', req.params.id)
             .single();
         if (getErr || !prod) return res.status(404).json({ message: 'Producto no encontrado' });
 
@@ -67,7 +84,7 @@ router.patch('/:id/stock', async (req, res) => {
         const { error: updErr } = await supabase
             .from('producto')
             .update({ stock: nuevoStock })
-            .eq('id_producto', req.params.id);
+            .eq('codigo_barras', req.params.id);
         if (updErr) throw updErr;
         res.json({ message: 'Stock actualizado', nuevo_stock: nuevoStock });
     } catch (error) {
@@ -77,4 +94,3 @@ router.patch('/:id/stock', async (req, res) => {
 });
 
 module.exports = router;
-

@@ -6,7 +6,7 @@
 ALTER TABLE Orden_Reparacion ALTER COLUMN codigo_seguimiento DROP NOT NULL;
 
 CREATE OR REPLACE FUNCTION generar_codigo_seguimiento()
-RETURNS TRIGGER AS $*$*
+RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.codigo_seguimiento IS NULL OR NEW.codigo_seguimiento = '' THEN
         UPDATE Orden_Reparacion
@@ -15,7 +15,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$*$* LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS tr_asignar_codigo_seguimiento ON Orden_Reparacion;
 CREATE TRIGGER tr_asignar_codigo_seguimiento
@@ -25,20 +25,20 @@ FOR EACH ROW EXECUTE FUNCTION generar_codigo_seguimiento();
 -- ==========================================
 -- 2. Actualización Automática de Inventario (TC-02)
 CREATE OR REPLACE FUNCTION descontar_stock_reparacion()
-RETURNS TRIGGER AS $*$*
+RETURNS TRIGGER AS $$
 BEGIN
     UPDATE Producto
     SET stock = stock - NEW.cantidad_usada
-    WHERE id_producto = NEW.id_producto;
+    WHERE codigo_barras = NEW.id_producto;
     
     -- Verificación de stock negativo
-    IF (SELECT stock FROM Producto WHERE id_producto = NEW.id_producto) < 0 THEN
+    IF (SELECT stock FROM Producto WHERE codigo_barras = NEW.id_producto) < 0 THEN
         RAISE EXCEPTION 'Error: Stock insuficiente para el producto seleccionado.';
     END IF;
     
     RETURN NEW;
 END;
-$*$* LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS tr_actualizar_inventario_rep ON Detalle_Reparacion;
 CREATE TRIGGER tr_actualizar_inventario_rep
@@ -48,7 +48,7 @@ FOR EACH ROW EXECUTE FUNCTION descontar_stock_reparacion();
 -- ==========================================
 -- 3. Restricción de Entrega por Saldo Pendiente (TC-05)
 CREATE OR REPLACE FUNCTION validar_pago_entrega()
-RETURNS TRIGGER AS $*$*
+RETURNS TRIGGER AS $$
 BEGIN
     -- Si el estado cambia a 'Entregado'
     IF NEW.estado = 'Entregado' THEN
@@ -59,7 +59,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$*$* LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS tr_validar_pago_antes_entrega ON Orden_Reparacion;
 CREATE TRIGGER tr_validar_pago_antes_entrega
@@ -68,25 +68,30 @@ FOR EACH ROW EXECUTE FUNCTION validar_pago_entrega();
 
 -- ==========================================
 -- 4. Asignación Automática de Garantía (RF-04)
-INSERT INTO Garantia (id_garantia, descripcion, dias_duracion) 
-VALUES (1, 'Garantía Original (30 días)', 30) ON CONFLICT DO NOTHING;
+INSERT INTO Garantia (id_garantia, descripcion, condiciones, dias_duracion) 
+VALUES (1, 'Garantía Original (30 días)', 'Cubre defectos de fabricación.', 30) ON CONFLICT (id_garantia) DO NOTHING;
 
-INSERT INTO Garantia (id_garantia, descripcion, dias_duracion) 
-VALUES (2, 'Garantía Genérica (7 días)', 7) ON CONFLICT DO NOTHING;
+INSERT INTO Garantia (id_garantia, descripcion, condiciones, dias_duracion) 
+VALUES (2, 'Garantía Genérica (7 días)', 'Cubre defectos de funcionamiento básico.', 7) ON CONFLICT (id_garantia) DO NOTHING;
+
+INSERT INTO Garantia (id_garantia, descripcion, condiciones, dias_duracion) 
+VALUES (3, 'Sin Garantía', 'No existe garantía para este tipo de piezas', 30) ON CONFLICT (id_garantia) DO NOTHING;
 
 CREATE OR REPLACE FUNCTION calcular_periodo_garantia()
-RETURNS TRIGGER AS $*$*
+RETURNS TRIGGER AS $$
 BEGIN
     -- Define la póliza a enlazar según tipo de refacción
     IF NEW.tipo_refaccion = 'Original' THEN
         NEW.id_garantia := 1;
-    ELSE
+    ELSIF NEW.tipo_refaccion = 'Genérica' THEN
         NEW.id_garantia := 2;
+    ELSE
+        NEW.id_garantia := 3; -- Sin Garantía
     END IF;
     
     RETURN NEW;
 END;
-$*$* LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS tr_generar_garantia_auto ON Detalle_Reparacion;
 CREATE TRIGGER tr_generar_garantia_auto
@@ -101,10 +106,10 @@ RETURNS TRIGGER AS $$
 BEGIN
     UPDATE Producto
     SET stock = stock - NEW.cantidad
-    WHERE id_producto = NEW.id_producto;
+    WHERE codigo_barras = NEW.id_producto;
     
     -- Verificación de stock bajo cero
-    IF (SELECT stock FROM Producto WHERE id_producto = NEW.id_producto) < 0 THEN
+    IF (SELECT stock FROM Producto WHERE codigo_barras = NEW.id_producto) < 0 THEN
         RAISE EXCEPTION 'Error: Stock insuficiente para el producto vendido.';
     END IF;
     
@@ -135,5 +140,5 @@ CREATE TRIGGER tr_registrar_fecha_entrega
 BEFORE UPDATE OF estado ON Orden_Reparacion
 FOR EACH ROW EXECUTE FUNCTION registrar_fecha_entrega();
 
--- Sincronizar el secuenciador de la tabla Garantia para evitar conflictos con los IDs manuales 1 y 2
-SELECT setval('garantia_id_garantia_seq', COALESCE((SELECT MAX(id_garantia) FROM Garantia), 2), true);
+-- Sincronizar el secuenciador de la tabla Garantia para evitar conflictos con los IDs manuales
+SELECT setval('garantia_id_garantia_seq', COALESCE((SELECT MAX(id_garantia) FROM Garantia), 3), true);

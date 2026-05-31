@@ -63,9 +63,17 @@ router.get('/totales-hoy', async (req, res) => {
 router.post('/', async (req, res) => {
     const { cajero_nombre, ventas_efectivo, ventas_transferencia, efectivo_esperado, efectivo_real, diferencia, observaciones } = req.body;
     try {
+        // Generar llave primaria natural no incremental
+        const now = new Date();
+        const yyyymmdd = now.toLocaleDateString('en-CA').replace(/-/g, ''); // YYYYMMDD (Local Time)
+        const hhmmss = now.toTimeString().slice(0, 8).replace(/:/g, ''); // HHMMSS (Local Time)
+        const cajeroClean = (cajero_nombre || 'CAJERO').toUpperCase().replace(/[^A-Z0-9]/g, '');
+        const id_corte = `CORTE-${yyyymmdd}-${hhmmss}-${cajeroClean}`;
+
         const { data, error } = await supabase
             .from('corte_caja')
             .insert([{
+                id_corte,
                 cajero_nombre,
                 ventas_efectivo: parseFloat(ventas_efectivo) || 0,
                 ventas_transferencia: parseFloat(ventas_transferencia) || 0,

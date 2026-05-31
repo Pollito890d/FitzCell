@@ -64,26 +64,28 @@ router.get('/:folio', async (req, res) => {
 
 // Crear una solicitud de reparación (Pública)
 router.post('/solicitud', async (req, res) => {
-    const { cliente_nombre, cliente_telefono, cliente_email, marca, modelo, color, contrasenia, descripcion, falla, folio_manual, anticipo } = req.body;
+    const { cliente_curp, cliente_nombre, cliente_telefono, cliente_email, marca, modelo, color, contrasenia, descripcion, falla, folio_manual, anticipo } = req.body;
     
     try {
         // 1. Buscar o crear cliente
-        let clienteId;
+        let clienteId = (cliente_curp || '').toUpperCase().trim();
+        if (!clienteId) {
+            // Generar un CURP temporal si no viene definido (para peticiones antiguas)
+            clienteId = 'CURP' + Date.now().toString().padEnd(14, '0');
+        }
+
         let { data: existingClient, error: errClient } = await supabase
             .from('cliente')
-            .select('id_cliente')
-            .or(`correo_electronico.eq.${cliente_email},telefono.eq.${cliente_telefono}`)
+            .select('curp')
+            .eq('curp', clienteId)
             .limit(1);
 
-        if (existingClient && existingClient.length > 0) {
-            clienteId = existingClient[0].id_cliente;
-        } else {
+        if (!existingClient || existingClient.length === 0) {
             const { data: newClient, error: errNew } = await supabase
                 .from('cliente')
-                .insert([{ nombre_completo: cliente_nombre, telefono: cliente_telefono, correo_electronico: cliente_email }])
+                .insert([{ curp: clienteId, nombre_completo: cliente_nombre, telefono: cliente_telefono, correo_electronico: cliente_email }])
                 .select();
             if(errNew) throw errNew;
-            clienteId = newClient[0].id_cliente;
         }
 
         // 2. Insert device

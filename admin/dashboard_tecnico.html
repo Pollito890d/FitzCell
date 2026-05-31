@@ -60,6 +60,7 @@
       <a href="#" onclick="showSection('sec-diagnostico')" id="nav-sec-diagnostico" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🔧 Diagnóstico</a>
       <a href="#" onclick="showSection('sec-inventario-tec')" id="nav-sec-inventario-tec" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📦 Inventario</a>
       <a href="#" onclick="showSection('sec-nueva-reparacion')" id="nav-sec-nueva-reparacion" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">➕ Nueva Reparación</a>
+      <a href="#" onclick="showSection('sec-clientes')" id="nav-sec-clientes" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">👥 Clientes</a>
       <a href="#" onclick="showSection('sec-garantias')" id="nav-sec-garantias" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">🛡️ Garantías</a>
       <a href="#" onclick="showSection('sec-reparaciones-globales')" id="nav-sec-reparaciones-globales" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📱 Reparaciones Globales</a>
     </nav>
@@ -86,6 +87,17 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" id="lista-ordenes">
         <p class="text-gray-500">Cargando órdenes desde Supabase...</p>
+      </div>
+
+      <!-- Paginación de Órdenes Asignadas -->
+      <div class="flex items-center justify-between mt-6 bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-lg">
+        <button onclick="ordenesCambiarPagina(-1)" id="btn-ord-prev" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          ◀ Anterior
+        </button>
+        <span id="ord-paginacion-info" class="text-xs font-bold text-gray-400 tracking-wider">Página 1 de 1</span>
+        <button onclick="ordenesCambiarPagina(1)" id="btn-ord-next" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          Siguiente ▶
+        </button>
       </div>
     </section>
 
@@ -291,6 +303,17 @@
           </table>
         </div>
       </div>
+      
+      <!-- Paginación de Inventario Técnico -->
+      <div class="flex items-center justify-between mt-6 bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-lg">
+        <button onclick="invTecCambiarPagina(-1)" id="btn-inv-tec-prev" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          ◀ Anterior
+        </button>
+        <span id="inv-tec-paginacion-info" class="text-xs font-bold text-gray-400 tracking-wider">Página 1 de 1</span>
+        <button onclick="invTecCambiarPagina(1)" id="btn-inv-tec-next" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          Siguiente ▶
+        </button>
+      </div>
     </section>
 
     <!-- SECCIÓN: GARANTÍAS -->
@@ -386,7 +409,11 @@
         <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 lg:col-span-7 shadow-lg">
           <h2 class="text-2xl font-bold mb-6 text-white border-b border-gray-800 pb-4">Formulario de Registro</h2>
           <form id="form-nueva-reparacion" onsubmit="crearNuevaReparacion(event)" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">CURP del Cliente *</label>
+                <input type="text" id="nr-curp" required maxlength="18" placeholder="CURP (18 caracteres)" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base uppercase font-mono">
+              </div>
               <div>
                 <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Nombre del Cliente *</label>
                 <input type="text" id="nr-cliente" required placeholder="Ej. Juan Pérez" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
@@ -510,6 +537,47 @@
             <p class="text-gray-500 text-xs text-center py-6">Cargando clientes registrados...</p>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: CLIENTES -->
+    <section id="sec-clientes" class="fade-in hidden">
+      <header class="mb-8 flex justify-between items-end">
+        <div>
+          <h1 class="text-3xl font-bold mb-1">Directorio de <span class="text-brand">Clientes</span></h1>
+          <p class="text-gray-400">Listado general de clientes registrados en FitzCell.</p>
+        </div>
+      </header>
+
+      <div class="mb-6">
+        <input type="text" id="clientes-general-buscador" oninput="filtrarClientesGeneral()" placeholder="Buscar cliente por CURP, nombre, teléfono o correo..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+      </div>
+
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-950 border-b border-gray-800 text-gray-400 text-sm">
+              <th class="p-4 font-semibold">CURP</th>
+              <th class="p-4 font-semibold">Nombre Completo</th>
+              <th class="p-4 font-semibold">Teléfono</th>
+              <th class="p-4 font-semibold">Correo Electrónico</th>
+            </tr>
+          </thead>
+          <tbody id="clientes-general-tbody" class="divide-y divide-gray-800 text-base">
+            <tr><td colspan="4" class="p-4 text-center text-gray-500">Cargando directorio de clientes...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación de Clientes -->
+      <div class="flex items-center justify-between mt-6 bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-lg">
+        <button onclick="cliGeneralCambiarPagina(-1)" id="btn-cli-prev" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          ◀ Anterior
+        </button>
+        <span id="cli-paginacion-info" class="text-xs font-bold text-gray-400 tracking-wider">Página 1 de 1</span>
+        <button onclick="cliGeneralCambiarPagina(1)" id="btn-cli-next" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          Siguiente ▶
+        </button>
       </div>
     </section>
 
@@ -733,6 +801,7 @@
         loadRefacciones();
       }
       if(id === 'sec-inventario-tec') loadInvTec();
+      if(id === 'sec-clientes') loadClientesGeneral();
       if(id === 'sec-reparaciones-globales') loadReparacionesGlobales();
     }
 
@@ -815,52 +884,86 @@
       showSection('sec-ordenes');
     }
 
-    async function loadOrdenes(){
-      try{
+    let ordenesPaginaActual = 1;
+    const ordenesLimitePorPagina = 9;
+    let allOrdenes = [];
+
+    function ordenesCambiarPagina(dir) {
+      ordenesPaginaActual += dir;
+      renderOrdenesPaginadas();
+    }
+
+    async function loadOrdenes() {
+      try {
         const res = await fetch('/api/reparaciones');
-        if(res.ok){
-          const data = await res.json();
-          let h = '';
-          data.forEach(rep => {
-            // Filtrar solo las que no estén entregadas para no saturar al técnico
-            if(rep.estado === 'Entregado') return;
-
-            let bc = 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20';
-            if (rep.estado === 'Reparando') {
-              bc = 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
-            } else if (rep.estado === 'Listo para entrega' || rep.estado === 'Listo') {
-              bc = 'bg-brand/10 text-brand border border-brand/20';
-            } else if (rep.estado === 'Diagnosticando') {
-              bc = 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
-            }
-
-            const folio = (rep.codigo_seguimiento||'').replace(/'/g,"");
-            const falla = (rep.falla_reportada||'Sin detalles').replace(/'/g,"").replace(/"/g,"");
-            const devText = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color ? `(${rep.dispositivo.color})` : ''}`.trim() : 'Dispositivo Desconocido';
-            const clientName = rep.dispositivo?.cliente ? rep.dispositivo.cliente.nombre_completo : 'General / Mostrador';
-            const diagClean = (rep.diagnostico||'').replace(/'/g,"\\'").replace(/"/g,"\\\"");
-            const costoClean = rep.costo || '';
-            const contraseniaClean = (rep.dispositivo?.contrasenia || '').replace(/'/g,"\\'").replace(/"/g,"\\\"");
-            
-            h += '<div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-brand/50 transition flex flex-col">' +
-              '<div class="flex justify-between items-start mb-4"><div><span class="text-xs font-bold text-gray-400 tracking-wider">FOLIO</span><h3 class="text-xl font-bold text-white">' + folio + '</h3></div>' +
-              '<span class="px-3 py-1 text-xs font-bold rounded-full ' + bc + '">' + rep.estado + '</span></div>' +
-              '<div class="mb-5 flex-1">' +
-                '<p class="text-sm font-bold text-white mb-0.5">' + devText + '</p>' +
-                '<p class="text-xs text-gray-400 mb-3">Cliente: ' + clientName + '</p>' +
-                '<p class="text-sm text-gray-500 italic">"' + falla + '"</p>' +
-              '</div>' +
-              '<button onclick="irADiagnostico(\'' + folio + '\',\'' + rep.id_dispositivo + '\',\'' + rep.id_orden + '\',\'' + falla + '\',\'' + rep.estado + '\',\'' + devText.replace(/'/g, "\\'") + '\',\'' + diagClean + '\',\'' + costoClean + '\',\'' + contraseniaClean + '\')" class="w-full bg-brand text-gray-950 hover:bg-brand-light py-2 rounded-lg text-sm font-bold transition shadow-[0_0_10px_rgba(7,183,107,0.1)]">Atender Equipo</button>' +
-              '</div>';
-          });
-          document.getElementById('lista-ordenes').innerHTML = h || '<p class="text-gray-500 col-span-3 text-center py-10">No hay órdenes asignadas pendientes.</p>';
+        if (res.ok) {
+          const list = await res.json();
+          // Filtrar solo las que no estén entregadas para no saturar al técnico
+          allOrdenes = list.filter(rep => rep.estado !== 'Entregado');
+          ordenesPaginaActual = 1;
+          renderOrdenesPaginadas();
         }
-      }catch(e){ console.error(e); }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function renderOrdenesPaginadas() {
+      const data = allOrdenes;
+      const totalItems = data.length;
+      const totalPaginas = Math.ceil(totalItems / ordenesLimitePorPagina) || 1;
+      
+      if (ordenesPaginaActual > totalPaginas) ordenesPaginaActual = totalPaginas;
+      if (ordenesPaginaActual < 1) ordenesPaginaActual = 1;
+      
+      const inicio = (ordenesPaginaActual - 1) * ordenesLimitePorPagina;
+      const fin = inicio + ordenesLimitePorPagina;
+      const paginados = data.slice(inicio, fin);
+      
+      const btnPrev = document.getElementById('btn-ord-prev');
+      const btnNext = document.getElementById('btn-ord-next');
+      const infoPag = document.getElementById('ord-paginacion-info');
+      if (btnPrev) btnPrev.disabled = (ordenesPaginaActual === 1);
+      if (btnNext) btnNext.disabled = (ordenesPaginaActual === totalPaginas);
+      if (infoPag) infoPag.innerText = `Página ${ordenesPaginaActual} de ${totalPaginas}`;
+      
+      let h = '';
+      paginados.forEach(rep => {
+        let bc = 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20';
+        if (rep.estado === 'Reparando') {
+          bc = 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
+        } else if (rep.estado === 'Listo para entrega' || rep.estado === 'Listo') {
+          bc = 'bg-brand/10 text-brand border border-brand/20';
+        } else if (rep.estado === 'Diagnosticando') {
+          bc = 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
+        }
+
+        const folio = (rep.codigo_seguimiento||'').replace(/'/g,"");
+        const falla = (rep.falla_reportada||'Sin detalles').replace(/'/g,"").replace(/"/g,"");
+        const devText = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color ? `(${rep.dispositivo.color})` : ''}`.trim() : 'Dispositivo Desconocido';
+        const clientName = rep.dispositivo?.cliente ? rep.dispositivo.cliente.nombre_completo : 'General / Mostrador';
+        const diagClean = (rep.diagnostico||'').replace(/'/g,"\\'").replace(/"/g,"\\\"");
+        const costoClean = rep.costo || '';
+        const contraseniaClean = (rep.dispositivo?.contrasenia || '').replace(/'/g,"\\'").replace(/"/g,"\\\"");
+        
+        h += '<div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-brand/50 transition flex flex-col">' +
+          '<div class="flex justify-between items-start mb-4"><div><span class="text-xs font-bold text-gray-400 tracking-wider">FOLIO</span><h3 class="text-xl font-bold text-white">' + folio + '</h3></div>' +
+          '<span class="px-3 py-1 text-xs font-bold rounded-full ' + bc + '">' + rep.estado + '</span></div>' +
+          '<div class="mb-5 flex-1">' +
+            '<p class="text-sm font-bold text-white mb-0.5">' + devText + '</p>' +
+            '<p class="text-xs text-gray-400 mb-3">Cliente: ' + clientName + '</p>' +
+            '<p class="text-sm text-gray-500 italic">"' + falla + '"</p>' +
+          '</div>' +
+          '<button onclick="irADiagnostico(\'' + folio + '\',\'' + rep.id_dispositivo + '\',\'' + rep.id_orden + '\',\'' + falla + '\',\'' + rep.estado + '\',\'' + devText.replace(/'/g, "\\'") + '\',\'' + diagClean + '\',\'' + costoClean + '\',\'' + contraseniaClean + '\')" class="w-full bg-brand text-gray-950 hover:bg-brand-light py-2 rounded-lg text-sm font-bold transition shadow-[0_0_10px_rgba(7,183,107,0.1)]">Atender Equipo</button>' +
+          '</div>';
+      });
+      document.getElementById('lista-ordenes').innerHTML = h || '<p class="text-gray-500 col-span-3 text-center py-10">No hay órdenes asignadas pendientes.</p>';
     }
 
     async function crearNuevaReparacion(e) {
       e.preventDefault();
       const payload = {
+        cliente_curp: document.getElementById('nr-curp').value.trim(),
         cliente_nombre: document.getElementById('nr-cliente').value.trim(),
         cliente_telefono: document.getElementById('nr-telefono').value.trim(),
         cliente_email: document.getElementById('nr-email').value.trim(),
@@ -886,6 +989,7 @@
           clearPattern();
           setContraseniaTipo('texto');
           loadOrdenes();
+          cargarCRMClientes();
           const dispText = `${payload.marca} ${payload.modelo} (${payload.color})`;
           abrirTicketRecepcion(
             d.folio,
@@ -909,12 +1013,21 @@
     let invTecCatActiva = null;
     let stockModalTecId = null;
 
+    let invTecPaginaActual = 1;
+    const invTecLimitePorPagina = 10;
+
+    function invTecCambiarPagina(dir) {
+      invTecPaginaActual += dir;
+      renderInvTec();
+    }
+
     async function loadInvTec() {
       try {
         const res = await fetch('/api/inventario');
         if (res.ok) {
           invTecDB = await res.json();
           renderInvTecCats();
+          invTecPaginaActual = 1;
           renderInvTec();
         }
       } catch(e) { console.error(e); }
@@ -931,6 +1044,7 @@
 
     function filtrarInvTec(cat) {
       invTecCatActiva = cat;
+      invTecPaginaActual = 1;
       renderInvTecCats();
       renderInvTec();
     }
@@ -939,8 +1053,27 @@
       const txt = (filterText || document.getElementById('inv-tec-buscador').value).toLowerCase().trim();
       let data = invTecCatActiva ? invTecDB.filter(i => i.categoria === invTecCatActiva) : invTecDB;
       if (txt) data = data.filter(i => (i.nombre_producto||'').toLowerCase().includes(txt) || (i.categoria||'').toLowerCase().includes(txt));
+      
+      // Aplicar Paginación
+      const totalItems = data.length;
+      const totalPaginas = Math.ceil(totalItems / invTecLimitePorPagina) || 1;
+      
+      if (invTecPaginaActual > totalPaginas) invTecPaginaActual = totalPaginas;
+      if (invTecPaginaActual < 1) invTecPaginaActual = 1;
+      
+      const inicio = (invTecPaginaActual - 1) * invTecLimitePorPagina;
+      const fin = inicio + invTecLimitePorPagina;
+      const paginados = data.slice(inicio, fin);
+      
+      const btnPrev = document.getElementById('btn-inv-tec-prev');
+      const btnNext = document.getElementById('btn-inv-tec-next');
+      const infoPag = document.getElementById('inv-tec-paginacion-info');
+      if (btnPrev) btnPrev.disabled = (invTecPaginaActual === 1);
+      if (btnNext) btnNext.disabled = (invTecPaginaActual === totalPaginas);
+      if (infoPag) infoPag.innerText = `Página ${invTecPaginaActual} de ${totalPaginas}`;
+
       let h = '';
-      data.forEach(it => {
+      paginados.forEach(it => {
         const sc = it.stock <= 5 ? 'bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-900/50 font-semibold' : 'text-white font-semibold';
         const nomEsc = it.nombre_producto.replace(/'/g, "\\'");
         h += `<tr class="hover:bg-gray-800/50 transition">
@@ -949,7 +1082,7 @@
           <td class="p-4 font-bold text-brand">${fmt(it.precio_venta)}</td>
           <td class="p-4 text-center"><span class="${sc}">${it.stock}</span></td>
           <td class="p-4 text-center">
-            <button onclick="abrirModalStockTec(${it.id_producto}, '${nomEsc}')" class="px-3 py-1.5 bg-brand/10 text-brand hover:bg-brand/20 border border-brand/30 rounded-lg text-xs font-bold transition">+ Stock</button>
+            <button onclick="abrirModalStockTec('${it.codigo_barras}', '${nomEsc}')" class="px-3 py-1.5 bg-brand/10 text-brand hover:bg-brand/20 border border-brand/30 rounded-lg text-xs font-bold transition">+ Stock</button>
           </td>
         </tr>`;
       });
@@ -958,7 +1091,10 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       const b = document.getElementById('inv-tec-buscador');
-      if (b) b.addEventListener('input', () => renderInvTec());
+      if (b) b.addEventListener('input', () => {
+        invTecPaginaActual = 1;
+        renderInvTec();
+      });
     });
 
     function abrirModalStockTec(id, nombre) {
@@ -1029,7 +1165,7 @@
       filtered.forEach(p => {
         const nom = p.nombre_producto.replace(/'/g, "\\'");
         html += `
-          <div onclick="agregarPieza('${nom}', ${p.id_producto})" class="p-3 bg-gray-950 hover:bg-gray-800/80 border border-gray-800 hover:border-brand/40 rounded-xl cursor-pointer flex justify-between items-center transition">
+          <div onclick="agregarPieza('${nom}', '${p.codigo_barras}')" class="p-3 bg-gray-950 hover:bg-gray-800/80 border border-gray-800 hover:border-brand/40 rounded-xl cursor-pointer flex justify-between items-center transition">
             <div>
               <p class="text-sm font-bold text-white">${p.nombre_producto}</p>
               <p class="text-xs text-gray-300 mt-1">${p.categoria || 'Sin categoría'} ${p.marcas_compatibles ? `• ${p.marcas_compatibles}` : ''}</p>
@@ -1059,8 +1195,8 @@
     function calcularCostoRefacciones() {
       let refTotal = 0;
       document.querySelectorAll('#lista-piezas-usadas > div').forEach(div => {
-        const id = parseInt(div.getAttribute('data-id'));
-        const prod = refaccionesDB.find(p => p.id_producto === id);
+        const id = div.getAttribute('data-id');
+        const prod = refaccionesDB.find(p => p.codigo_barras === id);
         if (prod) {
           refTotal += parseFloat(prod.precio_venta) || 0;
         } else {
@@ -1081,7 +1217,7 @@
         return;
       }
 
-      const producto = refaccionesDB.find(p => p.id_producto === id);
+      const producto = refaccionesDB.find(p => p.codigo_barras === id);
       const precio = producto ? parseFloat(producto.precio_venta) || 0 : 0;
 
       const div = document.createElement('div');
@@ -1097,6 +1233,7 @@
         '<select onchange="guardarPiezasEnLocalStorage()" class="ref-tipo bg-gray-950 text-white border border-gray-800 text-xs rounded px-2 py-1 focus:border-brand outline-none transition">' +
         '<option value="Original">Original (30 días)</option>' +
         '<option value="Genérica">Genérica (7 días)</option>' +
+        '<option value="Sin Garantía">Sin Garantía</option>' +
         '</select>' +
         '<span class="text-gray-400 text-xs">x1</span>' +
         '<button class="text-red-400 hover:text-red-300" onclick="this.parentElement.parentElement.remove(); guardarPiezasEnLocalStorage(); checkEmptyPiezas();"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>' +
@@ -1115,9 +1252,9 @@
     function guardarPiezasEnLocalStorage() {
       const piezas = [];
       document.querySelectorAll('#lista-piezas-usadas > div').forEach(div => {
-        const id = parseInt(div.getAttribute('data-id'));
+        const id = div.getAttribute('data-id');
         const nombre = div.getAttribute('data-nombre');
-        const prod = refaccionesDB.find(p => p.id_producto === id);
+        const prod = refaccionesDB.find(p => p.codigo_barras === id);
         const precio = prod ? parseFloat(prod.precio_venta) || 0 : (parseFloat(div.getAttribute('data-precio')) || 0);
         const sel = div.querySelector('select');
         const tipo_refaccion = sel ? sel.value : 'Original';
@@ -1149,6 +1286,7 @@
                 '<select onchange="guardarPiezasEnLocalStorage()" class="ref-tipo bg-gray-950 text-white border border-gray-800 text-xs rounded px-2 py-1 focus:border-brand outline-none transition">' +
                 '<option value="Original">Original (30 días)</option>' +
                 '<option value="Genérica">Genérica (7 días)</option>' +
+                '<option value="Sin Garantía">Sin Garantía</option>' +
                 '</select>' +
                 '<span class="text-gray-400 text-xs">x1</span>' +
                 '<button class="text-red-400 hover:text-red-300" onclick="this.parentElement.parentElement.remove(); guardarPiezasEnLocalStorage(); checkEmptyPiezas();"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>' +
@@ -1184,7 +1322,7 @@
       // Obtener las piezas agregadas
       const piezas = [];
       document.querySelectorAll('#lista-piezas-usadas > div').forEach(div => {
-        const id_producto = parseInt(div.getAttribute('data-id'));
+        const id_producto = div.getAttribute('data-id');
         const sel = div.querySelector('select');
         const tipo_refaccion = sel ? sel.value : 'Original';
         if (id_producto) {
@@ -1498,9 +1636,10 @@
         const nomEsc = (c.nombre_completo || '').replace(/'/g, "\\'");
         const telEsc = (c.telefono || '').replace(/'/g, "\\'");
         const mailEsc = (c.correo_electronico || '').replace(/'/g, "\\'");
+        const curpEsc = (c.curp || '').replace(/'/g, "\\'");
         
         html += `
-          <div onclick="seleccionarCRMCliente('${nomEsc}', '${telEsc}', '${mailEsc}')" class="p-3 bg-gray-950 hover:bg-gray-800/80 border border-gray-800 hover:border-brand/40 rounded-xl cursor-pointer transition flex justify-between items-center group">
+          <div onclick="seleccionarCRMCliente('${nomEsc}', '${telEsc}', '${mailEsc}', '${curpEsc}')" class="p-3 bg-gray-950 hover:bg-gray-800/80 border border-gray-800 hover:border-brand/40 rounded-xl cursor-pointer transition flex justify-between items-center group">
             <div>
               <p class="text-sm font-bold text-white group-hover:text-brand transition">${c.nombre_completo}</p>
               <p class="text-[12px] text-gray-300 mt-1">📞 ${c.telefono || 'Sin teléfono'}</p>
@@ -1522,19 +1661,22 @@
       const filtered = allCRMClientes.filter(c => 
         (c.nombre_completo || '').toLowerCase().includes(q) || 
         (c.telefono || '').toLowerCase().includes(q) ||
-        (c.correo_electronico || '').toLowerCase().includes(q)
+        (c.correo_electronico || '').toLowerCase().includes(q) ||
+        (c.curp || '').toLowerCase().includes(q)
       );
       renderCRMClientes(filtered);
     }
 
-    function seleccionarCRMCliente(nombre, telefono, email) {
+    function seleccionarCRMCliente(nombre, telefono, email, curp) {
       const inpNombre = document.getElementById('nr-cliente');
       const inpTelefono = document.getElementById('nr-telefono');
       const inpEmail = document.getElementById('nr-email');
+      const inpCurp = document.getElementById('nr-curp');
 
       if (inpNombre) { inpNombre.value = nombre; highlightField(inpNombre); }
       if (inpTelefono) { inpTelefono.value = telefono; highlightField(inpTelefono); }
       if (inpEmail) { inpEmail.value = email; highlightField(inpEmail); }
+      if (inpCurp && curp) { inpCurp.value = curp; highlightField(inpCurp); }
     }
 
     function highlightField(el) {
@@ -1542,6 +1684,76 @@
       setTimeout(() => {
         el.classList.remove('border-brand', 'bg-brand/10');
       }, 800);
+    }
+
+    // --- DIRECTORIO GENERAL DE CLIENTES (PAGINADO) ---
+    let cliGeneralPaginaActual = 1;
+    const cliGeneralLimitePorPagina = 10;
+    let allGeneralClientes = [];
+
+    function cliGeneralCambiarPagina(dir) {
+      cliGeneralPaginaActual += dir;
+      renderClientesGeneral();
+    }
+
+    async function loadClientesGeneral() {
+      try {
+        const res = await fetch('/api/reparaciones/clientes/listado');
+        if (res.ok) {
+          allGeneralClientes = await res.json();
+          cliGeneralPaginaActual = 1;
+          renderClientesGeneral();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderClientesGeneral() {
+      const q = document.getElementById('clientes-general-buscador').value.toLowerCase().trim();
+      let data = allGeneralClientes;
+      
+      if (q) {
+        data = data.filter(c => 
+          (c.curp || '').toLowerCase().includes(q) ||
+          (c.nombre_completo || '').toLowerCase().includes(q) ||
+          (c.telefono || '').toLowerCase().includes(q) ||
+          (c.correo_electronico || '').toLowerCase().includes(q)
+        );
+      }
+
+      const totalItems = data.length;
+      const totalPaginas = Math.ceil(totalItems / cliGeneralLimitePorPagina) || 1;
+      
+      if (cliGeneralPaginaActual > totalPaginas) cliGeneralPaginaActual = totalPaginas;
+      if (cliGeneralPaginaActual < 1) cliGeneralPaginaActual = 1;
+      
+      const inicio = (cliGeneralPaginaActual - 1) * cliGeneralLimitePorPagina;
+      const fin = inicio + cliGeneralLimitePorPagina;
+      const paginados = data.slice(inicio, fin);
+      
+      const btnPrev = document.getElementById('btn-cli-prev');
+      const btnNext = document.getElementById('btn-cli-next');
+      const infoPag = document.getElementById('cli-paginacion-info');
+      if (btnPrev) btnPrev.disabled = (cliGeneralPaginaActual === 1);
+      if (btnNext) btnNext.disabled = (cliGeneralPaginaActual === totalPaginas);
+      if (infoPag) infoPag.innerText = `Página ${cliGeneralPaginaActual} de ${totalPaginas}`;
+      
+      let html = '';
+      paginados.forEach(c => {
+        html += `<tr class="hover:bg-gray-800/40 transition">
+          <td class="p-4 font-mono font-bold text-brand text-sm">${c.curp || '—'}</td>
+          <td class="p-4 text-white font-medium">${c.nombre_completo}</td>
+          <td class="p-4 text-gray-300">${c.telefono || '—'}</td>
+          <td class="p-4 text-gray-400 font-mono text-xs">${c.correo_electronico || '—'}</td>
+        </tr>`;
+      });
+      document.getElementById('clientes-general-tbody').innerHTML = html || '<tr><td colspan="4" class="p-4 text-center text-gray-500">Sin clientes registrados</td></tr>';
+    }
+
+    function filtrarClientesGeneral() {
+      cliGeneralPaginaActual = 1;
+      renderClientesGeneral();
     }
 
     function abrirTicketRecepcionConObjeto(rep) {

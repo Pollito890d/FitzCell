@@ -63,6 +63,7 @@
       <a href="#" onclick="showSection('sec-reparaciones')" id="nav-sec-reparaciones" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📱 Reparaciones globales</a>
       <a href="#" onclick="showSection('sec-nueva-reparacion')" id="nav-sec-nueva-reparacion" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">➕ Nueva Reparación</a>
       <a href="#" onclick="showSection('sec-ventas')" id="nav-sec-ventas" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">💰 Historial de Ventas</a>
+      <a href="#" onclick="showSection('sec-clientes')" id="nav-sec-clientes" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">👥 Clientes</a>
       <a href="#" onclick="showSection('sec-estadisticas')" id="nav-sec-estadisticas" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">📈 Estadísticas Gerente</a>
       <a href="#" onclick="showSection('sec-cortes')" id="nav-sec-cortes" class="nav-item block p-3 text-gray-400 hover:bg-gray-800 rounded-lg transition-all">💵 Cortes de Caja</a>
     </nav>
@@ -153,6 +154,17 @@
           </table>
         </div>
       </div>
+      
+      <!-- Paginación de Inventario (Encargado) -->
+      <div class="flex items-center justify-between mt-6 bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-lg">
+        <button onclick="invCambiarPagina(-1)" id="btn-inv-prev" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          ◀ Anterior
+        </button>
+        <span id="inv-paginacion-info" class="text-xs font-bold text-gray-400 tracking-wider">Página 1 de 1</span>
+        <button onclick="invCambiarPagina(1)" id="btn-inv-next" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          Siguiente ▶
+        </button>
+      </div>
     </section>
 
     <!-- SECCIÓN: EMPLEADOS -->
@@ -175,8 +187,8 @@
     <!-- SECCIÓN: REPARACIONES GLOBALES -->
     <section id="sec-reparaciones" class="fade-in hidden">
       <header class="mb-8">
-        <h1 class="text-3xl font-bold mb-1">Reparaciones <span class="text-brand">Globales</span></h1>
-        <p class="text-gray-400">Monitor del estado de todas las reparaciones en el taller.</p>
+        <h1 class="text-3xl font-bold mb-1">Reparaciones <span class="text-brand">Globalses</span></h1>
+        <p class="text-gray-400">Estado de todas las reparaciones en el taller.</p>
       </header>
 
       <!-- Buscadores de Reparaciones Globales -->
@@ -241,7 +253,11 @@
         <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 lg:col-span-7 shadow-lg">
           <h2 class="text-2xl font-bold mb-6 text-white border-b border-gray-800 pb-4">Formulario de Registro</h2>
           <form id="form-nueva-reparacion" onsubmit="crearNuevaReparacion(event)" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">CURP del Cliente *</label>
+                <input type="text" id="nr-curp" required maxlength="18" placeholder="CURP (18 caracteres)" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base uppercase font-mono">
+              </div>
               <div>
                 <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Nombre del Cliente *</label>
                 <input type="text" id="nr-cliente" required placeholder="Ej. Juan Pérez" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
@@ -372,7 +388,7 @@
     <section id="sec-ventas" class="fade-in hidden">
       <header class="mb-8">
         <h1 class="text-3xl font-bold mb-1">Historial de <span class="text-brand">Ventas</span></h1>
-        <p class="text-gray-400">Ingresos generados por el área de mostrador.</p>
+        <p class="text-gray-400">Ingresos generados por las ventas realizadas.</p>
       </header>
       <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
         <table class="w-full text-left border-collapse">
@@ -390,13 +406,24 @@
           </tbody>
         </table>
       </div>
+      
+      <!-- Paginación de Historial de Ventas -->
+      <div class="flex items-center justify-between mt-6 bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-lg">
+        <button onclick="venCambiarPagina(-1)" id="btn-ven-prev" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          ◀ Anterior
+        </button>
+        <span id="ven-paginacion-info" class="text-xs font-bold text-gray-400 tracking-wider">Página 1 de 1</span>
+        <button onclick="venCambiarPagina(1)" id="btn-ven-next" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          Siguiente ▶
+        </button>
+      </div>
     </section>
 
     <!-- SECCIÓN: HISTORIAL DE CORTES DE CAJA -->
     <section id="sec-cortes" class="fade-in hidden">
       <header class="mb-8">
         <h1 class="text-3xl font-bold mb-1">Cortes de <span class="text-brand">Caja</span></h1>
-        <p class="text-gray-400">Historial completo y arqueos registrados por cajeros.</p>
+        <p class="text-gray-400">Historial completo de ventas registradas por cajeros.</p>
       </header>
 
       <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg p-6">
@@ -420,13 +447,24 @@
           </table>
         </div>
       </div>
+      
+      <!-- Paginación de Cortes de Caja -->
+      <div class="flex items-center justify-between mt-6 bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-lg">
+        <button onclick="cortesCambiarPagina(-1)" id="btn-cor-prev" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          ◀ Anterior
+        </button>
+        <span id="cor-paginacion-info" class="text-xs font-bold text-gray-400 tracking-wider">Página 1 de 1</span>
+        <button onclick="cortesCambiarPagina(1)" id="btn-cor-next" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          Siguiente ▶
+        </button>
+      </div>
     </section>
 
     <!-- SECCIÓN: ESTADÍSTICAS GERENTE -->
     <section id="sec-estadisticas" class="fade-in hidden">
       <header class="mb-8">
         <h1 class="text-3xl font-bold mb-1">Estadísticas <span class="text-brand">Gerente</span></h1>
-        <p class="text-gray-400">Reportes visuales y análisis de rendimiento en tiempo real.</p>
+        <p class="text-gray-400">Reportes gráficos y estadísticos de rendimiento.</p>
       </header>
 
       <!-- Panel de Gráficos -->
@@ -473,6 +511,47 @@
       </div>
     </section>
 
+    <!-- SECCIÓN: CLIENTES -->
+    <section id="sec-clientes" class="fade-in hidden">
+      <header class="mb-8 flex justify-between items-end">
+        <div>
+          <h1 class="text-3xl font-bold mb-1">Directorio de <span class="text-brand">Clientes</span></h1>
+          <p class="text-gray-400">Listado general de clientes registrados en FitzCell.</p>
+        </div>
+      </header>
+
+      <div class="mb-6">
+        <input type="text" id="clientes-general-buscador" oninput="filtrarClientesGeneral()" placeholder="Buscar cliente por CURP, nombre, teléfono o correo..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+      </div>
+
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-950 border-b border-gray-800 text-gray-400 text-sm">
+              <th class="p-4 font-semibold">CURP</th>
+              <th class="p-4 font-semibold">Nombre Completo</th>
+              <th class="p-4 font-semibold">Teléfono</th>
+              <th class="p-4 font-semibold">Correo Electrónico</th>
+            </tr>
+          </thead>
+          <tbody id="clientes-general-tbody" class="divide-y divide-gray-800 text-base">
+            <tr><td colspan="4" class="p-4 text-center text-gray-500">Cargando directorio de clientes...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación de Clientes -->
+      <div class="flex items-center justify-between mt-6 bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-lg">
+        <button onclick="cliGeneralCambiarPagina(-1)" id="btn-cli-prev" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          ◀ Anterior
+        </button>
+        <span id="cli-paginacion-info" class="text-xs font-bold text-gray-400 tracking-wider">Página 1 de 1</span>
+        <button onclick="cliGeneralCambiarPagina(1)" id="btn-cli-next" class="px-4 py-2 bg-gray-950 text-gray-400 hover:bg-gray-800 hover:text-white border border-gray-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          Siguiente ▶
+        </button>
+      </div>
+    </section>
+
   </main>
 
   <!-- Modal de Nuevo Producto (Encargado) -->
@@ -483,6 +562,10 @@
         <button onclick="cerrarModalNuevoProducto()" class="text-gray-400 hover:text-white">❌</button>
       </h2>
       <form id="form-nuevo-prod" onsubmit="guardarNuevoProducto(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Código de Barras / SKU *</label>
+          <input type="text" id="np-barras" required placeholder="Ej. 750102030405" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm font-mono uppercase">
+        </div>
         <div>
           <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Nombre del Producto *</label>
           <input type="text" id="np-nombre" required placeholder="Ej. Pantalla OLED iPhone 14 Pro" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
@@ -511,11 +594,17 @@
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Precio de Compra ($)</label>
-            <input type="number" id="np-compra" min="0" step="0.01" placeholder="0.00" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+            <div class="relative">
+              <span class="absolute left-4 top-3 text-gray-500 font-bold">$</span>
+              <input type="number" id="np-compra" min="0" step="0.01" placeholder="0.00" class="w-full bg-gray-950 border border-gray-700 rounded-xl pl-8 pr-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+            </div>
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Precio de Venta ($) *</label>
-            <input type="number" id="np-venta" required min="0" step="0.01" placeholder="0.00" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+            <div class="relative">
+              <span class="absolute left-4 top-3 text-gray-500 font-bold">$</span>
+              <input type="number" id="np-venta" required min="0" step="0.01" placeholder="0.00" class="w-full bg-gray-950 border border-gray-700 rounded-xl pl-8 pr-4 py-3 text-white focus:border-brand outline-none transition text-sm">
+            </div>
           </div>
         </div>
         <div>
@@ -979,6 +1068,7 @@
     async function guardarNuevoProducto(e) {
       e.preventDefault();
       const payload = {
+        codigo_barras: document.getElementById('np-barras').value.trim(),
         nombre_producto: document.getElementById('np-nombre').value.trim(),
         categoria: document.getElementById('np-categoria').value,
         precio_compra: parseFloat(document.getElementById('np-compra').value) || 0,
@@ -1018,7 +1108,7 @@
       });
       const a = document.getElementById('nav-'+id);
       if(a){ a.classList.remove('text-gray-400','hover:bg-gray-800'); a.classList.add('bg-brand/10','text-brand','font-bold','border','border-brand/20'); }
-      const loaders = { 'sec-resumen':loadResumen,'sec-inventario':loadInventario,'sec-empleados':loadEmpleados,'sec-reparaciones':loadReparaciones,'sec-ventas':loadVentas, 'sec-estadisticas':loadEstadisticas, 'sec-cortes':loadCortesManager };
+      const loaders = { 'sec-resumen':loadResumen,'sec-inventario':loadInventario,'sec-empleados':loadEmpleados,'sec-reparaciones':loadReparaciones,'sec-ventas':loadVentas, 'sec-estadisticas':loadEstadisticas, 'sec-cortes':loadCortesManager, 'sec-clientes':loadClientesGeneral };
       if(loaders[id]) loaders[id]();
     }
 
@@ -1059,12 +1149,22 @@
       }catch(e){ console.error(e); }
     }
 
+    let invPaginaActual = 1;
+    const invLimitePorPagina = 10;
+    let invActiveCat = null;
+
+    function invCambiarPagina(dir) {
+      invPaginaActual += dir;
+      renderInv(invActiveCat);
+    }
+
     async function loadInventario(){
       try{
         const res = await fetch('/api/inventario');
         if(res.ok){
           allInv = await res.json();
           renderCats();
+          invPaginaActual = 1;
           renderInv(null);
           const al = allInv.filter(p => p.stock <= 5).length;
           document.getElementById('res-alertas').innerText = al + ' refacciones';
@@ -1074,9 +1174,9 @@
 
     function renderCats(){
       const cats = [...new Set(allInv.map(i => i.categoria))].filter(Boolean);
-      let h = '<button onclick="renderInv(null)" class="whitespace-nowrap px-4 py-2 bg-brand text-gray-950 rounded-lg text-sm font-bold transition">Todas</button>';
+      let h = '<button onclick="invActiveCat=null; invPaginaActual=1; renderInv(null)" class="whitespace-nowrap px-4 py-2 bg-brand text-gray-950 rounded-lg text-sm font-bold transition">Todas</button>';
       cats.forEach(c => {
-        h += '<button onclick="renderInv(\'' + c + '\')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">' + c + '</button>';
+        h += `<button onclick="invActiveCat='${c}'; invPaginaActual=1; renderInv('${c}')" class="whitespace-nowrap px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold transition">${c}</button>`;
       });
       document.getElementById('inv-categorias').innerHTML = h;
     }
@@ -1119,9 +1219,29 @@
     }
 
     function renderInv(cat){
+      invActiveCat = cat;
       const data = cat ? allInv.filter(i => i.categoria === cat) : allInv;
+      
+      const totalItems = data.length;
+      const totalPaginas = Math.ceil(totalItems / invLimitePorPagina) || 1;
+      
+      if (invPaginaActual > totalPaginas) invPaginaActual = totalPaginas;
+      if (invPaginaActual < 1) invPaginaActual = 1;
+      
+      const inicio = (invPaginaActual - 1) * invLimitePorPagina;
+      const fin = inicio + invLimitePorPagina;
+      const paginados = data.slice(inicio, fin);
+      
+      const btnPrev = document.getElementById('btn-inv-prev');
+      const btnNext = document.getElementById('btn-inv-next');
+      const infoPag = document.getElementById('inv-paginacion-info');
+      
+      if (btnPrev) btnPrev.disabled = (invPaginaActual === 1);
+      if (btnNext) btnNext.disabled = (invPaginaActual === totalPaginas);
+      if (infoPag) infoPag.innerText = `Página ${invPaginaActual} de ${totalPaginas}`;
+
       let h = '';
-      data.forEach(it => {
+      paginados.forEach(it => {
         const sc = it.stock <= 5 
           ? 'bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-900/50' 
           : 'text-white font-semibold';
@@ -1133,7 +1253,7 @@
           <td class="p-4 font-bold text-brand">${fmt(it.precio_venta)}</td>
           <td class="p-4 text-center"><span class="${sc}">${it.stock}</span></td>
           <td class="p-4 text-center">
-            <button onclick="abrirModalStock(${it.id_producto}, '${nomEsc}')" class="px-3 py-1.5 bg-brand/10 text-brand hover:bg-brand/20 border border-brand/30 rounded-lg text-xs font-bold transition">+ Stock</button>
+            <button onclick="abrirModalStock('${it.codigo_barras}', '${nomEsc}')" class="px-3 py-1.5 bg-brand/10 text-brand hover:bg-brand/20 border border-brand/30 rounded-lg text-xs font-bold transition">+ Stock</button>
           </td>
         </tr>`;
       });
@@ -1199,6 +1319,7 @@
     async function crearNuevaReparacion(e) {
       e.preventDefault();
       const payload = {
+        cliente_curp: document.getElementById('nr-curp').value.trim(),
         cliente_nombre: document.getElementById('nr-cliente').value.trim(),
         cliente_telefono: document.getElementById('nr-telefono').value.trim(),
         cliente_email: document.getElementById('nr-email').value.trim(),
@@ -1224,6 +1345,7 @@
           clearPattern();
           setContraseniaTipo('texto');
           loadReparaciones();
+          cargarCRMClientes();
           const dispText = `${payload.marca} ${payload.modelo} (${payload.color})`;
           abrirTicketRecepcion(
             d.folio,
@@ -1393,29 +1515,64 @@
       document.getElementById('rep-tbody').innerHTML = h || '<tr><td colspan="9" class="p-4 text-center text-gray-500">Sin órdenes globales que coincidan</td></tr>';
     }
 
-    async function loadVentas(){
+    let allVentas = [];
+    let venPaginaActual = 1;
+    const venLimitePorPagina = 10;
+
+    function venCambiarPagina(dir) {
+      venPaginaActual += dir;
+      renderVentasPaginadas();
+    }
+
+    async function loadVentas() {
       try {
         const res = await fetch('/api/ventas');
         if (res.ok) {
-          const sales = await res.json();
-          let h = '';
-          sales.forEach(v => {
-            h += `<tr class="hover:bg-gray-800/50 transition">
-              <td class="p-4 font-bold text-white">V-${v.id_venta}</td>
-              <td class="p-4 text-gray-400">${new Date(v.fecha).toLocaleString('es-MX')}</td>
-              <td class="p-4 text-gray-300">${v.metodo_pago || 'Efectivo'}</td>
-              <td class="p-4 font-bold text-brand text-right">${fmt(v.total)}</td>
-              <td class="p-4 text-center">
-                <button class="text-brand hover:text-white underline font-semibold transition" onclick="verTicket(${v.id_venta})">Ver Ticket</button>
-              </td>
-            </tr>`;
-          });
-          document.getElementById('ven-tbody').innerHTML = h || '<tr><td colspan="5" class="p-4 text-center text-gray-500">Sin historial de ventas</td></tr>';
+          allVentas = await res.json();
+          // Quitar ventas de $0.00
+          allVentas = allVentas.filter(v => parseFloat(v.total) > 0);
+          venPaginaActual = 1;
+          renderVentasPaginadas();
         }
-      } catch(err) {
+      } catch (err) {
         console.error(err);
         document.getElementById('ven-tbody').innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-400">Error al cargar historial.</td></tr>';
       }
+    }
+
+    function renderVentasPaginadas() {
+      const data = allVentas;
+      const totalItems = data.length;
+      const totalPaginas = Math.ceil(totalItems / venLimitePorPagina) || 1;
+      
+      if (venPaginaActual > totalPaginas) venPaginaActual = totalPaginas;
+      if (venPaginaActual < 1) venPaginaActual = 1;
+      
+      const inicio = (venPaginaActual - 1) * venLimitePorPagina;
+      const fin = inicio + venLimitePorPagina;
+      const paginados = data.slice(inicio, fin);
+      
+      const btnPrev = document.getElementById('btn-ven-prev');
+      const btnNext = document.getElementById('btn-ven-next');
+      const infoPag = document.getElementById('ven-paginacion-info');
+      
+      if (btnPrev) btnPrev.disabled = (venPaginaActual === 1);
+      if (btnNext) btnNext.disabled = (venPaginaActual === totalPaginas);
+      if (infoPag) infoPag.innerText = `Página ${venPaginaActual} de ${totalPaginas}`;
+      
+      let h = '';
+      paginados.forEach(v => {
+        h += `<tr class="hover:bg-gray-800/50 transition">
+          <td class="p-4 font-bold text-white">V-${v.id_venta}</td>
+          <td class="p-4 text-gray-400">${new Date(v.fecha).toLocaleString('es-MX')}</td>
+          <td class="p-4 text-gray-300">${v.metodo_pago || 'Efectivo'}</td>
+          <td class="p-4 font-bold text-brand text-right">${fmt(v.total)}</td>
+          <td class="p-4 text-center">
+            <button class="text-brand hover:text-white underline font-semibold transition" onclick="verTicket(${v.id_venta})">Ver Ticket</button>
+          </td>
+        </tr>`;
+      });
+      document.getElementById('ven-tbody').innerHTML = h || '<tr><td colspan="5" class="p-4 text-center text-gray-500">Sin historial de ventas</td></tr>';
     }
 
     function verTicket(id_venta) {
@@ -1777,7 +1934,7 @@
           <td class="py-3 px-2 text-gray-400">${it.categoria||'—'}</td>
           <td class="py-3 px-2 text-center"><span class="px-2 py-0.5 bg-red-950/50 text-red-400 rounded border border-red-900/50 font-bold">${it.stock}</span></td>
           <td class="py-3 px-2 text-center">
-            <button onclick="cerrarAlertasStock(); abrirModalStock(${it.id_producto}, '${nomEsc}')" class="px-2.5 py-1 bg-brand/10 text-brand hover:bg-brand/20 border border-brand/30 rounded-lg text-xs font-bold transition">+ Stock</button>
+            <button onclick="cerrarAlertasStock(); abrirModalStock('${it.codigo_barras}', '${nomEsc}')" class="px-2.5 py-1 bg-brand/10 text-brand hover:bg-brand/20 border border-brand/30 rounded-lg text-xs font-bold transition">+ Stock</button>
           </td>
         </tr>`;
       });
@@ -1864,61 +2021,95 @@
       document.getElementById('modal-detalle-reparacion').classList.add('hidden');
     }
 
+    let allCortes = [];
+    let corPaginaActual = 1;
+    const corLimitePorPagina = 10;
+
+    function cortesCambiarPagina(dir) {
+      corPaginaActual += dir;
+      renderCortesPaginados();
+    }
+
     async function loadCortesManager() {
       try {
         const res = await fetch('/api/corte-caja');
         if (res.ok) {
-          const list = await res.json();
-          const tbody = document.getElementById('manager-cortes-tbody');
-          
-          if (!list || list.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="9" class="py-4 text-center text-gray-500">No hay cortes de caja registrados en el sistema.</td></tr>';
-            return;
-          }
-          
-          let html = '';
-          list.forEach(c => {
-            const fechaStr = new Date(c.fecha).toLocaleString('es-MX');
-            
-            let difClass = 'text-gray-400';
-            let difSign = '';
-            if (c.diferencia > 0.01) {
-              difClass = 'text-green-400 font-bold';
-              difSign = '+';
-            } else if (c.diferencia < -0.01) {
-              difClass = 'text-red-400 font-bold';
-            }
-            
-            const corteJson = JSON.stringify(c).replace(/'/g, "\\'").replace(/"/g, '&quot;');
-            html += `<tr class="border-b border-gray-800 hover:bg-gray-800/30 transition">
-              <td class="p-4 text-gray-300 font-medium">${fechaStr}</td>
-              <td class="p-4 text-gray-400">${c.cajero_nombre}</td>
-              <td class="p-4 text-right text-brand">${fmt(c.ventas_efectivo)}</td>
-              <td class="p-4 text-right text-blue-400">${fmt(c.ventas_transferencia)}</td>
-              <td class="p-4 text-right text-gray-300">${fmt(c.efectivo_esperado)}</td>
-              <td class="p-4 text-right text-white font-bold">${fmt(c.efectivo_real)}</td>
-              <td class="p-4 text-center ${difClass}">${difSign}${fmt(c.diferencia)}</td>
-              <td class="p-4 text-center">
-                <button onclick="abrirTicketCorteConObjeto(JSON.parse(this.dataset.corte))" data-corte="${corteJson}" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded font-bold text-xs transition">
-                  📄 Ticket
-                </button>
-              </td>
-            </tr>`;
-            
-            if (c.observaciones) {
-              html += `<tr class="bg-gray-950/20 text-xs">
-                <td colspan="8" class="p-3 text-gray-500 italic border-b border-gray-800/50">
-                  <strong>Notas del Cajero:</strong> ${c.observaciones}
-                </td>
-              </tr>`;
-            }
-          });
-          
-          tbody.innerHTML = html;
+          allCortes = await res.json();
+          corPaginaActual = 1;
+          renderCortesPaginados();
         }
       } catch (err) {
         console.error('Error al cargar cortes de caja para gerente:', err);
       }
+    }
+
+    function renderCortesPaginados() {
+      const data = allCortes;
+      const totalItems = data.length;
+      const totalPaginas = Math.ceil(totalItems / corLimitePorPagina) || 1;
+      
+      if (corPaginaActual > totalPaginas) corPaginaActual = totalPaginas;
+      if (corPaginaActual < 1) corPaginaActual = 1;
+      
+      const inicio = (corPaginaActual - 1) * corLimitePorPagina;
+      const fin = inicio + corLimitePorPagina;
+      const paginados = data.slice(inicio, fin);
+      
+      const btnPrev = document.getElementById('btn-cor-prev');
+      const btnNext = document.getElementById('btn-cor-next');
+      const infoPag = document.getElementById('cor-paginacion-info');
+      
+      if (btnPrev) btnPrev.disabled = (corPaginaActual === 1);
+      if (btnNext) btnNext.disabled = (corPaginaActual === totalPaginas);
+      if (infoPag) infoPag.innerText = `Página ${corPaginaActual} de ${totalPaginas}`;
+      
+      const tbody = document.getElementById('manager-cortes-tbody');
+      if (!tbody) return;
+      
+      if (paginados.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="py-4 text-center text-gray-500">No hay cortes de caja registrados en el sistema.</td></tr>';
+        return;
+      }
+      
+      let html = '';
+      paginados.forEach(c => {
+        const fechaStr = new Date(c.fecha).toLocaleString('es-MX');
+        
+        let difClass = 'text-gray-400';
+        let difSign = '';
+        if (c.diferencia > 0.01) {
+          difClass = 'text-green-400 font-bold';
+          difSign = '+';
+        } else if (c.diferencia < -0.01) {
+          difClass = 'text-red-400 font-bold';
+        }
+        
+        const corteJson = JSON.stringify(c).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        html += `<tr class="border-b border-gray-800 hover:bg-gray-800/30 transition">
+          <td class="p-4 text-gray-300 font-medium">${fechaStr}</td>
+          <td class="p-4 text-gray-400">${c.cajero_nombre}</td>
+          <td class="p-4 text-right text-brand">${fmt(c.ventas_efectivo)}</td>
+          <td class="p-4 text-right text-blue-400">${fmt(c.ventas_transferencia)}</td>
+          <td class="p-4 text-right text-gray-300">${fmt(c.efectivo_esperado)}</td>
+          <td class="p-4 text-right text-white font-bold">${fmt(c.efectivo_real)}</td>
+          <td class="p-4 text-center ${difClass}">${difSign}${fmt(c.diferencia)}</td>
+          <td class="p-4 text-center">
+            <button onclick="abrirTicketCorteConObjeto(JSON.parse(this.dataset.corte))" data-corte="${corteJson}" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded font-bold text-xs transition">
+              📄 Ticket
+            </button>
+          </td>
+        </tr>`;
+        
+        if (c.observaciones) {
+          html += `<tr class="bg-gray-950/20 text-xs">
+            <td colspan="8" class="p-3 text-gray-500 italic border-b border-gray-800/50">
+              <strong>Notas del Cajero:</strong> ${c.observaciones}
+            </td>
+          </tr>`;
+        }
+      });
+      
+      tbody.innerHTML = html;
     }
 
     function abrirTicketCorteConObjeto(c) {
@@ -1989,13 +2180,15 @@
         const nomEsc = (c.nombre_completo || '').replace(/'/g, "\\'");
         const telEsc = (c.telefono || '').replace(/'/g, "\\'");
         const mailEsc = (c.correo_electronico || '').replace(/'/g, "\\'");
+        const curpEsc = (c.curp || '').replace(/'/g, "\\'");
         
         html += `
-          <div onclick="seleccionarCRMCliente('${nomEsc}', '${telEsc}', '${mailEsc}')" class="p-3 bg-gray-950 hover:bg-gray-800/80 border border-gray-800 hover:border-brand/40 rounded-xl cursor-pointer transition flex justify-between items-center group">
+          <div onclick="seleccionarCRMCliente('${nomEsc}', '${telEsc}', '${mailEsc}', '${curpEsc}')" class="p-3 bg-gray-950 hover:bg-gray-800/80 border border-gray-800 hover:border-brand/40 rounded-xl cursor-pointer transition flex justify-between items-center group">
             <div>
               <p class="text-sm font-bold text-white group-hover:text-brand transition">${c.nombre_completo}</p>
               <p class="text-[12px] text-gray-300 mt-1">📞 ${c.telefono || 'Sin teléfono'}</p>
               <p class="text-[11px] text-gray-400 font-mono mt-0.5">✉️ ${c.correo_electronico || 'Sin correo'}</p>
+              <p class="text-[10px] text-brand font-mono font-semibold mt-0.5">🆔 ${c.curp || 'Sin CURP'}</p>
             </div>
             <span class="text-xs text-gray-500 group-hover:text-brand transition-all">➕</span>
           </div>
@@ -2013,19 +2206,22 @@
       const filtered = allCRMClientes.filter(c => 
         (c.nombre_completo || '').toLowerCase().includes(q) || 
         (c.telefono || '').toLowerCase().includes(q) ||
-        (c.correo_electronico || '').toLowerCase().includes(q)
+        (c.correo_electronico || '').toLowerCase().includes(q) ||
+        (c.curp || '').toLowerCase().includes(q)
       );
       renderCRMClientes(filtered);
     }
 
-    function seleccionarCRMCliente(nombre, telefono, email) {
+    function seleccionarCRMCliente(nombre, telefono, email, curp) {
       const inpNombre = document.getElementById('nr-cliente');
       const inpTelefono = document.getElementById('nr-telefono');
       const inpEmail = document.getElementById('nr-email');
+      const inpCurp = document.getElementById('nr-curp');
 
       if (inpNombre) { inpNombre.value = nombre; highlightField(inpNombre); }
       if (inpTelefono) { inpTelefono.value = telefono; highlightField(inpTelefono); }
       if (inpEmail) { inpEmail.value = email; highlightField(inpEmail); }
+      if (inpCurp && curp) { inpCurp.value = curp; highlightField(inpCurp); }
     }
 
     // Dibujar animación de resalte
@@ -2034,6 +2230,76 @@
       setTimeout(() => {
         el.classList.remove('border-brand', 'bg-brand/10');
       }, 800);
+    }
+
+    // --- DIRECTORIO GENERAL DE CLIENTES (PAGINADO) ---
+    let cliGeneralPaginaActual = 1;
+    const cliGeneralLimitePorPagina = 10;
+    let allGeneralClientes = [];
+
+    function cliGeneralCambiarPagina(dir) {
+      cliGeneralPaginaActual += dir;
+      renderClientesGeneral();
+    }
+
+    async function loadClientesGeneral() {
+      try {
+        const res = await fetch('/api/reparaciones/clientes/listado');
+        if (res.ok) {
+          allGeneralClientes = await res.json();
+          cliGeneralPaginaActual = 1;
+          renderClientesGeneral();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderClientesGeneral() {
+      const q = document.getElementById('clientes-general-buscador').value.toLowerCase().trim();
+      let data = allGeneralClientes;
+      
+      if (q) {
+        data = data.filter(c => 
+          (c.curp || '').toLowerCase().includes(q) ||
+          (c.nombre_completo || '').toLowerCase().includes(q) ||
+          (c.telefono || '').toLowerCase().includes(q) ||
+          (c.correo_electronico || '').toLowerCase().includes(q)
+        );
+      }
+
+      const totalItems = data.length;
+      const totalPaginas = Math.ceil(totalItems / cliGeneralLimitePorPagina) || 1;
+      
+      if (cliGeneralPaginaActual > totalPaginas) cliGeneralPaginaActual = totalPaginas;
+      if (cliGeneralPaginaActual < 1) cliGeneralPaginaActual = 1;
+      
+      const inicio = (cliGeneralPaginaActual - 1) * cliGeneralLimitePorPagina;
+      const fin = inicio + cliGeneralLimitePorPagina;
+      const paginados = data.slice(inicio, fin);
+      
+      const btnPrev = document.getElementById('btn-cli-prev');
+      const btnNext = document.getElementById('btn-cli-next');
+      const infoPag = document.getElementById('cli-paginacion-info');
+      if (btnPrev) btnPrev.disabled = (cliGeneralPaginaActual === 1);
+      if (btnNext) btnNext.disabled = (cliGeneralPaginaActual === totalPaginas);
+      if (infoPag) infoPag.innerText = `Página ${cliGeneralPaginaActual} de ${totalPaginas}`;
+      
+      let html = '';
+      paginados.forEach(c => {
+        html += `<tr class="hover:bg-gray-800/40 transition">
+          <td class="p-4 font-mono font-bold text-brand text-sm">${c.curp || '—'}</td>
+          <td class="p-4 text-white font-medium">${c.nombre_completo}</td>
+          <td class="p-4 text-gray-300">${c.telefono || '—'}</td>
+          <td class="p-4 text-gray-400 font-mono text-xs">${c.correo_electronico || '—'}</td>
+        </tr>`;
+      });
+      document.getElementById('clientes-general-tbody').innerHTML = html || '<tr><td colspan="4" class="p-4 text-center text-gray-500">Sin clientes registrados</td></tr>';
+    }
+
+    function filtrarClientesGeneral() {
+      cliGeneralPaginaActual = 1;
+      renderClientesGeneral();
     }
 
     // Gestión del Dibujador de Patrón (Nueva Reparación)
