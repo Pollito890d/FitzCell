@@ -769,6 +769,12 @@
         marcas_compatibles: document.getElementById('npt-marcas').value.trim(),
         modelos_compatibles: document.getElementById('npt-modelos').value.trim()
       };
+      
+      if (payload.precio_venta <= payload.precio_compra) {
+        alert('⚠️ Error comercial: El precio de venta debe ser estrictamente mayor que el precio de compra.');
+        return;
+      }
+
       try {
         const res = await fetch('/api/inventario', {
           method: 'POST',

@@ -17,6 +17,13 @@ router.get('/', async (req, res) => {
 // Agregar producto
 router.post('/', async (req, res) => {
     const { codigo_barras, nombre_producto, stock, categoria, precio_compra, precio_venta, modelos_compatibles, marcas_compatibles } = req.body;
+    
+    const pCompra = parseFloat(precio_compra) || 0;
+    const pVenta = parseFloat(precio_venta) || 0;
+    if (pVenta <= pCompra) {
+        return res.status(400).json({ message: 'El precio de venta debe ser estrictamente mayor que el precio de compra.' });
+    }
+
     try {
         const { data, error } = await supabase
             .from('producto')
@@ -42,6 +49,13 @@ router.post('/', async (req, res) => {
 // Actualizar producto
 router.put('/:id', async (req, res) => {
     const { nombre_producto, stock, categoria, precio_compra, precio_venta, modelos_compatibles, marcas_compatibles } = req.body;
+    
+    const pCompra = parseFloat(precio_compra) || 0;
+    const pVenta = parseFloat(precio_venta) || 0;
+    if (pVenta <= pCompra) {
+        return res.status(400).json({ message: 'El precio de venta debe ser estrictamente mayor que el precio de compra.' });
+    }
+
     try {
         const { data, error } = await supabase
             .from('producto')
