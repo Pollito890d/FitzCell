@@ -187,7 +187,7 @@
     <!-- SECCIÓN: REPARACIONES GLOBALES -->
     <section id="sec-reparaciones" class="fade-in hidden">
       <header class="mb-8">
-        <h1 class="text-3xl font-bold mb-1">Reparaciones <span class="text-brand">Globalses</span></h1>
+        <h1 class="text-3xl font-bold mb-1">Reparaciones <span class="text-brand">Globales</span></h1>
         <p class="text-gray-400">Estado de todas las reparaciones en el taller.</p>
       </header>
 
@@ -377,7 +377,7 @@
             <span class="absolute left-3.5 top-3.5 text-gray-500 font-bold">🔍</span>
           </div>
           
-          <div class="overflow-y-auto pr-1 space-y-2 border border-gray-800 bg-gray-950/40 p-3 rounded-xl max-h-[350px] flex-1" id="lista-clientes-rapido">
+          <div class="overflow-y-auto pr-1 space-y-2 border border-gray-800 bg-gray-950/40 p-3 rounded-xl max-h-[580px] flex-1" id="lista-clientes-rapido">
             <p class="text-gray-500 text-xs text-center py-6">Cargando clientes registrados...</p>
           </div>
         </div>
@@ -435,6 +435,7 @@
                 <th class="pb-3 font-semibold">Cajero</th>
                 <th class="pb-3 font-semibold text-right">Ventas Efectivo</th>
                 <th class="pb-3 font-semibold text-right">Ventas Transferencia</th>
+                <th class="pb-3 font-semibold text-right text-green-400">Total Ventas</th>
                 <th class="pb-3 font-semibold text-right">Efectivo Esperado</th>
                 <th class="pb-3 font-semibold text-right">Efectivo Real</th>
                 <th class="pb-3 font-semibold text-center">Diferencia</th>
@@ -442,7 +443,7 @@
               </tr>
             </thead>
             <tbody id="manager-cortes-tbody" class="divide-y divide-gray-800 text-sm">
-              <tr><td colspan="8" class="py-4 text-center text-gray-500">Cargando...</td></tr>
+              <tr><td colspan="9" class="py-4 text-center text-gray-500">Cargando...</td></tr>
             </tbody>
           </table>
         </div>
@@ -938,6 +939,7 @@
         <p class="font-bold text-[10px] uppercase border-b pb-0.5 text-gray-600">Balances Registrados</p>
         <div class="flex justify-between"><span>Ventas Efectivo:</span><span id="tc-ventas-efectivo" class="text-green-600 font-bold">$0.00</span></div>
         <div class="flex justify-between"><span>Ventas Transf:</span><span id="tc-ventas-transferencia" class="text-blue-600 font-bold">$0.00</span></div>
+        <div class="flex justify-between font-bold text-gray-900 border-t border-dashed pt-1"><span>Total Ventas:</span><span id="tc-total-ventas" class="text-green-600 font-black">$0.00</span></div>
         <div class="flex justify-between border-t border-dashed pt-1"><span>Efectivo Esperado:</span><span id="tc-efectivo-esperado" class="font-bold">$0.00</span></div>
         <div class="flex justify-between"><span>Efectivo Real:</span><span id="tc-efectivo-real" class="font-black text-gray-950">$0.00</span></div>
         <div class="flex justify-between border-t border-dashed pt-1" id="tc-container-diferencia"><span>Diferencia:</span><span id="tc-diferencia" class="font-bold">$0.00</span></div>
@@ -2067,7 +2069,7 @@
       if (!tbody) return;
       
       if (paginados.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="py-4 text-center text-gray-500">No hay cortes de caja registrados en el sistema.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="py-4 text-center text-gray-500">No hay cortes de caja registrados en el sistema.</td></tr>';
         return;
       }
       
@@ -2090,6 +2092,7 @@
           <td class="p-4 text-gray-400">${c.cajero_nombre}</td>
           <td class="p-4 text-right text-brand">${fmt(c.ventas_efectivo)}</td>
           <td class="p-4 text-right text-blue-400">${fmt(c.ventas_transferencia)}</td>
+          <td class="p-4 text-right text-green-400 font-bold">${fmt(c.ventas_efectivo + c.ventas_transferencia)}</td>
           <td class="p-4 text-right text-gray-300">${fmt(c.efectivo_esperado)}</td>
           <td class="p-4 text-right text-white font-bold">${fmt(c.efectivo_real)}</td>
           <td class="p-4 text-center ${difClass}">${difSign}${fmt(c.diferencia)}</td>
@@ -2102,7 +2105,7 @@
         
         if (c.observaciones) {
           html += `<tr class="bg-gray-950/20 text-xs">
-            <td colspan="8" class="p-3 text-gray-500 italic border-b border-gray-800/50">
+            <td colspan="9" class="p-3 text-gray-500 italic border-b border-gray-800/50">
               <strong>Notas del Cajero:</strong> ${c.observaciones}
             </td>
           </tr>`;
@@ -2118,6 +2121,7 @@
       document.getElementById('tc-cajero').innerText = c.cajero_nombre || '—';
       document.getElementById('tc-ventas-efectivo').innerText = fmt(c.ventas_efectivo);
       document.getElementById('tc-ventas-transferencia').innerText = fmt(c.ventas_transferencia);
+      document.getElementById('tc-total-ventas').innerText = fmt(c.ventas_efectivo + c.ventas_transferencia);
       document.getElementById('tc-efectivo-esperado').innerText = fmt(c.efectivo_esperado);
       document.getElementById('tc-efectivo-real').innerText = fmt(c.efectivo_real);
       
@@ -2287,11 +2291,11 @@
       
       let html = '';
       paginados.forEach(c => {
-        html += `<tr class="hover:bg-gray-800/40 transition">
-          <td class="p-4 font-mono font-bold text-brand text-sm">${c.curp || '—'}</td>
-          <td class="p-4 text-white font-medium">${c.nombre_completo}</td>
-          <td class="p-4 text-gray-300">${c.telefono || '—'}</td>
-          <td class="p-4 text-gray-400 font-mono text-xs">${c.correo_electronico || '—'}</td>
+        html += `<tr class="hover:bg-gray-800/40 transition text-base">
+          <td class="p-4 font-mono font-bold text-brand text-base">${c.curp || '—'}</td>
+          <td class="p-4 text-white font-bold text-lg">${c.nombre_completo}</td>
+          <td class="p-4 text-gray-200 text-base">${c.telefono || '—'}</td>
+          <td class="p-4 text-gray-300 font-mono text-sm">${c.correo_electronico || '—'}</td>
         </tr>`;
       });
       document.getElementById('clientes-general-tbody').innerHTML = html || '<tr><td colspan="4" class="p-4 text-center text-gray-500">Sin clientes registrados</td></tr>';
