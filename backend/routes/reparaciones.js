@@ -186,6 +186,32 @@ router.put('/:id_orden/diagnostico', async (req, res) => {
     }
 });
 
+// Actualizar la contraseña/patrón del dispositivo de una orden
+router.put('/:id_orden/contrasenia', async (req, res) => {
+    const { id_orden } = req.params;
+    const { contrasenia } = req.body;
+    try {
+        // Obtener id_dispositivo de la orden
+        const { data: ord, error: errOrd } = await supabase
+            .from('orden_reparacion')
+            .select('id_dispositivo')
+            .eq('id_orden', id_orden)
+            .single();
+        if (errOrd || !ord) return res.status(404).json({ message: 'Orden no encontrada' });
+
+        const { error: errUpdate } = await supabase
+            .from('dispositivo')
+            .update({ contrasenia })
+            .eq('id_dispositivo', ord.id_dispositivo);
+        if (errUpdate) throw errUpdate;
+
+        res.json({ message: 'Contraseña del dispositivo actualizada con éxito' });
+    } catch(err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error al actualizar contraseña' });
+    }
+});
+
 module.exports = router;
 
 
