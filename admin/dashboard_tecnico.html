@@ -452,16 +452,21 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-7xl mx-auto">
         <!-- Formulario (Izquierda) -->
         <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 lg:col-span-7 shadow-lg">
-          <h2 class="text-2xl font-bold mb-6 text-white border-b border-gray-800 pb-4">Formulario de Registro</h2>
+          <h2 class="text-2xl font-bold mb-6 text-white border-b border-gray-800 pb-4 flex justify-between items-center">
+            <span>Formulario de Registro</span>
+            <button type="button" onclick="desbloquearClienteRegistro()" id="btn-desbloquear-cliente" class="hidden text-xs bg-red-950/40 hover:bg-red-900/30 text-red-400 border border-red-900/50 px-3 py-1.5 rounded-xl font-bold transition">
+              ✍️ Editar / Nuevo Cliente
+            </button>
+          </h2>
           <form id="form-nueva-reparacion" onsubmit="crearNuevaReparacion(event)" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">CURP del Cliente *</label>
-                <input type="text" id="nr-curp" required maxlength="18" placeholder="CURP (18 caracteres)" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base uppercase font-mono">
+                <input type="text" id="nr-curp" oninput="filtrarClientesDesdeFormulario()" required maxlength="18" placeholder="CURP (18 caracteres)" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base uppercase font-mono">
               </div>
               <div>
                 <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Nombre del Cliente *</label>
-                <input type="text" id="nr-cliente" required placeholder="Ej. Juan Pérez" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+                <input type="text" id="nr-cliente" oninput="filtrarClientesDesdeFormulario()" required placeholder="Ej. Juan Pérez" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
               </div>
               <div>
                 <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Teléfono *</label>
@@ -490,8 +495,36 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Contraseña/Pin de Bloqueo</label>
+                <label class="block text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wider">🔑 Contraseña/Pin de Bloqueo *</label>
+                
+                <div class="flex gap-2 mb-3">
+                  <button type="button" onclick="setRegContraseniaTipo('texto')" id="btn-reg-tipo-texto" class="flex-1 py-2 rounded-xl text-xs font-bold transition bg-brand text-gray-950 border border-brand/20">PIN / Texto</button>
+                  <button type="button" onclick="setRegContraseniaTipo('patron')" id="btn-reg-tipo-patron" class="flex-1 py-2 rounded-xl text-xs font-bold transition bg-gray-950 text-gray-400 border border-gray-800 hover:bg-gray-900">Patrón (Dibujar)</button>
+                </div>
+
                 <input type="text" id="reg-contrasenia" placeholder="Ej. 1234 o Patrón" class="w-full bg-gray-950 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-brand outline-none transition text-base">
+                
+                <div id="reg-patron-drawer-container" class="hidden mt-3 p-4 bg-gray-950/60 border border-gray-800 rounded-2xl text-center">
+                  <p class="text-[10px] text-gray-400 mb-2 font-semibold">Dibuja el patrón arrastrando sobre los círculos:</p>
+                  <div class="relative w-44 h-44 bg-gray-950/90 border border-gray-800 rounded-2xl mx-auto p-3 flex items-center justify-center select-none" id="reg-pattern-container">
+                    <div class="grid grid-cols-3 gap-5 w-full h-full relative" id="reg-pattern-grid">
+                      <div data-index="1" class="reg-pattern-dot w-4 h-4 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[8px] font-bold text-gray-300">1</div>
+                      <div data-index="2" class="reg-pattern-dot w-4 h-4 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[8px] font-bold text-gray-300">2</div>
+                      <div data-index="3" class="reg-pattern-dot w-4 h-4 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[8px] font-bold text-gray-300">3</div>
+                      <div data-index="4" class="reg-pattern-dot w-4 h-4 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[8px] font-bold text-gray-300">4</div>
+                      <div data-index="5" class="reg-pattern-dot w-4 h-4 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[8px] font-bold text-gray-300">5</div>
+                      <div data-index="6" class="reg-pattern-dot w-4 h-4 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[8px] font-bold text-gray-300">6</div>
+                      <div data-index="7" class="reg-pattern-dot w-4 h-4 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[8px] font-bold text-gray-300">7</div>
+                      <div data-index="8" class="reg-pattern-dot w-4 h-4 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[8px] font-bold text-gray-300">8</div>
+                      <div data-index="9" class="reg-pattern-dot w-4 h-4 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[8px] font-bold text-gray-300">9</div>
+                    </div>
+                    <svg class="absolute inset-0 pointer-events-none w-full h-full" id="reg-pattern-svg"></svg>
+                  </div>
+                  <div class="mt-2 flex items-center justify-between text-[10px]">
+                    <span class="font-bold uppercase text-gray-500">Patrón: <span id="reg-pattern-sequence-text" class="text-brand">Ninguno</span></span>
+                    <button type="button" onclick="clearRegPattern()" class="px-2 py-0.5 bg-red-950/30 text-red-400 hover:bg-red-900/20 border border-red-900/50 rounded text-[9px] font-bold transition">Limpiar</button>
+                  </div>
+                </div>
               </div>
               <div>
                 <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Descripción Física / Estado del Equipo</label>
@@ -697,6 +730,7 @@
       <div class="mb-4 text-gray-800 space-y-2 border-b border-dashed pb-2">
         <p class="font-bold text-[10px] uppercase border-b pb-0.5 text-gray-600">Datos del Servicio</p>
         <div><span class="text-gray-500">Cliente:</span> <span id="tr-cliente" class="font-bold">Juan Pérez</span></div>
+        <div><span class="text-gray-500">CURP:</span> <span id="tr-curp-ticket" class="font-mono font-bold"></span></div>
         <div><span class="text-gray-500">Teléfono:</span> <span id="tr-telefono">951 123 4567</span></div>
         <div><span class="text-gray-500">Equipo:</span> <span id="tr-equipo" class="font-bold">iPhone 13 Pro</span></div>
         <div><span class="text-gray-500">Detalles/Estado:</span> <span id="tr-descripcion-ticket">—</span></div>
@@ -729,10 +763,11 @@
     function logout() { localStorage.clear(); window.location.href = '../login.html'; }
     const fmt = (v) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(v || 0);
 
-    function abrirTicketRecepcion(folio, cliente, telefono, dispositivo, falla, anticipo, descripcion) {
+    function abrirTicketRecepcion(folio, cliente, telefono, dispositivo, falla, anticipo, descripcion, curp) {
       document.getElementById('tr-folio').innerText = folio;
       document.getElementById('tr-fecha').innerText = new Date().toLocaleString('es-MX');
       document.getElementById('tr-cliente').innerText = cliente;
+      document.getElementById('tr-curp-ticket').innerText = curp || '—';
       document.getElementById('tr-telefono').innerText = telefono;
       document.getElementById('tr-equipo').innerText = dispositivo;
       document.getElementById('tr-falla').innerText = falla;
@@ -986,6 +1021,13 @@
         folio_manual: document.getElementById('nr-folio') ? document.getElementById('nr-folio').value.trim() : '',
         anticipo: document.getElementById('nr-anticipo') ? parseFloat(document.getElementById('nr-anticipo').value) || 0 : 0
       };
+
+      // Validar formato de CURP y congruencia con el nombre
+      const valCurp = validarCURPConNombre(payload.cliente_curp, payload.cliente_nombre);
+      if (!valCurp.valido) {
+        alert(valCurp.mensaje);
+        return;
+      }
       
       try {
         const res = await fetch('/api/reparaciones/solicitud', {
@@ -996,8 +1038,9 @@
         const d = await res.json();
         if(res.ok) {
           document.getElementById('form-nueva-reparacion').reset();
-          clearPattern();
-          setContraseniaTipo('texto');
+          clearRegPattern();
+          setRegContraseniaTipo('texto');
+          desbloquearClienteRegistro();
           loadOrdenes();
           cargarCRMClientes();
           const dispText = `${payload.marca} ${payload.modelo} (${payload.color})`;
@@ -1008,7 +1051,8 @@
             dispText,
             payload.falla,
             payload.anticipo,
-            payload.descripcion
+            payload.descripcion,
+            payload.cliente_curp
           );
         } else {
           alert('Error: ' + (d.message || 'No se pudo registrar la reparación.'));
@@ -1684,11 +1728,45 @@
       const inpTelefono = document.getElementById('nr-telefono');
       const inpEmail = document.getElementById('nr-email');
       const inpCurp = document.getElementById('nr-curp');
+      const btnUnlock = document.getElementById('btn-desbloquear-cliente');
 
-      if (inpNombre) { inpNombre.value = nombre; highlightField(inpNombre); }
-      if (inpTelefono) { inpTelefono.value = telefono; highlightField(inpTelefono); }
-      if (inpEmail) { inpEmail.value = email; highlightField(inpEmail); }
-      if (inpCurp && curp) { inpCurp.value = curp; highlightField(inpCurp); }
+      const inputs = [inpNombre, inpTelefono, inpEmail, inpCurp];
+
+      if (inpNombre) inpNombre.value = nombre;
+      if (inpTelefono) inpTelefono.value = telefono;
+      if (inpEmail) inpEmail.value = email;
+      if (inpCurp && curp) inpCurp.value = curp;
+
+      inputs.forEach(el => {
+        if (el) {
+          el.readOnly = true;
+          el.classList.add('bg-gray-900/60', 'text-gray-400', 'cursor-not-allowed', 'border-gray-800');
+          el.classList.remove('focus:border-brand');
+          highlightField(el);
+        }
+      });
+
+      if (btnUnlock) btnUnlock.classList.remove('hidden');
+    }
+
+    function desbloquearClienteRegistro() {
+      const inpNombre = document.getElementById('nr-cliente');
+      const inpTelefono = document.getElementById('nr-telefono');
+      const inpEmail = document.getElementById('nr-email');
+      const inpCurp = document.getElementById('nr-curp');
+      const btnUnlock = document.getElementById('btn-desbloquear-cliente');
+
+      const inputs = [inpNombre, inpTelefono, inpEmail, inpCurp];
+
+      inputs.forEach(el => {
+        if (el) {
+          el.readOnly = false;
+          el.classList.remove('bg-gray-900/60', 'text-gray-400', 'cursor-not-allowed', 'border-gray-800');
+          el.classList.add('focus:border-brand');
+        }
+      });
+
+      if (btnUnlock) btnUnlock.classList.add('hidden');
     }
 
     function highlightField(el) {
@@ -1776,9 +1854,11 @@
       
       const clientName = rep.dispositivo?.cliente?.nombre_completo || rep.cliente?.nombre_completo || '—';
       const phone = rep.dispositivo?.cliente?.telefono || rep.cliente_telefono || '—';
+      const curpVal = rep.dispositivo?.cliente?.curp || rep.cliente?.curp || rep.cliente_curp || '—';
       const deviceName = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color ? `(${rep.dispositivo.color})` : ''}` : '—';
       
       document.getElementById('tr-cliente').innerText = clientName;
+      document.getElementById('tr-curp-ticket').innerText = curpVal;
       document.getElementById('tr-telefono').innerText = phone;
       document.getElementById('tr-equipo').innerText = deviceName;
       document.getElementById('tr-falla').innerText = rep.falla_reportada || '—';
@@ -2067,9 +2147,200 @@
       }
     }
 
+    // --- LOGICA DE PATRON DE REGISTRO E INTERACTIVOS DE NUEVA REPARACION ---
+    let regPatternDrawSeq = [];
+    let isDrawingRegPattern = false;
+
+    function setRegContraseniaTipo(tipo) {
+      const btnTexto = document.getElementById('btn-reg-tipo-texto');
+      const btnPatron = document.getElementById('btn-reg-tipo-patron');
+      const inputContrasenia = document.getElementById('reg-contrasenia');
+      const patronContainer = document.getElementById('reg-patron-drawer-container');
+
+      if (!btnTexto || !btnPatron || !inputContrasenia || !patronContainer) return;
+
+      if (tipo === 'texto') {
+        btnTexto.className = 'flex-1 py-2 rounded-xl text-xs font-bold transition bg-brand text-gray-950 border border-brand/20';
+        btnPatron.className = 'flex-1 py-2 rounded-xl text-xs font-bold transition bg-gray-950 text-gray-400 border border-gray-800 hover:bg-gray-900';
+        inputContrasenia.classList.remove('hidden');
+        patronContainer.classList.add('hidden');
+        clearRegPattern();
+      } else {
+        btnPatron.className = 'flex-1 py-2 rounded-xl text-xs font-bold transition bg-brand text-gray-950 border border-brand/20';
+        btnTexto.className = 'flex-1 py-2 rounded-xl text-xs font-bold transition bg-gray-950 text-gray-400 border border-gray-800 hover:bg-gray-900';
+        inputContrasenia.classList.add('hidden');
+        patronContainer.classList.remove('hidden');
+        clearRegPattern();
+      }
+    }
+
+    function initRegPatternLock() {
+      const container = document.getElementById('reg-pattern-container');
+      const svg = document.getElementById('reg-pattern-svg');
+      const dots = document.querySelectorAll('.reg-pattern-dot');
+
+      if (!container || !svg) return;
+
+      function getDotCenter(dot) {
+        const rect = dot.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        return {
+          x: rect.left + rect.width / 2 - containerRect.left,
+          y: rect.top + rect.height / 2 - containerRect.top
+        };
+      }
+
+      function updateDrawLines() {
+        svg.innerHTML = '';
+        if (regPatternDrawSeq.length < 1) return;
+
+        let points = '';
+        regPatternDrawSeq.forEach(idx => {
+          const dot = document.querySelector(`.reg-pattern-dot[data-index="${idx}"]`);
+          if (dot) {
+            const pt = getDotCenter(dot);
+            points += `${pt.x},${pt.y} `;
+          }
+        });
+
+        if (points) {
+          const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+          polyline.setAttribute('points', points.trim());
+          polyline.setAttribute('stroke', '#07B76B');
+          polyline.setAttribute('stroke-width', '4');
+          polyline.setAttribute('fill', 'none');
+          polyline.setAttribute('stroke-linecap', 'round');
+          polyline.setAttribute('stroke-linejoin', 'round');
+          svg.appendChild(polyline);
+        }
+      }
+
+      function handleStart(e) {
+        isDrawingRegPattern = true;
+        regPatternDrawSeq = [];
+        svg.innerHTML = '';
+        dots.forEach(dot => {
+          dot.className = 'reg-pattern-dot w-4 h-4 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[8px] font-bold text-gray-300';
+        });
+        handleMove(e);
+      }
+
+      function handleMove(e) {
+        if (!isDrawingRegPattern) return;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        dots.forEach(dot => {
+          const rect = dot.getBoundingClientRect();
+          const pad = 12;
+          if (clientX >= rect.left - pad && clientX <= rect.right + pad &&
+              clientY >= rect.top - pad && clientY <= rect.bottom + pad) {
+            const idx = parseInt(dot.getAttribute('data-index'));
+            if (!regPatternDrawSeq.includes(idx)) {
+              regPatternDrawSeq.push(idx);
+              dot.className = 'reg-pattern-dot w-4 h-4 rounded-full bg-brand border-2 border-brand-light scale-125 shadow-[0_0_10px_rgba(7,183,107,0.6)] cursor-pointer flex items-center justify-center transition-all text-[8px] font-black text-gray-950';
+              updateDrawLines();
+            }
+          }
+        });
+      }
+
+      function handleEnd() {
+        if (!isDrawingRegPattern) return;
+        isDrawingRegPattern = false;
+        const seqStr = regPatternDrawSeq.join('-');
+        document.getElementById('reg-contrasenia').value = seqStr;
+        document.getElementById('reg-pattern-sequence-text').innerText = seqStr || 'Ninguno';
+      }
+
+      container.addEventListener('mousedown', handleStart);
+      container.addEventListener('mousemove', handleMove);
+      window.addEventListener('mouseup', handleEnd);
+
+      container.addEventListener('touchstart', (e) => { e.preventDefault(); handleStart(e); });
+      container.addEventListener('touchmove', (e) => { e.preventDefault(); handleMove(e); });
+      container.addEventListener('touchend', handleEnd);
+    }
+
+    function clearRegPattern() {
+      regPatternDrawSeq = [];
+      const svg = document.getElementById('reg-pattern-svg');
+      if (svg) svg.innerHTML = '';
+
+      const dots = document.querySelectorAll('.reg-pattern-dot');
+      dots.forEach(dot => {
+        dot.className = 'reg-pattern-dot w-4 h-4 rounded-full bg-gray-700 border-2 border-gray-600 hover:bg-gray-500 cursor-pointer flex items-center justify-center transition text-[8px] font-bold text-gray-300';
+      });
+      document.getElementById('reg-contrasenia').value = '';
+      document.getElementById('reg-pattern-sequence-text').innerText = 'Ninguno';
+    }
+
+    // --- CRM FILTRADO DINÁMICO Y VALIDACIONES DE CURP/NOMBRE ---
+    function filtrarClientesDesdeFormulario() {
+      const nameVal = document.getElementById('nr-cliente').value.toLowerCase().trim();
+      const curpVal = document.getElementById('nr-curp').value.toLowerCase().trim();
+
+      if (!nameVal && !curpVal) {
+        renderCRMClientes(allCRMClientes);
+        return;
+      }
+
+      const filtered = allCRMClientes.filter(c => {
+        const matchesName = !nameVal || (c.nombre_completo || '').toLowerCase().includes(nameVal);
+        const matchesCurp = !curpVal || (c.curp || '').toLowerCase().includes(curpVal);
+        return matchesName && matchesCurp;
+      });
+      renderCRMClientes(filtered);
+    }
+
+    function validarCURPConNombre(curp, nombre) {
+      curp = (curp || '').toUpperCase().trim();
+      nombre = (nombre || '').toUpperCase().trim();
+
+      const regexCurp = /^[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[A-Z0-9]{2}$/;
+      if (!regexCurp.test(curp)) {
+        return {
+          valido: false,
+          mensaje: '⚠️ El formato de la CURP es inválido. Debe contener 18 caracteres (4 letras, 6 números, H/M, 5 letras y 2 alfanuméricos).'
+        };
+      }
+
+      const normalizarTexto = (str) => {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      };
+
+      const nombreNorm = normalizarTexto(nombre);
+      const palabras = nombreNorm.split(/\s+/).filter(p => p.length > 0);
+
+      if (palabras.length === 0) {
+        return { valido: false, mensaje: '⚠️ El nombre del cliente no es válido.' };
+      }
+
+      const curpInitials = curp.substring(0, 4);
+      const initials = palabras.map(p => p[0]);
+
+      const matchesFirstLetter = initials.includes(curpInitials[0]);
+      let matchingInitialsCount = 0;
+      curpInitials.split('').forEach(char => {
+        if (initials.includes(char)) {
+          matchingInitialsCount++;
+        }
+      });
+
+      if (!matchesFirstLetter || matchingInitialsCount < 2) {
+        return {
+          valido: false,
+          mensaje: `⚠️ La CURP "${curp}" no parece coincidir con el nombre del cliente "${nombre}". Verifique que los apellidos e iniciales coincidan.`
+        };
+      }
+
+      return { valido: true };
+    }
+
     // Auto-cargar mesa de trabajo al iniciar
     window.addEventListener('DOMContentLoaded', () => {
       initPatternLock();
+      initRegPatternLock();
       cargarCRMClientes();
       
       const activeFolio = localStorage.getItem('fitzcell_active_folio');

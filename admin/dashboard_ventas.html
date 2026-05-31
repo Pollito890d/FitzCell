@@ -304,20 +304,6 @@
               <div id="corte-efectivo-esperado" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white font-black text-lg">$1,000.00</div>
             </div>
 
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Efectivo Real en Caja ($)</label>
-              <div class="relative">
-                <span class="absolute left-4 top-3 text-gray-500 font-bold text-lg">$</span>
-                <input type="number" id="corte-efectivo-real" oninput="calcularDiferenciaCorte()" placeholder="0.00" step="0.01" class="w-full bg-gray-950 border border-gray-700 rounded-xl pl-8 pr-4 py-3 text-white focus:border-brand outline-none transition text-lg font-bold">
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Diferencia ($)</label>
-              <div id="corte-diferencia-badge" class="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 font-black text-lg text-center text-gray-400">
-                $0.00
-              </div>
-            </div>
 
             <div>
               <label class="block text-xs font-semibold text-gray-400 mb-1 uppercase tracking-wider">Observaciones / Notas</label>
@@ -343,13 +329,11 @@
                   <th class="pb-3 font-semibold">Fecha</th>
                   <th class="pb-3 font-semibold">Cajero</th>
                   <th class="pb-3 font-semibold text-right">Esperado</th>
-                  <th class="pb-3 font-semibold text-right">Real</th>
-                  <th class="pb-3 font-semibold text-center">Dif.</th>
                   <th class="pb-3 font-semibold text-center">Ticket</th>
                 </tr>
               </thead>
               <tbody id="corte-tbody" class="divide-y divide-gray-800 text-sm">
-                <tr><td colspan="6" class="py-4 text-center text-gray-500">Cargando...</td></tr>
+                <tr><td colspan="4" class="py-4 text-center text-gray-500">Cargando...</td></tr>
               </tbody>
             </table>
           </div>
@@ -527,6 +511,7 @@
       <div class="mb-4 text-gray-800 space-y-2 border-b border-dashed pb-2">
         <p class="font-bold text-[10px] uppercase border-b pb-0.5 text-gray-600">Datos del Servicio</p>
         <div><span class="text-gray-500">Cliente:</span> <span id="tr-cliente" class="font-bold">Juan Pérez</span></div>
+        <div><span class="text-gray-500">CURP:</span> <span id="tr-curp-ticket" class="font-mono font-bold"></span></div>
         <div><span class="text-gray-500">Teléfono:</span> <span id="tr-telefono">951 123 4567</span></div>
         <div><span class="text-gray-500">Equipo:</span> <span id="tr-equipo" class="font-bold">iPhone 13 Pro</span></div>
         <div><span class="text-gray-500">Detalles/Estado:</span> <span id="tr-descripcion-ticket">—</span></div>
@@ -581,8 +566,7 @@
         <div class="flex justify-between"><span>Ventas Transf:</span><span id="tc-ventas-transferencia" class="text-blue-600 font-bold">$0.00</span></div>
         <div class="flex justify-between font-bold text-gray-900 border-t border-dashed pt-1"><span>Total Ventas:</span><span id="tc-total-ventas" class="text-green-600 font-black">$0.00</span></div>
         <div class="flex justify-between border-t border-dashed pt-1"><span>Efectivo Esperado:</span><span id="tc-efectivo-esperado" class="font-bold">$0.00</span></div>
-        <div class="flex justify-between"><span>Efectivo Real:</span><span id="tc-efectivo-real" class="font-black text-gray-950">$0.00</span></div>
-        <div class="flex justify-between border-t border-dashed pt-1" id="tc-container-diferencia"><span>Diferencia:</span><span id="tc-diferencia" class="font-bold">$0.00</span></div>
+
       </div>
 
       <div class="mb-4 text-gray-800" id="tc-container-observaciones">
@@ -688,7 +672,7 @@
            </div>
            <div class="flex items-center gap-4 shrink-0">
              <span class="font-bold text-brand text-lg">${formatCurrency(p.precio_venta)}</span>
-             <button onclick="addTicket(${p.id_producto}, '${escName}', ${p.precio_venta})" class="bg-brand text-gray-950 hover:bg-brand-light px-4 py-2 rounded-lg font-bold transition shadow-sm">Añadir</button>
+             <button onclick="addTicket('${p.codigo_barras}', '${escName}', ${p.precio_venta})" class="bg-brand text-gray-950 hover:bg-brand-light px-4 py-2 rounded-lg font-bold transition shadow-sm">Añadir</button>
            </div>
          </div>`;
       });
@@ -1151,34 +1135,10 @@
           
           document.getElementById('corte-ventas-efectivo').innerText = formatCurrency(corteVentasEfectivo);
           document.getElementById('corte-ventas-transferencia').innerText = formatCurrency(corteVentasTransferencia);
-          
-          calcularDiferenciaCorte();
+          document.getElementById('corte-efectivo-esperado').innerText = formatCurrency(corteVentasEfectivo);
         }
       } catch (e) {
         console.error('Error al cargar totales del corte:', e);
-      }
-    }
-
-    function calcularDiferenciaCorte() {
-      const esperado = corteVentasEfectivo;
-      document.getElementById('corte-efectivo-esperado').innerText = formatCurrency(esperado);
-      
-      const real = parseFloat(document.getElementById('corte-efectivo-real').value) || 0;
-      const dif = real - esperado;
-      
-      const badge = document.getElementById('corte-diferencia-badge');
-      badge.innerText = formatCurrency(dif);
-      
-      badge.className = "w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 font-black text-lg text-center ";
-      if (dif > 0.01) {
-        badge.className += "text-green-400";
-        badge.innerText = "+" + formatCurrency(dif) + " (Sobrante)";
-      } else if (dif < -0.01) {
-        badge.className += "text-red-400";
-        badge.innerText = formatCurrency(dif) + " (Faltante)";
-      } else {
-        badge.className += "text-gray-400";
-        badge.innerText = formatCurrency(dif) + " (Sin diferencia)";
       }
     }
 
@@ -1187,14 +1147,6 @@
       const ventas_efectivo = corteVentasEfectivo;
       const ventas_transferencia = corteVentasTransferencia;
       const esperado = ventas_efectivo;
-      const real = parseFloat(document.getElementById('corte-efectivo-real').value) || 0;
-      
-      if (isNaN(real) || real < 0) {
-        alert('Por favor introduce un valor válido de efectivo real en caja.');
-        return;
-      }
-      
-      const diferencia = real - esperado;
       const observaciones = document.getElementById('corte-observaciones').value.trim();
       
       try {
@@ -1206,8 +1158,6 @@
             ventas_efectivo,
             ventas_transferencia,
             efectivo_esperado: esperado,
-            efectivo_real: real,
-            diferencia,
             observaciones
           })
         });
@@ -1215,7 +1165,6 @@
         if (res.ok) {
           const d = await res.json();
           alert('¡Corte de caja registrado exitosamente!');
-          document.getElementById('corte-efectivo-real').value = '';
           document.getElementById('corte-observaciones').value = '';
           cargarTotalesCorte();
           cargarHistorialCortes();
@@ -1262,8 +1211,6 @@
               <td class="py-3 font-medium text-gray-300">${fechaStr}</td>
               <td class="py-3 text-gray-400">${c.cajero_nombre}</td>
               <td class="py-3 text-right text-gray-400">${formatCurrency(c.efectivo_esperado)}</td>
-              <td class="py-3 text-right text-gray-300 font-medium">${formatCurrency(c.efectivo_real)}</td>
-              <td class="py-3 text-center ${difClass}">${difSign}${formatCurrency(c.diferencia)}</td>
               <td class="py-3 text-center">
                 <button onclick="abrirTicketCorteConObjeto(JSON.parse(this.dataset.corte))" data-corte="${corteJson}" class="bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1 rounded font-bold text-xs transition">
                   📄 Ticket
@@ -1273,7 +1220,7 @@
             
             if (c.observaciones) {
               html += `<tr class="border-b border-gray-800/50 bg-gray-950/20 text-xs">
-                <td colspan="6" class="py-2 px-4 text-gray-500 italic">
+                <td colspan="4" class="py-2 px-4 text-gray-500 italic">
                   <strong>Notas:</strong> ${c.observaciones}
                 </td>
               </tr>`;
@@ -1295,18 +1242,6 @@
       document.getElementById('tc-ventas-transferencia').innerText = formatCurrency(c.ventas_transferencia);
       document.getElementById('tc-total-ventas').innerText = formatCurrency(c.ventas_efectivo + c.ventas_transferencia);
       document.getElementById('tc-efectivo-esperado').innerText = formatCurrency(c.efectivo_esperado);
-      document.getElementById('tc-efectivo-real').innerText = formatCurrency(c.efectivo_real);
-      
-      const diff = parseFloat(c.diferencia) || 0;
-      const tcDiff = document.getElementById('tc-diferencia');
-      tcDiff.innerText = (diff >= 0 ? '+' : '') + formatCurrency(diff);
-      if (diff > 0.01) {
-        tcDiff.className = 'font-bold text-green-600';
-      } else if (diff < -0.01) {
-        tcDiff.className = 'font-bold text-red-600';
-      } else {
-        tcDiff.className = 'font-bold text-gray-600';
-      }
 
       const tcObs = document.getElementById('tc-observaciones');
       const tcContainerObs = document.getElementById('tc-container-observaciones');
@@ -1510,9 +1445,11 @@
       
       const clientName = rep.dispositivo?.cliente?.nombre_completo || rep.cliente?.nombre_completo || '—';
       const phone = rep.dispositivo?.cliente?.telefono || rep.cliente_telefono || '—';
+      const curpVal = rep.dispositivo?.cliente?.curp || rep.cliente?.curp || rep.cliente_curp || '—';
       const deviceName = rep.dispositivo ? `${rep.dispositivo.marca || ''} ${rep.dispositivo.modelo || ''} ${rep.dispositivo.color ? `(${rep.dispositivo.color})` : ''}` : '—';
       
       document.getElementById('tr-cliente').innerText = clientName;
+      document.getElementById('tr-curp-ticket').innerText = curpVal;
       document.getElementById('tr-telefono').innerText = phone;
       document.getElementById('tr-equipo').innerText = deviceName;
       document.getElementById('tr-falla').innerText = rep.falla_reportada || '—';

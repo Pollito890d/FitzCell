@@ -112,7 +112,5 @@ CREATE TABLE Corte_Caja (
     ventas_efectivo DECIMAL(10,2) DEFAULT 0,
     ventas_transferencia DECIMAL(10,2) DEFAULT 0,
     efectivo_esperado DECIMAL(10,2) DEFAULT 0,
-    efectivo_real DECIMAL(10,2) DEFAULT 0,
-    diferencia DECIMAL(10,2) DEFAULT 0,
     observaciones TEXT
 );

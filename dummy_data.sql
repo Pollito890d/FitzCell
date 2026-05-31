@@ -117,10 +117,10 @@ INSERT INTO Detalle_Venta (id_venta, id_producto, cantidad, precio_unitario) VAL
 (5, '750100000006', 1, 850.00);
 
 -- 10. Insertar Cortes de Caja (Identificador Natural no incremental)
-INSERT INTO Corte_Caja (id_corte, fecha, cajero_nombre, ventas_efectivo, ventas_transferencia, efectivo_esperado, efectivo_real, diferencia, observaciones) VALUES 
-('CORTE-20260527-180000-ANAVENTAS', NOW() - INTERVAL '3 days', 'Ana Ventas', 2700.00, 0.00, 2700.00, 2700.00, 0.00, 'Caja cuadrada perfectamente, ingresos por entrega de R-1001'),
-('CORTE-20260528-180000-ANAVENTAS', NOW() - INTERVAL '2 days', 'Ana Ventas', 650.00, 1300.00, 650.00, 650.00, 0.00, 'Ventas de mostrador fluidas'),
-('CORTE-20260529-180000-ANAVENTAS', NOW() - INTERVAL '1 days', 'Ana Ventas', 250.00, 0.00, 250.00, 250.00, 0.00, 'Poco movimiento de efectivo hoy');
+INSERT INTO Corte_Caja (id_corte, fecha, cajero_nombre, ventas_efectivo, ventas_transferencia, efectivo_esperado, observaciones) VALUES 
+('CORTE-20260527-180000-ANAVENTAS', NOW() - INTERVAL '3 days', 'Ana Ventas', 2700.00, 0.00, 2700.00, 'Caja cuadrada perfectamente, ingresos por entrega de R-1001'),
+('CORTE-20260528-180000-ANAVENTAS', NOW() - INTERVAL '2 days', 'Ana Ventas', 650.00, 1300.00, 650.00, 'Ventas de mostrador fluidas'),
+('CORTE-20260529-180000-ANAVENTAS', NOW() - INTERVAL '1 days', 'Ana Ventas', 250.00, 0.00, 250.00, 'Poco movimiento de efectivo hoy');
 
 -- 11. Sincronizar secuencias para llaves primarias artificiales (SERIAL) después de los inserts manuales
 SELECT setval(pg_get_serial_sequence('dispositivo', 'id_dispositivo'), COALESCE(MAX(id_dispositivo), 1), true) FROM dispositivo;

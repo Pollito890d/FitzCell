@@ -61,7 +61,7 @@ router.get('/totales-hoy', async (req, res) => {
 
 // Registrar un corte de caja
 router.post('/', async (req, res) => {
-    const { cajero_nombre, ventas_efectivo, ventas_transferencia, efectivo_esperado, efectivo_real, diferencia, observaciones } = req.body;
+    const { cajero_nombre, ventas_efectivo, ventas_transferencia, efectivo_esperado, observaciones } = req.body;
     try {
         // Generar llave primaria natural no incremental
         const now = new Date();
@@ -78,8 +78,6 @@ router.post('/', async (req, res) => {
                 ventas_efectivo: parseFloat(ventas_efectivo) || 0,
                 ventas_transferencia: parseFloat(ventas_transferencia) || 0,
                 efectivo_esperado: parseFloat(efectivo_esperado) || 0,
-                efectivo_real: parseFloat(efectivo_real) || 0,
-                diferencia: parseFloat(diferencia) || 0,
                 observaciones
             }])
             .select();

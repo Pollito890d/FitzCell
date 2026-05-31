@@ -29,13 +29,16 @@ router.post('/', async (req, res) => {
             if (errDetalle) throw errDetalle;
 
             // Descontar stock manualmente del producto en base de datos
-            const { data: prod, error: errProd } = await supabase
+            const { data: prods, error: errProd } = await supabase
                 .from('producto')
                 .select('stock')
-                .eq('codigo_barras', item.id_producto)
-                .single();
+                .eq('codigo_barras', item.id_producto);
             
             if (errProd) throw errProd;
+            if (!prods || prods.length === 0) {
+                throw new Error(`El producto con código de barras ${item.id_producto} no existe en el inventario.`);
+            }
+            const prod = prods[0];
             
             const newStock = Math.max(0, (prod.stock || 0) - item.cantidad);
             await supabase
@@ -69,13 +72,16 @@ router.post('/reparacion', async (req, res) => {
         if (errVenta) throw errVenta;
 
         // 2. Obtener el costo total de la reparación para liquidarlo
-        const { data: ord, error: errOrdSelect } = await supabase
+        const { data: ords, error: errOrdSelect } = await supabase
             .from('orden_reparacion')
             .select('costo')
-            .eq('id_orden', id_orden)
-            .single();
+            .eq('id_orden', id_orden);
         
         if (errOrdSelect) throw errOrdSelect;
+        if (!ords || ords.length === 0) {
+            return res.status(404).json({ message: `La orden de reparación #${id_orden} no existe.` });
+        }
+        const ord = ords[0];
 
         // 3. Actualizar la orden a 'Entregado', liquidando el anticipo e ingresando la fecha de entrega
         const { error: errOrd } = await supabase
