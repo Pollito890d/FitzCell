@@ -1461,7 +1461,7 @@
       if (fechaBusqueda) {
         d = d.filter(rep => {
           if (!rep.fecha_entrada) return false;
-          const repFecha = rep.fecha_entrada.split('T')[0];
+          const repFecha = new Date(rep.fecha_entrada).toLocaleDateString('en-CA');
           return repFecha === fechaBusqueda;
         });
       }
@@ -2524,6 +2524,12 @@
     window.addEventListener('DOMContentLoaded', () => {
       initRegPatternLock();
       cargarCRMClientes();
+
+      // Auto-actualizar reparaciones y resumen cada 15 segundos
+      setInterval(() => {
+        loadReparaciones();
+        loadResumen();
+      }, 15000);
     });
 
     showSection('sec-resumen');

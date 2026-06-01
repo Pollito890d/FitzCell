@@ -1594,7 +1594,7 @@
       if (fechaBusqueda) {
         data = data.filter(rep => {
           if (!rep.fecha_entrada) return false;
-          const repFecha = rep.fecha_entrada.split('T')[0];
+          const repFecha = new Date(rep.fecha_entrada).toLocaleDateString('en-CA');
           return repFecha === fechaBusqueda;
         });
       }
@@ -2363,6 +2363,12 @@
       
       // Mostrar órdenes por defecto
       showSection('sec-ordenes');
+
+      // Auto-actualizar órdenes y reparaciones en segundo plano cada 15 segundos
+      setInterval(() => {
+        loadOrdenes();
+        loadReparacionesGlobales();
+      }, 15000);
     });
   </script>
 </body>
